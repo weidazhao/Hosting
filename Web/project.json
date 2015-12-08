@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0-*",
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+    "Microsoft.ServiceFabric": "4.4.90-preview",
+    "Microsoft.ServiceFabric.Services": "1.4.90-preview"
+  },
+
+  "frameworks": {
+    "dnx451": { }
+  },
+
+  "exclude": [
+    "wwwroot",
+    "node_modules",
+    "PackageRoot"
+  ],
+  "publishExclude": [
+    "**.user",
+    "**.vspscc",
+    "PackageRoot"
+  ]
+}
