@@ -1,14 +1,12 @@
 ﻿using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Web
 {
     public class HttpCommunicationListener : ICommunicationListener
-    {        
+    {
         public void Abort()
         {
             throw new NotImplementedException();
