@@ -13,7 +13,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
-    <UpdateServiceFabricManifestEnabled>true</UpdateServiceFabricManifestEnabled>
+    <UpdateServiceFabricManifestEnabled>false</UpdateServiceFabricManifestEnabled>
     <ServiceFabricServiceManifestPath>PackageRoot\ServiceManifest.xml</ServiceFabricServiceManifestPath>
   </PropertyGroup>
   <ItemGroup>

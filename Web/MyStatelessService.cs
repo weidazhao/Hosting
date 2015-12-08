@@ -8,7 +8,7 @@ namespace Web
     {
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            return base.CreateServiceInstanceListeners();
+            return new[] { new ServiceInstanceListener(initializationParameters => new HttpCommunicationListener<Startup>(initializationParameters)) };
         }
     }
 }
