@@ -1,4 +1,5 @@
-﻿using Microsoft.ServiceFabric.Services.Communication.Runtime;
+﻿using Microsoft.ServiceFabric.Services.Communication.AspNet;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
 
@@ -8,7 +9,7 @@ namespace Web
     {
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(initializationParameters => new HttpCommunicationListener<Startup>(initializationParameters)) };
+            return new[] { new ServiceReplicaListener(p => new HttpCommunicationListener<Startup>(p, Program.Arguments)) };
         }
     }
 }

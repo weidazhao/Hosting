@@ -4,10 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System.Fabric;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Web
+namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 {
     //
     // TODO:
@@ -20,12 +21,14 @@ namespace Web
         private const string ConfigFileKey = "config";
 
         private readonly ServiceInitializationParameters _initializationParameters;
+        private readonly string[] _args;
 
         private IApplication _application;
 
-        public HttpCommunicationListener(ServiceInitializationParameters initializationParameters)
+        public HttpCommunicationListener(ServiceInitializationParameters initializationParameters, string[] args)
         {
             _initializationParameters = initializationParameters;
+            _args = args.ToArray();
         }
 
         public void Abort()
@@ -51,13 +54,13 @@ namespace Web
 
         private void StartApplication(string serverUrl)
         {
-            var tempBuilder = new ConfigurationBuilder().AddCommandLine(Program.Arguments);
+            var tempBuilder = new ConfigurationBuilder().AddCommandLine(_args);
             var tempConfig = tempBuilder.Build();
             var configFilePath = tempConfig[ConfigFileKey] ?? HostingJsonFile;
 
             var config = new ConfigurationBuilder().AddJsonFile(configFilePath, optional: true)
                                                    .AddEnvironmentVariables()
-                                                   .AddCommandLine(Program.Arguments)
+                                                   .AddCommandLine(_args)
                                                    .Build();
 
             config["server.urls"] = serverUrl;

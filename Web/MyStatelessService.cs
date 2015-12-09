@@ -1,4 +1,5 @@
-﻿using Microsoft.ServiceFabric.Services.Communication.Runtime;
+﻿using Microsoft.ServiceFabric.Services.Communication.AspNet;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
 
@@ -8,7 +9,7 @@ namespace Web
     {
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            return new[] { new ServiceInstanceListener(initializationParameters => new HttpCommunicationListener<Startup>(initializationParameters)) };
+            return new[] { new ServiceInstanceListener(p => new HttpCommunicationListener<Startup>(p, Program.Arguments)) };
         }
     }
 }
