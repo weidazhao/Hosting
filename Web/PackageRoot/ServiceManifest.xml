@@ -16,7 +16,7 @@
     <EntryPoint>
       <ExeHost>
         <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc1-update1\bin\dnx.exe</Program>
-        <Arguments>--appbase approot\src\Web Microsoft.Dnx.ApplicationHost --server Microsoft.AspNet.Server.Kestrel</Arguments>
+        <Arguments>--project approot\src\Web Web --server Microsoft.AspNet.Server.Kestrel</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
       </ExeHost>
