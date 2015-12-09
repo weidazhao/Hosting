@@ -17,7 +17,7 @@ namespace Web
 
             using (FabricRuntime fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("WebType", typeof(MyStatelessService));
+                fabricRuntime.RegisterServiceType("WebType", typeof(MyStatefulService));
 
                 Thread.Sleep(Timeout.Infinite);
             }

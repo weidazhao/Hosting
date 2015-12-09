@@ -1,14 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="HostingType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
-   <Parameters />
+   <Parameters>
+      <Parameter Name="Stateful1_TargetReplicaSetSize" DefaultValue="3" />
+      <Parameter Name="Stateful1_MinReplicaSetSize" DefaultValue="2" />
+      <Parameter Name="Stateful1_PartitionCount" DefaultValue="1" />
+   </Parameters>
    <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="Web" ServiceManifestVersion="1.0.0" />
    </ServiceManifestImport>
    <DefaultServices>
       <Service Name="WebService">
-         <StatelessService ServiceTypeName="WebType">
-            <SingletonPartition />
-         </StatelessService>
+         <StatefulService ServiceTypeName="WebType" TargetReplicaSetSize="[Stateful1_TargetReplicaSetSize]" MinReplicaSetSize="[Stateful1_MinReplicaSetSize]">
+            <UniformInt64Partition PartitionCount="[Stateful1_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+         </StatefulService>
       </Service>
    </DefaultServices>
 </ApplicationManifest>

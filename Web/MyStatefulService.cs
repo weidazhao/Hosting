@@ -8,7 +8,7 @@ namespace Web
     {
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return base.CreateServiceReplicaListeners();
+            return new[] { new ServiceReplicaListener(initializationParameters => new HttpCommunicationListener<Startup>(initializationParameters)) };
         }
     }
 }
