@@ -4,31 +4,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System.Fabric;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 {
-    //
-    // TODO:
-    // Refer to https://github.com/aspnet/Hosting/blob/release/src/Microsoft.AspNet.Hosting/WebApplication.cs
-    // See if Microsoft.AspNet.Hosting.WebApplication can be refactored so that HttpCommunicationListener can reuse it.
-    //
-    public class HttpCommunicationListener<TStartup> : ICommunicationListener
+    public class AspNetCommunicationListener<TStartup> : ICommunicationListener
     {
         private const string HostingJsonFile = "hosting.json";
         private const string ConfigFileKey = "config";
 
-        private readonly ServiceInitializationParameters _initializationParameters;
-        private readonly string[] _args;
+        private ServiceInitializationParameters _initializationParameters;
+        private string[] _args;
 
         private IApplication _application;
 
-        public HttpCommunicationListener(ServiceInitializationParameters initializationParameters, string[] args)
+        public AspNetCommunicationListener(ServiceInitializationParameters initializationParameters, string[] args)
         {
             _initializationParameters = initializationParameters;
-            _args = args.ToArray();
+            _args = args;
         }
 
         public void Abort()
@@ -87,11 +81,6 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
             }
         }
 
-        //
-        // TODO:
-        // Allow users to plug in their own URL patterns.
-        // Refer to https://github.com/Azure/servicefabric-samples/blob/master/samples/Services/VS2015/WordCount/WordCount.Common/OwinCommunicationListener.cs
-        //
         private string ResolveServerUrl()
         {
             var endpointName = $"{PlatformServices.Default.Application.ApplicationName}TypeEndpoint";

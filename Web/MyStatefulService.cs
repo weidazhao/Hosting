@@ -7,9 +7,16 @@ namespace Web
 {
     public class MyStatefulService : StatefulService
     {
+        private string[] _args;
+
+        public MyStatefulService(string[] args)
+        {
+            _args = args;
+        }
+
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(p => new HttpCommunicationListener<Startup>(p, Program.Arguments)) };
+            return new[] { new ServiceReplicaListener(p => new AspNetCommunicationListener<Startup>(p, _args)) };
         }
     }
 }
