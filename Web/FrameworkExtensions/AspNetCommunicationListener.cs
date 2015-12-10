@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Internal;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System.Fabric;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +16,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
         private ServiceInitializationParameters _initializationParameters;
         private string[] _args;
 
-        private IApplication _application;
+        private WebApplication2 _webApp;
 
         public AspNetCommunicationListener(ServiceInitializationParameters initializationParameters, string[] args)
         {
@@ -27,12 +26,12 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 
         public void Abort()
         {
-            StopApplication();
+            _webApp.Dispose();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            StopApplication();
+            _webApp.Dispose();
 
             return Task.FromResult(true);
         }
@@ -41,44 +40,9 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
         {
             var serverUrl = ResolveServerUrl();
 
-            StartApplication(serverUrl);
+            _webApp = new WebApplication2(typeof(TStartup), _args.Concat(new[] { "--server.urls", serverUrl }).ToArray());
 
             return Task.FromResult(serverUrl);
-        }
-
-        private void StartApplication(string serverUrl)
-        {
-            var tempBuilder = new ConfigurationBuilder().AddCommandLine(_args);
-            var tempConfig = tempBuilder.Build();
-            var configFilePath = tempConfig[ConfigFileKey] ?? HostingJsonFile;
-
-            var config = new ConfigurationBuilder().AddJsonFile(configFilePath, optional: true)
-                                                   .AddEnvironmentVariables()
-                                                   .AddCommandLine(_args)
-                                                   .Build();
-
-            config["server.urls"] = serverUrl;
-
-            var hostBuilder = new WebHostBuilder(config, captureStartupErrors: true);
-            hostBuilder.UseStartup(typeof(TStartup));
-
-            var host = hostBuilder.Build();
-
-            _application = host.Start();
-        }
-
-        private void StopApplication()
-        {
-            if (_application != null)
-            {
-                var lifetimeService = _application.Services.GetService(typeof(IApplicationLifetime)) as IApplicationLifetime;
-
-                lifetimeService.StopApplication();
-
-                _application.Dispose();
-
-                _application = null;
-            }
         }
 
         private string ResolveServerUrl()
