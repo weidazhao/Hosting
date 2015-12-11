@@ -1,23 +1,24 @@
 ﻿using Microsoft.AspNet.Hosting;
-using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using System.Fabric;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 {
-    public class AspNetCommunicationListener<TStartup> : ICommunicationListener
+    public class AspNetCommunicationListener : ICommunicationListener
     {
-        private ServiceInitializationParameters _initializationParameters;
-        private string[] _args;
+        private readonly string _serverUrl;
+        private readonly Type _startupType;
+        private readonly string[] _args;
 
         private WebApplication2 _webApp;
 
-        public AspNetCommunicationListener(ServiceInitializationParameters initializationParameters, string[] args)
+        public AspNetCommunicationListener(string serverUrl, Type startupType, string[] args)
         {
-            _initializationParameters = initializationParameters;
+            _serverUrl = serverUrl;
+            _startupType = startupType;
             _args = args;
         }
 
@@ -35,20 +36,11 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            var serverUrl = ResolveServerUrl();
+            var args = (_args ?? Enumerable.Empty<string>()).Concat(new[] { "--server.urls", _serverUrl }).ToArray();
 
-            _webApp = new WebApplication2(typeof(TStartup), _args.Concat(new[] { "--server.urls", serverUrl }).ToArray());
+            _webApp = new WebApplication2(_startupType, args);
 
-            return Task.FromResult(serverUrl);
-        }
-
-        private string ResolveServerUrl()
-        {
-            var endpointName = $"{PlatformServices.Default.Application.ApplicationName}TypeEndpoint";
-
-            var endpoint = _initializationParameters.CodePackageActivationContext.GetEndpoint(endpointName);
-
-            return $"{endpoint.Protocol}://+:{endpoint.Port}";
+            return Task.FromResult(_serverUrl);
         }
     }
 }

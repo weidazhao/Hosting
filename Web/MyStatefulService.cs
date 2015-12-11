@@ -16,7 +16,14 @@ namespace Web
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(p => new AspNetCommunicationListener<Startup>(p, _args)) };
+            var builder = new AspNetCommunicationListenerBuilder()
+            {
+                StartupType = typeof(Startup),
+                Arguments = _args,
+                EndpointName = "WebTypeEndpoint"
+            };
+
+            yield return new ServiceReplicaListener(p => builder.Build(p));
         }
     }
 }
