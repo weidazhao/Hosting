@@ -10,9 +10,6 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 {
     public class AspNetCommunicationListener<TStartup> : ICommunicationListener
     {
-        private const string HostingJsonFile = "hosting.json";
-        private const string ConfigFileKey = "config";
-
         private ServiceInitializationParameters _initializationParameters;
         private string[] _args;
 
