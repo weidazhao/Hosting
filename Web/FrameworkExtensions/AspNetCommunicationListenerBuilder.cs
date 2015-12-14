@@ -8,13 +8,13 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
     {
         public Type StartupType { get; set; }
 
+        public Action<IServiceCollection> ConfigureServices { get; set; }
+
         public string[] Arguments { get; set; }
 
         public string ServerUrl { get; set; }
 
         public string EndpointName { get; set; }
-
-        public Action<IServiceCollection> ConfigureServices { get; set; }
 
         public AspNetCommunicationListener Build(ServiceInitializationParameters parameters)
         {
