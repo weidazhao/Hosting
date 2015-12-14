@@ -50,7 +50,7 @@ namespace Web
             var builder = new AspNetCommunicationListenerBuilder()
             {
                 StartupType = typeof(Startup),
-                ConfigureServices = serviceCollection => serviceCollection.AddInstance(typeof(ICounterService), this)
+                ConfigureServices = serviceCollection => serviceCollection.AddInstance(typeof(ICounterService), this),
                 Arguments = _args,
                 EndpointName = "WebTypeEndpoint",
             };
