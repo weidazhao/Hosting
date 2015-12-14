@@ -9,7 +9,7 @@ namespace Web
         {
             using (FabricRuntime fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterStatefulServiceFactory("WebType", () => new MyStatefulService(args));
+                fabricRuntime.RegisterStatefulServiceFactory("WebType", () => new CounterService(args));
 
                 Thread.Sleep(Timeout.Infinite);
             }

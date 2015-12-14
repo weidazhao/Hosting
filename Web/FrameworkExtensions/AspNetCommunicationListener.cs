@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
 using System.Linq;
@@ -11,14 +12,16 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
     {
         private readonly string _serverUrl;
         private readonly Type _startupType;
+        private readonly Action<IServiceCollection> _configureServices;
         private readonly string[] _args;
 
         private WebApplication2 _webApp;
 
-        public AspNetCommunicationListener(string serverUrl, Type startupType, string[] args)
+        public AspNetCommunicationListener(string serverUrl, Type startupType, Action<IServiceCollection> configureServices, string[] args)
         {
             _serverUrl = serverUrl;
             _startupType = startupType;
+            _configureServices = configureServices;
             _args = args;
         }
 
@@ -38,7 +41,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
         {
             var args = (_args ?? Enumerable.Empty<string>()).Concat(new[] { "--server.urls", _serverUrl }).ToArray();
 
-            _webApp = new WebApplication2(_startupType, args);
+            _webApp = new WebApplication2(_startupType, _configureServices, args);
 
             return Task.FromResult(_serverUrl);
         }

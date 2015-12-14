@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Fabric;
 
 namespace Microsoft.ServiceFabric.Services.Communication.AspNet
@@ -12,6 +13,8 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
         public string ServerUrl { get; set; }
 
         public string EndpointName { get; set; }
+
+        public Action<IServiceCollection> ConfigureServices { get; set; }
 
         public AspNetCommunicationListener Build(ServiceInitializationParameters parameters)
         {
@@ -34,7 +37,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 serverUrl = $"{endpoint.Protocol}://+:{endpoint.Port}";
             }
 
-            return new AspNetCommunicationListener(serverUrl, StartupType, Arguments);
+            return new AspNetCommunicationListener(serverUrl, StartupType, ConfigureServices, Arguments);
         }
     }
 }

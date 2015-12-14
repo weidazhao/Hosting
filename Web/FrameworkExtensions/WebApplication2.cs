@@ -19,7 +19,7 @@ namespace Microsoft.AspNet.Hosting
 
         private IApplication _application;
 
-        public WebApplication2(Type startupType, string[] args)
+        public WebApplication2(Type startupType, Action<IServiceCollection> configureServices, string[] args)
         {
             // Allow the location of the json file to be specified via a --config command line arg
             var tempBuilder = new ConfigurationBuilder().AddCommandLine(args);
@@ -28,10 +28,17 @@ namespace Microsoft.AspNet.Hosting
             var config = LoadHostingConfiguration(configFilePath, args);
 
             var hostBuilder = new WebHostBuilder(config, captureStartupErrors: true);
+
             if (startupType != null)
             {
                 hostBuilder.UseStartup(startupType);
             }
+
+            if (configureServices != null)
+            {
+                hostBuilder.UseServices(configureServices);
+            }
+
             var host = hostBuilder.Build();
             _application = host.Start();
 
@@ -85,7 +92,7 @@ namespace Microsoft.AspNet.Hosting
 
         public static void Run(Type startupType, string[] args)
         {
-            var webApp = new WebApplication2(startupType, args);
+            var webApp = new WebApplication2(startupType, null, args);
 
             Console.CancelKeyPress += (sender, eventArgs) =>
             {

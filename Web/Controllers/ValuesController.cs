@@ -1,41 +1,28 @@
 ﻿using Microsoft.AspNet.Mvc;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        // GET: api/values
+        private readonly ICounterService _counterService;
+
+        public ValuesController(ICounterService counterService)
+        {
+            _counterService = counterService;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<long> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _counterService.GetCurrentAsync();
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<long> Post()
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return await _counterService.IncrementAsync();
         }
     }
 }
