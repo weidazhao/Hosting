@@ -1,20 +1,39 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Fabric;
 
 namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 {
     public class AspNetCommunicationListenerBuilder
     {
-        public Type StartupType { get; set; }
+        internal Type StartupType { get; private set; }
+        internal string[] Arguments { get; private set; }
+        internal string EndpointName { get; private set; }
+        internal Dictionary<Type, object> Services { get; } = new Dictionary<Type, object>();
 
-        public Action<IServiceCollection> ConfigureServices { get; set; }
+        public AspNetCommunicationListenerBuilder UseStartupType(Type startupType)
+        {
+            StartupType = startupType;
+            return this;
+        }
 
-        public string[] Arguments { get; set; }
+        public AspNetCommunicationListenerBuilder UseArguments(string[] arguments)
+        {
+            Arguments = arguments;
+            return this;
+        }
 
-        public string ServerUrl { get; set; }
+        public AspNetCommunicationListenerBuilder UseEndpoint(string endpointName)
+        {
+            EndpointName = endpointName;
+            return this;
+        }
 
-        public string EndpointName { get; set; }
+        public AspNetCommunicationListenerBuilder UseService(Type serviceType, object serviceInstance)
+        {
+            Services[serviceType] = serviceInstance;
+            return this;
+        }
 
         public AspNetCommunicationListener Build(ServiceInitializationParameters parameters)
         {
@@ -23,21 +42,12 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 throw new InvalidOperationException("StartupType can not be null.");
             }
 
-            if (string.IsNullOrEmpty(ServerUrl) && (parameters == null || string.IsNullOrEmpty(EndpointName)))
+            if (string.IsNullOrEmpty(EndpointName))
             {
-                throw new InvalidOperationException("Server URL can not be resolved.");
+                throw new InvalidOperationException("EndpointName can not be null.");
             }
 
-            string serverUrl = ServerUrl;
-
-            if (string.IsNullOrEmpty(serverUrl))
-            {
-                var endpoint = parameters.CodePackageActivationContext.GetEndpoint(EndpointName);
-
-                serverUrl = $"{endpoint.Protocol}://+:{endpoint.Port}";
-            }
-
-            return new AspNetCommunicationListener(serverUrl, StartupType, ConfigureServices, Arguments);
+            return new AspNetCommunicationListener(this, parameters);
         }
     }
 }

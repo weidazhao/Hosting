@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ServiceFabric.Data.Collections;
+﻿using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.AspNet;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -47,13 +46,10 @@ namespace Web
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            var builder = new AspNetCommunicationListenerBuilder()
-            {
-                StartupType = typeof(Startup),
-                ConfigureServices = serviceCollection => serviceCollection.AddInstance(typeof(ICounterService), this),
-                Arguments = _args,
-                EndpointName = "WebTypeEndpoint",
-            };
+            var builder = new AspNetCommunicationListenerBuilder().UseStartupType(typeof(Startup))
+                                                                  .UseArguments(_args)
+                                                                  .UseEndpoint("WebTypeEndpoint")
+                                                                  .UseService(typeof(ICounterService), this);
 
             yield return new ServiceReplicaListener(p => builder.Build(p));
         }
