@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using System.Fabric;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,14 +11,17 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
     public class AspNetCommunicationListener : ICommunicationListener
     {
         private readonly AspNetCommunicationListenerBuilder _builder;
-        private readonly ServiceInitializationParameters _parameters;
 
         private WebApplication2 _webApp;
 
-        internal AspNetCommunicationListener(AspNetCommunicationListenerBuilder builder, ServiceInitializationParameters parameters)
+        internal AspNetCommunicationListener(AspNetCommunicationListenerBuilder builder)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             _builder = builder;
-            _parameters = parameters;
         }
 
         void ICommunicationListener.Abort()
@@ -35,7 +38,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 
         Task<string> ICommunicationListener.OpenAsync(CancellationToken cancellationToken)
         {
-            var endpoint = _parameters.CodePackageActivationContext.GetEndpoint(_builder.EndpointName);
+            var endpoint = _builder.ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint(_builder.EndpointName);
 
             var serverUrl = $"{endpoint.Protocol}://+:{endpoint.Port}";
 
