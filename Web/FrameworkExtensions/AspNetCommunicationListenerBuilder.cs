@@ -82,6 +82,8 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 throw new InvalidOperationException($"{nameof(EndpointName)} can not be null or empty.");
             }
 
+            ServiceInitializationParameters = parameters;
+
             return new AspNetCommunicationListener(this);
         }
     }
