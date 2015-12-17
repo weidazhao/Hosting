@@ -7,11 +7,13 @@ namespace Web
     {
         public static void Main(string[] args)
         {
-            using (FabricRuntime fabricRuntime = FabricRuntime.Create())
+            var waitHandle = new ManualResetEvent(false);
+
+            using (FabricRuntime fabricRuntime = FabricRuntime.Create(() => waitHandle.Set()))
             {
                 fabricRuntime.RegisterStatefulServiceFactory("WebType", () => new CounterService(args));
 
-                Thread.Sleep(Timeout.Infinite);
+                waitHandle.WaitOne();
             }
         }
     }
