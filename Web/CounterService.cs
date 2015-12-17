@@ -46,7 +46,7 @@ namespace Web
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            var builder = new AspNetCommunicationListenerBuilder().UseStartupType(typeof(Startup))
+            var builder = new AspNetCommunicationListenerBuilder().UseStartup(typeof(Startup))
                                                                   .UseArguments(_args)
                                                                   .UseEndpoint("WebTypeEndpoint")
                                                                   .UseService(typeof(ICounterService), this);

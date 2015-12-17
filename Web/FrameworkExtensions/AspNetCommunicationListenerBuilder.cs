@@ -12,7 +12,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
         internal Dictionary<Type, object> Services { get; } = new Dictionary<Type, object>();
         internal ServiceInitializationParameters ServiceInitializationParameters { get; private set; }
 
-        public AspNetCommunicationListenerBuilder UseStartupType(Type startupType)
+        public AspNetCommunicationListenerBuilder UseStartup(Type startupType)
         {
             if (startupType == null)
             {
