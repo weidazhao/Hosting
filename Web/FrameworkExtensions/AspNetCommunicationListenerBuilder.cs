@@ -1,16 +1,22 @@
-﻿using System;
+﻿using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.Services.Communication.AspNet
 {
     public class AspNetCommunicationListenerBuilder
     {
-        internal Type StartupType { get; private set; }
-        internal string[] Arguments { get; private set; }
-        internal string EndpointName { get; private set; }
-        internal Dictionary<Type, object> Services { get; } = new Dictionary<Type, object>();
-        internal ServiceInitializationParameters ServiceInitializationParameters { get; private set; }
+        private Type _startupType;
+        private string[] _arguments;
+        private string _endpointName;
+        private Dictionary<Type, object> _services = new Dictionary<Type, object>();
+        private ServiceInitializationParameters _serviceInitializationParameters;
 
         public AspNetCommunicationListenerBuilder UseStartup(Type startupType)
         {
@@ -19,7 +25,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 throw new ArgumentNullException(nameof(startupType));
             }
 
-            StartupType = startupType;
+            _startupType = startupType;
 
             return this;
         }
@@ -31,7 +37,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 throw new ArgumentNullException(nameof(arguments));
             }
 
-            Arguments = arguments;
+            _arguments = arguments;
 
             return this;
         }
@@ -43,7 +49,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 throw new ArgumentException($"{nameof(endpointName)} can not be null.", nameof(endpointName));
             }
 
-            EndpointName = endpointName;
+            _endpointName = endpointName;
 
             return this;
         }
@@ -60,31 +66,81 @@ namespace Microsoft.ServiceFabric.Services.Communication.AspNet
                 throw new ArgumentNullException(nameof(serviceInstance));
             }
 
-            Services[serviceType] = serviceInstance;
+            _services[serviceType] = serviceInstance;
 
             return this;
         }
 
-        public AspNetCommunicationListener Build(ServiceInitializationParameters parameters)
+        public ICommunicationListener Build(ServiceInitializationParameters serviceInitializationParameters)
         {
-            if (parameters == null)
+            if (serviceInitializationParameters == null)
             {
-                throw new ArgumentNullException(nameof(parameters));
+                throw new ArgumentNullException(nameof(serviceInitializationParameters));
             }
 
-            if (StartupType == null)
+            if (_startupType == null)
             {
-                throw new InvalidOperationException($"{nameof(StartupType)} can not be null.");
+                throw new InvalidOperationException($"{nameof(_startupType)} can not be null.");
             }
 
-            if (string.IsNullOrEmpty(EndpointName))
+            if (string.IsNullOrEmpty(_endpointName))
             {
-                throw new InvalidOperationException($"{nameof(EndpointName)} can not be null or empty.");
+                throw new InvalidOperationException($"{nameof(_endpointName)} can not be null or empty.");
             }
 
-            ServiceInitializationParameters = parameters;
+            _serviceInitializationParameters = serviceInitializationParameters;
 
             return new AspNetCommunicationListener(this);
+        }
+
+        private sealed class AspNetCommunicationListener : ICommunicationListener
+        {
+            private readonly AspNetCommunicationListenerBuilder _builder;
+
+            private WebApplication2 _webApp;
+
+            public AspNetCommunicationListener(AspNetCommunicationListenerBuilder builder)
+            {
+                if (builder == null)
+                {
+                    throw new ArgumentNullException(nameof(builder));
+                }
+
+                _builder = builder;
+            }
+
+            public void Abort()
+            {
+                _webApp.Dispose();
+            }
+
+            public Task CloseAsync(CancellationToken cancellationToken)
+            {
+                _webApp.Dispose();
+
+                return Task.FromResult(true);
+            }
+
+            public Task<string> OpenAsync(CancellationToken cancellationToken)
+            {
+                var endpoint = _builder._serviceInitializationParameters.CodePackageActivationContext.GetEndpoint(_builder._endpointName);
+
+                var serverUrl = $"{endpoint.Protocol}://+:{endpoint.Port}";
+
+                var args = (_builder._arguments ?? Enumerable.Empty<string>()).Concat(new[] { "--server.urls", serverUrl }).ToArray();
+
+                _webApp = new WebApplication2(_builder._startupType, ConfigureServices, args);
+
+                return Task.FromResult(serverUrl);
+            }
+
+            private void ConfigureServices(IServiceCollection serviceCollection)
+            {
+                foreach (var service in _builder._services)
+                {
+                    serviceCollection.AddInstance(service.Key, service.Value);
+                }
+            }
         }
     }
 }
