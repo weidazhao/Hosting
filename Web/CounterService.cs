@@ -3,12 +3,15 @@ using Microsoft.ServiceFabric.Services.Communication.AspNet;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Web
 {
     public class CounterService : StatefulService, ICounterService
     {
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+
         private string[] _args;
 
         public CounterService(string[] args)
@@ -18,29 +21,47 @@ namespace Web
 
         public async Task<long> GetCurrentAsync()
         {
-            var counter = await StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("counter");
+            await _semaphore.WaitAsync();
 
-            using (var tx = StateManager.CreateTransaction())
+            try
             {
-                var result = await counter.GetOrAddAsync(tx, "counter", 0);
+                var counter = await StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("counter");
 
-                await tx.CommitAsync();
+                using (var tx = StateManager.CreateTransaction())
+                {
+                    var result = await counter.GetOrAddAsync(tx, "counter", 0);
 
-                return result;
+                    await tx.CommitAsync();
+
+                    return result;
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
         public async Task<long> IncrementAsync()
         {
-            var counter = await StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("counter");
+            await _semaphore.WaitAsync();
 
-            using (var tx = StateManager.CreateTransaction())
+            try
             {
-                var result = await counter.AddOrUpdateAsync(tx, "counter", 0, (k, v) => v + 1);
+                var counter = await StateManager.GetOrAddAsync<IReliableDictionary<string, long>>("counter");
 
-                await tx.CommitAsync();
+                using (var tx = StateManager.CreateTransaction())
+                {
+                    var result = await counter.AddOrUpdateAsync(tx, "counter", 0, (k, v) => v + 1);
 
-                return result;
+                    await tx.CommitAsync();
+
+                    return result;
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
