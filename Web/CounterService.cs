@@ -1,4 +1,6 @@
-﻿using Microsoft.ServiceFabric.Data.Collections;
+﻿using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.AspNet;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -11,13 +13,6 @@ namespace Web
     public class CounterService : StatefulService, ICounterService
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
-
-        private string[] _args;
-
-        public CounterService(string[] args)
-        {
-            _args = args;
-        }
 
         public async Task<long> GetCurrentAsync()
         {
@@ -67,12 +62,16 @@ namespace Web
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            var builder = new AspNetCommunicationListenerBuilder().UseStartup(typeof(Startup))
-                                                                  .UseArguments(_args)
-                                                                  .UseEndpoint("WebTypeEndpoint")
-                                                                  .UseService(typeof(ICounterService), this);
+            var config = WebApplicationConfiguration.GetDefault();
 
-            yield return new ServiceReplicaListener(p => builder.Build(p));
+            var builder = new WebApplicationBuilder().UseConfiguration(config)
+                                                     .UseStartup<Startup>()
+                                                     .UseServerFactory("Microsoft.AspNet.Server.Kestrel")
+                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this));
+
+            var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("WebTypeEndpoint");
+
+            yield return new ServiceReplicaListener(_ => new AspNetCommunicationListener(builder, $"{endpoint.Protocol}://+:{endpoint.Port}"));
         }
     }
 }

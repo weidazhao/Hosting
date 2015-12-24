@@ -5,14 +5,14 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc": "6.0.0-rc2-*",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc2-*",
+    "Microsoft.AspNet.Hosting": "1.0.0-rc2-*",
     "Microsoft.ServiceFabric": "4.4.90-preview",
     "Microsoft.ServiceFabric.Services": "1.4.90-preview"
   },
