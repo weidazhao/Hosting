@@ -62,16 +62,16 @@ namespace Web
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            var config = WebApplicationConfiguration.GetDefault();
-
-            var builder = new WebApplicationBuilder().UseConfiguration(config)
-                                                     .UseStartup<Startup>()
-                                                     .UseServerFactory("Microsoft.AspNet.Server.Kestrel")
-                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this));
+            var webApp = new WebApplicationBuilder().UseConfiguration(WebApplicationConfiguration.GetDefault())
+                                                    .UseStartup<Startup>()
+                                                    .UseServerFactory("Microsoft.AspNet.Server.Kestrel")
+                                                    .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
+                                                    .Build();
 
             var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("WebTypeEndpoint");
+            webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
 
-            yield return new ServiceReplicaListener(_ => new AspNetCommunicationListener(builder, $"{endpoint.Protocol}://+:{endpoint.Port}"));
+            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp)) };
         }
     }
 }
