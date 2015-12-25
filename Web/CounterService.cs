@@ -11,7 +11,7 @@ namespace Web
 {
     public class CounterService : StatefulService, ICounterService
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public async Task<long> GetCurrentAsync()
         {
