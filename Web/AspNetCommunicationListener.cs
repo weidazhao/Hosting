@@ -10,7 +10,7 @@ namespace Web
     public class AspNetCommunicationListener : ICommunicationListener
     {
         private IWebApplication _webApp;
-        private IDisposable _disposable;
+        private IDisposable _token;
 
         public AspNetCommunicationListener(IWebApplication webApp)
         {
@@ -19,19 +19,19 @@ namespace Web
 
         public void Abort()
         {
-            _disposable?.Dispose();
+            _token?.Dispose();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            _disposable?.Dispose();
+            _token?.Dispose();
 
             return Task.FromResult(true);
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            _disposable = _webApp.Start();
+            _token = _webApp.Start();
 
             return Task.FromResult(_webApp.GetAddresses().First());
         }

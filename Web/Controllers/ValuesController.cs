@@ -14,15 +14,15 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<long> Get()
+        public Task<long> Get()
         {
-            return await _counterService.GetCurrentAsync();
+            return _counterService.GetCurrentAsync();
         }
 
         [HttpPost]
-        public async Task<long> Post()
+        public Task<long> Post()
         {
-            return await _counterService.IncrementAsync();
+            return _counterService.IncrementAsync();
         }
     }
 }
