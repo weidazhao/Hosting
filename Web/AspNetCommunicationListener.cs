@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.Services.Communication.AspNet
+namespace Web
 {
     public class AspNetCommunicationListener : ICommunicationListener
     {
