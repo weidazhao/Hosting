@@ -6,7 +6,7 @@
   <CodePackage Name="C" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc1-update1\bin\dnx.exe</Program>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16351\bin\dnx.exe</Program>
         <Arguments>--project approot\src\Web Web</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />

@@ -61,12 +61,15 @@ namespace Web
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
+            // Build an ASP.NET 5 web application that serves as the communication listener.
             var webApp = new WebApplicationBuilder().UseConfiguration(WebApplicationConfiguration.GetDefault())
                                                     .UseStartup<Startup>()
                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
                                                     .Build();
 
+            // Replaces the address with the one that is dynamically allocated by Service Fabric.
             var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("WebTypeEndpoint");
+            webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
 
             return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp)) };

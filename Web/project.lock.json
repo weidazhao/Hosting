@@ -1136,44 +1136,6 @@
           "lib/net451/Microsoft.Extensions.Logging.Abstractions.dll": {}
         }
       },
-      "Microsoft.Extensions.Logging.Console/1.0.0-rc2-15949": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc2-15945",
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15949",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.0.0-rc2-23623"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/net451/Microsoft.Extensions.Logging.Console.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.Extensions.Logging.Console.dll": {}
-        }
-      },
-      "Microsoft.Extensions.Logging.Debug/1.0.0-rc2-15949": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15949"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
-        }
-      },
       "Microsoft.Extensions.MemoryPool/1.0.0-rc2-15961": {
         "type": "package",
         "frameworkAssemblies": [
@@ -1512,15 +1474,6 @@
         },
         "runtime": {
           "lib/net45/_._": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet5.2/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "System.Text.Encoding/4.0.0": {
@@ -2697,44 +2650,6 @@
           "lib/net451/Microsoft.Extensions.Logging.Abstractions.dll": {}
         }
       },
-      "Microsoft.Extensions.Logging.Console/1.0.0-rc2-15949": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc2-15945",
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15949",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.0.0-rc2-23623"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/net451/Microsoft.Extensions.Logging.Console.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.Extensions.Logging.Console.dll": {}
-        }
-      },
-      "Microsoft.Extensions.Logging.Debug/1.0.0-rc2-15949": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15949"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
-        }
-      },
       "Microsoft.Extensions.MemoryPool/1.0.0-rc2-15961": {
         "type": "package",
         "frameworkAssemblies": [
@@ -2894,21 +2809,6 @@
         },
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
-        }
-      },
-      "runtime.win.System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-        "type": "package",
-        "dependencies": {
-          "System.Resources.ResourceManager": "4.0.0",
-          "System.Runtime": "4.0.0",
-          "System.Runtime.InteropServices": "4.0.0",
-          "System.Threading": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet/_._": {}
-        },
-        "runtime": {
-          "runtimes/win7/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "System.Buffers/4.0.0-rc2-23623": {
@@ -3088,15 +2988,6 @@
         },
         "runtime": {
           "lib/net45/_._": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet5.2/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "System.Text.Encoding/4.0.0": {
@@ -4273,44 +4164,6 @@
           "lib/net451/Microsoft.Extensions.Logging.Abstractions.dll": {}
         }
       },
-      "Microsoft.Extensions.Logging.Console/1.0.0-rc2-15949": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc2-15945",
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15949",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.0.0-rc2-23623"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/net451/Microsoft.Extensions.Logging.Console.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.Extensions.Logging.Console.dll": {}
-        }
-      },
-      "Microsoft.Extensions.Logging.Debug/1.0.0-rc2-15949": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-15949"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
-        }
-      },
       "Microsoft.Extensions.MemoryPool/1.0.0-rc2-15961": {
         "type": "package",
         "frameworkAssemblies": [
@@ -4470,21 +4323,6 @@
         },
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
-        }
-      },
-      "runtime.win.System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-        "type": "package",
-        "dependencies": {
-          "System.Resources.ResourceManager": "4.0.0",
-          "System.Runtime": "4.0.0",
-          "System.Runtime.InteropServices": "4.0.0",
-          "System.Threading": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet/_._": {}
-        },
-        "runtime": {
-          "runtimes/win7/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "System.Buffers/4.0.0-rc2-23623": {
@@ -4664,15 +4502,6 @@
         },
         "runtime": {
           "lib/net45/_._": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet5.2/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "System.Text.Encoding/4.0.0": {
@@ -5575,38 +5404,6 @@
         "Microsoft.Extensions.Logging.Abstractions.nuspec"
       ]
     },
-    "Microsoft.Extensions.Logging.Console/1.0.0-rc2-15949": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "Q6vnT6PcZqgHPxQorxRW9QvpRLoPMe9DEk5wCSYqys1J+goAzeghG1io3wQlGzE+J48DwGsnQGDKMZoPIq5H9A==",
-      "files": [
-        "lib/dotnet5.4/Microsoft.Extensions.Logging.Console.dll",
-        "lib/dotnet5.4/Microsoft.Extensions.Logging.Console.xml",
-        "lib/net451/Microsoft.Extensions.Logging.Console.dll",
-        "lib/net451/Microsoft.Extensions.Logging.Console.xml",
-        "lib/netcore50/Microsoft.Extensions.Logging.Console.dll",
-        "lib/netcore50/Microsoft.Extensions.Logging.Console.xml",
-        "Microsoft.Extensions.Logging.Console.1.0.0-rc2-15949.nupkg",
-        "Microsoft.Extensions.Logging.Console.1.0.0-rc2-15949.nupkg.sha512",
-        "Microsoft.Extensions.Logging.Console.nuspec"
-      ]
-    },
-    "Microsoft.Extensions.Logging.Debug/1.0.0-rc2-15949": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "ZmDK8fx4YLGYihmX8Nazk9PgIQLpUkosiimPCl2pc/nONOemXDr/OG1E2ychAnoc6yvit51QC5SUMyT/xXtrTw==",
-      "files": [
-        "lib/dotnet5.4/Microsoft.Extensions.Logging.Debug.dll",
-        "lib/dotnet5.4/Microsoft.Extensions.Logging.Debug.xml",
-        "lib/net451/Microsoft.Extensions.Logging.Debug.dll",
-        "lib/net451/Microsoft.Extensions.Logging.Debug.xml",
-        "lib/netcore50/Microsoft.Extensions.Logging.Debug.dll",
-        "lib/netcore50/Microsoft.Extensions.Logging.Debug.xml",
-        "Microsoft.Extensions.Logging.Debug.1.0.0-rc2-15949.nupkg",
-        "Microsoft.Extensions.Logging.Debug.1.0.0-rc2-15949.nupkg.sha512",
-        "Microsoft.Extensions.Logging.Debug.nuspec"
-      ]
-    },
     "Microsoft.Extensions.MemoryPool/1.0.0-rc2-15961": {
       "type": "package",
       "serviceable": true,
@@ -5746,21 +5543,6 @@
         "Newtonsoft.Json.6.0.6.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
-      ]
-    },
-    "runtime.win.System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "i4KQ0JqCxlFqQdL/6Md74NGv0vMTMDM5ydP2T48pL1Ig2cGkf1llLN7dUBCh7vji0Xf4AkL6hT+8C8UQE/0sxA==",
-      "files": [
-        "ref/dotnet/_._",
-        "runtime.win.System.Runtime.InteropServices.RuntimeInformation.4.0.0-rc2-23623.nupkg",
-        "runtime.win.System.Runtime.InteropServices.RuntimeInformation.4.0.0-rc2-23623.nupkg.sha512",
-        "runtime.win.System.Runtime.InteropServices.RuntimeInformation.nuspec",
-        "runtimes/win/lib/dotnet5.2/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/win7/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/win7/lib/netcore50/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/win8-aot/lib/netcore50/System.Runtime.InteropServices.RuntimeInformation.dll"
       ]
     },
     "System.Buffers/4.0.0-rc2-23623": {
@@ -6358,26 +6140,6 @@
         "System.Runtime.InteropServices.nuspec"
       ]
     },
-    "System.Runtime.InteropServices.RuntimeInformation/4.0.0-rc2-23623": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "RlJaNB+Xi+9XrlTSFHZgY5zfC/hFpNCx6hgqyh+9QlGx1Tvv1zuRZ0WRpgQZt/CertsywJfoHd+fCx8tEurVWg==",
-      "files": [
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "ref/dotnet5.2/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "runtime.json",
-        "System.Runtime.InteropServices.RuntimeInformation.4.0.0-rc2-23623.nupkg",
-        "System.Runtime.InteropServices.RuntimeInformation.4.0.0-rc2-23623.nupkg.sha512",
-        "System.Runtime.InteropServices.RuntimeInformation.nuspec"
-      ]
-    },
     "System.Text.Encoding/4.0.0": {
       "type": "package",
       "sha512": "AMxFNOXpA6Ab8swULbXuJmoT2K5w6TnV3ObF5wsmEcIHQUJghoZtDVfVHb08O2wW15mOSI1i9Wg0Dx0pY13o8g==",
@@ -6536,14 +6298,11 @@
   },
   "projectFileDependencyGroups": {
     "": [
+      "Microsoft.AspNet.Hosting >= 1.0.0-rc2-*",
       "Microsoft.AspNet.Mvc >= 6.0.0-rc2-*",
       "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc2-*",
       "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc2-*",
       "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc2-*",
-      "Microsoft.Extensions.Logging >= 1.0.0-rc2-*",
-      "Microsoft.Extensions.Logging.Console >= 1.0.0-rc2-*",
-      "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc2-*",
-      "Microsoft.AspNet.Hosting >= 1.0.0-rc2-*",
       "Microsoft.ServiceFabric >= 4.4.90-preview",
       "Microsoft.ServiceFabric.Services >= 1.4.90-preview"
     ],
