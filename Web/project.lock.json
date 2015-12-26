@@ -1237,7 +1237,7 @@
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Microsoft.ServiceFabric/4.4.90-preview": {
+      "Microsoft.ServiceFabric/4.4.87-preview": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.ServiceFabric.Internal.dll": {},
@@ -1255,10 +1255,10 @@
           }
         }
       },
-      "Microsoft.ServiceFabric.Data/1.4.90-preview": {
+      "Microsoft.ServiceFabric.Data/1.4.87-preview": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ServiceFabric": "[4.4.90-preview]"
+          "Microsoft.ServiceFabric": "[4.4.87-preview]"
         },
         "frameworkAssemblies": [
           "System.Runtime.Serialization",
@@ -1271,11 +1271,11 @@
           "lib/net45/Microsoft.ServiceFabric.Data.dll": {}
         }
       },
-      "Microsoft.ServiceFabric.Services/1.4.90-preview": {
+      "Microsoft.ServiceFabric.Services/1.4.87-preview": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ServiceFabric": "[4.4.90-preview]",
-          "Microsoft.ServiceFabric.Data": "[1.4.90-preview]"
+          "Microsoft.ServiceFabric": "[4.4.87-preview]",
+          "Microsoft.ServiceFabric.Data": "[1.4.87-preview]"
         },
         "frameworkAssemblies": [
           "System.Runtime.Serialization",
@@ -2751,7 +2751,7 @@
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Microsoft.ServiceFabric/4.4.90-preview": {
+      "Microsoft.ServiceFabric/4.4.87-preview": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.ServiceFabric.Internal.dll": {},
@@ -2769,10 +2769,10 @@
           }
         }
       },
-      "Microsoft.ServiceFabric.Data/1.4.90-preview": {
+      "Microsoft.ServiceFabric.Data/1.4.87-preview": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ServiceFabric": "[4.4.90-preview]"
+          "Microsoft.ServiceFabric": "[4.4.87-preview]"
         },
         "frameworkAssemblies": [
           "System.Runtime.Serialization",
@@ -2785,11 +2785,11 @@
           "lib/net45/Microsoft.ServiceFabric.Data.dll": {}
         }
       },
-      "Microsoft.ServiceFabric.Services/1.4.90-preview": {
+      "Microsoft.ServiceFabric.Services/1.4.87-preview": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ServiceFabric": "[4.4.90-preview]",
-          "Microsoft.ServiceFabric.Data": "[1.4.90-preview]"
+          "Microsoft.ServiceFabric": "[4.4.87-preview]",
+          "Microsoft.ServiceFabric.Data": "[1.4.87-preview]"
         },
         "frameworkAssemblies": [
           "System.Runtime.Serialization",
@@ -4265,7 +4265,7 @@
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Microsoft.ServiceFabric/4.4.90-preview": {
+      "Microsoft.ServiceFabric/4.4.87-preview": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.ServiceFabric.Internal.dll": {},
@@ -4283,10 +4283,10 @@
           }
         }
       },
-      "Microsoft.ServiceFabric.Data/1.4.90-preview": {
+      "Microsoft.ServiceFabric.Data/1.4.87-preview": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ServiceFabric": "[4.4.90-preview]"
+          "Microsoft.ServiceFabric": "[4.4.87-preview]"
         },
         "frameworkAssemblies": [
           "System.Runtime.Serialization",
@@ -4299,11 +4299,11 @@
           "lib/net45/Microsoft.ServiceFabric.Data.dll": {}
         }
       },
-      "Microsoft.ServiceFabric.Services/1.4.90-preview": {
+      "Microsoft.ServiceFabric.Services/1.4.87-preview": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ServiceFabric": "[4.4.90-preview]",
-          "Microsoft.ServiceFabric.Data": "[1.4.90-preview]"
+          "Microsoft.ServiceFabric": "[4.4.87-preview]",
+          "Microsoft.ServiceFabric.Data": "[1.4.87-preview]"
         },
         "frameworkAssemblies": [
           "System.Runtime.Serialization",
@@ -5485,39 +5485,39 @@
         "Microsoft.Net.Http.Headers.nuspec"
       ]
     },
-    "Microsoft.ServiceFabric/4.4.90-preview": {
+    "Microsoft.ServiceFabric/4.4.87-preview": {
       "type": "package",
-      "sha512": "8BCtg+GrpCjCrIy9KlMe/y89iUIIIaBXWrj3yK6V9WRhbuVy3LDMAAlseaM1T8oaOCnDKFlE3bWppNT43BC0Bg==",
+      "sha512": "jVvhcsxwTGM7ygxZTeakVfbx3Bwq/44QC0sutjfgwHOYxkbx+CPuajEoaN/QFpo6Tm371YxwecA5wsf2Ek9CjA==",
       "files": [
         "lib/net45/en-us/Microsoft.ServiceFabric.Internal.Strings.resources.dll",
         "lib/net45/Microsoft.ServiceFabric.Internal.dll",
         "lib/net45/Microsoft.ServiceFabric.Internal.Strings.dll",
         "lib/net45/System.Fabric.dll",
         "lib/net45/System.Fabric.xml",
-        "Microsoft.ServiceFabric.4.4.90-preview.nupkg",
-        "Microsoft.ServiceFabric.4.4.90-preview.nupkg.sha512",
+        "Microsoft.ServiceFabric.4.4.87-preview.nupkg",
+        "Microsoft.ServiceFabric.4.4.87-preview.nupkg.sha512",
         "Microsoft.ServiceFabric.nuspec"
       ]
     },
-    "Microsoft.ServiceFabric.Data/1.4.90-preview": {
+    "Microsoft.ServiceFabric.Data/1.4.87-preview": {
       "type": "package",
-      "sha512": "2gplbHK9Jrh8Pa+thtX6SqmN8ZoqyDA1RJeOe/Fq9w1SBcYIjRc5+sPX8EXQwtduVZX580yR7d0jQKyye4wt5Q==",
+      "sha512": "oSlKiWqV9hRbD2VrE3ZFMUhfGlYsgWKXVd/Rue1McEH8cVU9Qk9vkWE/T40cZyuOiECJGObKPpXX5MeenJMIrQ==",
       "files": [
         "lib/net45/Microsoft.ServiceFabric.Data.dll",
         "lib/net45/Microsoft.ServiceFabric.Data.xml",
-        "Microsoft.ServiceFabric.Data.1.4.90-preview.nupkg",
-        "Microsoft.ServiceFabric.Data.1.4.90-preview.nupkg.sha512",
+        "Microsoft.ServiceFabric.Data.1.4.87-preview.nupkg",
+        "Microsoft.ServiceFabric.Data.1.4.87-preview.nupkg.sha512",
         "Microsoft.ServiceFabric.Data.nuspec"
       ]
     },
-    "Microsoft.ServiceFabric.Services/1.4.90-preview": {
+    "Microsoft.ServiceFabric.Services/1.4.87-preview": {
       "type": "package",
-      "sha512": "7tm8Ggu6J/s0hBNE4zN9thC+0WkoPFDG524bVSGilx0cqC2SjiINsXionMLGMv5RdU/9hhdkCVN44gZybXQoZQ==",
+      "sha512": "PILym7v2+WVvr226lelJUhpLywA0nSylQe1GunM+eaIyaRGObMDRBoPTxzTkWKQz6FXIEEPnooKv4I+a7Oo+Fg==",
       "files": [
         "lib/net45/Microsoft.ServiceFabric.Services.dll",
         "lib/net45/Microsoft.ServiceFabric.Services.xml",
-        "Microsoft.ServiceFabric.Services.1.4.90-preview.nupkg",
-        "Microsoft.ServiceFabric.Services.1.4.90-preview.nupkg.sha512",
+        "Microsoft.ServiceFabric.Services.1.4.87-preview.nupkg",
+        "Microsoft.ServiceFabric.Services.1.4.87-preview.nupkg.sha512",
         "Microsoft.ServiceFabric.Services.nuspec"
       ]
     },
@@ -6303,8 +6303,8 @@
       "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc2-16224",
       "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc2-15945",
       "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc2-15945",
-      "Microsoft.ServiceFabric >= 4.4.90-preview",
-      "Microsoft.ServiceFabric.Services >= 1.4.90-preview"
+      "Microsoft.ServiceFabric >= 4.4.87-preview",
+      "Microsoft.ServiceFabric.Services >= 1.4.87-preview"
     ],
     "DNX,Version=v4.5.1": []
   }
