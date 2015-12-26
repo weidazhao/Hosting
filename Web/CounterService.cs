@@ -63,7 +63,6 @@ namespace Web
         {
             var webApp = new WebApplicationBuilder().UseConfiguration(WebApplicationConfiguration.GetDefault())
                                                     .UseStartup<Startup>()
-                                                    .UseServerFactory("Microsoft.AspNet.Server.Kestrel")
                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
                                                     .Build();
 
