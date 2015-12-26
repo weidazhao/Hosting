@@ -67,7 +67,7 @@ namespace Web
                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
                                                     .Build();
 
-            // Replaces the address with the one that is dynamically allocated by Service Fabric.
+            // Replace the address with the one dynamically allocated by Service Fabric.
             var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("WebTypeEndpoint");
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
