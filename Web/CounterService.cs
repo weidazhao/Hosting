@@ -46,7 +46,7 @@ namespace Web
 
                 using (var tx = StateManager.CreateTransaction())
                 {
-                    var result = await counter.AddOrUpdateAsync(tx, "counter", 0, (k, v) => v + 1);
+                    var result = await counter.AddOrUpdateAsync(tx, "counter", 1, (k, v) => v + 1);
 
                     await tx.CommitAsync();
 
