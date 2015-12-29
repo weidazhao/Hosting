@@ -12,7 +12,7 @@
 
 ## Create Communication Listener
 ```csharp
-public class CounterService : StatefulService, ICounterService
+public class MyStatefulService : StatefulService
 {
     ...
     
@@ -65,4 +65,33 @@ public class AspNetCommunicationListener : ICommunicationListener
         return Task.FromResult(_webApp.GetAddresses().First());
     }
 }
+```
+
+## ServiceManifest.xml
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest Name="Web"
+                 Version="1.0.0"
+                 xmlns="http://schemas.microsoft.com/2011/01/fabric"
+                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ServiceTypes>
+    <StatefulServiceType ServiceTypeName="WebType" HasPersistedState="true" />
+  </ServiceTypes>
+  <CodePackage Name="C" Version="1.0.0">
+    <EntryPoint>
+      <ExeHost>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16351\bin\dnx.exe</Program>
+        <Arguments>--project approot\src\Web Web</Arguments>
+        <WorkingFolder>CodePackage</WorkingFolder>
+        <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
+      </ExeHost>
+    </EntryPoint>
+  </CodePackage>
+  <Resources>
+    <Endpoints>
+      <Endpoint Name="WebTypeEndpoint" Protocol="http" Type="Input" />
+    </Endpoints>
+  </Resources>
+</ServiceManifest>
 ```
