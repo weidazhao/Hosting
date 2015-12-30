@@ -21,7 +21,7 @@ public class MyStatefulService : StatefulService
         // Build an ASP.NET 5 web application that serves as the communication listener.
         var webApp = new WebApplicationBuilder().UseConfiguration(WebApplicationConfiguration.GetDefault())
                                                 .UseStartup<Startup>()
-                                                .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
+                                                .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this))
                                                 .Build();
 
         // Replace the address with the one dynamically allocated by Service Fabric.
