@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
-    public class ValuesController : Controller
+    public class ValuesController
     {
         private readonly ICounterService _counterService;
 
@@ -14,13 +14,13 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public Task<long> Get()
+        public Task<long> GetAsync()
         {
             return _counterService.GetCurrentAsync();
         }
 
         [HttpPost]
-        public Task<long> Post()
+        public Task<long> PostAsync()
         {
             return _counterService.IncrementAsync();
         }

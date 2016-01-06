@@ -7,8 +7,8 @@ This sample demonstrates how ASP.NET 5 Web API is used as a communication listen
 
 1. Install Service Fabric runtime, SDK and tools - 1.4.87: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
 2. Launch 'Developer Command Prompt for VS2015' as admin and upgrade DNVM by running: https://github.com/aspnet/home#cmd
-3. In the command prompt, run _dnvm install 1.0.0-rc2-16351 -a x86 -u_.
-4. In the command prompt, run _dnvm install 1.0.0-rc2-16351 -a x64 -u_.
+3. In the command prompt, run _dnvm install 1.0.0-rc2-16357 -a x86 -u_.
+4. In the command prompt, run _dnvm install 1.0.0-rc2-16357 -a x64 -u_.
 5. Clone the repo and open the solution in Visual Studio running as admin.
 6. In Visual Studio, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetvnext/api/v3/index.json.
 7. After all the packages are restored, F5 to run the app.

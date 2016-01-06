@@ -11,19 +11,19 @@ namespace Web
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                                                      .AddEnvironmentVariables()
+                                                      .Build();
         }
 
-        public IConfigurationRoot Configuration { get; set; }
+        public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvcCore()
+                    .AddJsonFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

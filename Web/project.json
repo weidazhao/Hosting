@@ -5,11 +5,11 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNet.Hosting": "1.0.0-rc2-16150",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc2-16747",
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-16224",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-15945",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-15945",
+    "Microsoft.AspNet.Mvc.Core": "6.0.0-rc2-16770",
+    "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc2-16770",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-16236",
+    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-15952",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-15952",
     "Microsoft.ServiceFabric": "4.4.87-preview",
     "Microsoft.ServiceFabric.Services": "1.4.87-preview"
   },
