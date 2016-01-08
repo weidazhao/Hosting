@@ -3,7 +3,7 @@
   <ServiceTypes>
     <StatefulServiceType ServiceTypeName="WebType" HasPersistedState="true" />
   </ServiceTypes>
-  <CodePackage Name="C" Version="1.0.0">
+  <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
         <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16357\bin\dnx.exe</Program>

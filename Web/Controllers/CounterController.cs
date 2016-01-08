@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
-    public class ValuesController
+    public class CounterController
     {
         private readonly ICounterService _counterService;
 
-        public ValuesController(ICounterService counterService)
+        public CounterController(ICounterService counterService)
         {
             _counterService = counterService;
         }
