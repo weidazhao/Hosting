@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
+using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace Counter
         {
             _token = _webApp.Start();
 
-            return Task.FromResult(_webApp.GetAddresses().First());
+            return Task.FromResult(_webApp.GetAddresses().First().Replace("+", FabricRuntime.GetNodeContext().IPAddressOrFQDN));
         }
     }
 }

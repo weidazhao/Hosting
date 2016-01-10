@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Proxy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Gateway
 {
@@ -21,15 +23,16 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddMvcCore()
-                    .AddJsonFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseMvc();
+            var handler = new GatewayHttpClientHandler(new Uri("fabric:/Hosting/CounterService"), message => message.GetHashCode());
+
+            var proxyOptions = new ProxyOptions() { Host = "localhost", BackChannelMessageHandler = handler };
+
+            app.RunProxy(proxyOptions);
         }
     }
 }
