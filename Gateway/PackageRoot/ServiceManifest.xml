@@ -15,7 +15,7 @@
   </CodePackage>
   <Resources>
     <Endpoints>
-      <Endpoint Name="GatewayTypeEndpoint" Protocol="http" Type="Input" />
+      <Endpoint Name="GatewayTypeEndpoint" Protocol="http" Type="Input" Port="8000" />
     </Endpoints>
   </Resources>
 </ServiceManifest>
