@@ -7,6 +7,8 @@ Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Hosting", "Hosting\Hosting.
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Counter", "Counter\Counter.xproj", "{58123BB4-8F73-43A2-9892-DFB465809E3D}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Gateway", "Gateway\Gateway.xproj", "{DDEDC25A-A4F1-413C-8FF3-8143768124E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,6 +25,10 @@ Global
 		{58123BB4-8F73-43A2-9892-DFB465809E3D}.Debug|x64.Build.0 = Debug|Any CPU
 		{58123BB4-8F73-43A2-9892-DFB465809E3D}.Release|x64.ActiveCfg = Release|Any CPU
 		{58123BB4-8F73-43A2-9892-DFB465809E3D}.Release|x64.Build.0 = Release|Any CPU
+		{DDEDC25A-A4F1-413C-8FF3-8143768124E3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DDEDC25A-A4F1-413C-8FF3-8143768124E3}.Debug|x64.Build.0 = Debug|Any CPU
+		{DDEDC25A-A4F1-413C-8FF3-8143768124E3}.Release|x64.ActiveCfg = Release|Any CPU
+		{DDEDC25A-A4F1-413C-8FF3-8143768124E3}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

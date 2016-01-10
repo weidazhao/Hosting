@@ -6,9 +6,17 @@
       <Parameter Name="Counter_PartitionCount" DefaultValue="1" />
    </Parameters>
    <ServiceManifestImport>
+      <ServiceManifestRef ServiceManifestName="Gateway" ServiceManifestVersion="1.0.0" />
+   </ServiceManifestImport>
+   <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="Counter" ServiceManifestVersion="1.0.0" />
    </ServiceManifestImport>
    <DefaultServices>
+      <Service Name="GatewayService">
+         <StatelessService ServiceTypeName="GatewayType">
+            <SingletonPartition />
+         </StatelessService>
+      </Service>
       <Service Name="CounterService">
          <StatefulService ServiceTypeName="CounterType" TargetReplicaSetSize="[Counter_TargetReplicaSetSize]" MinReplicaSetSize="[Counter_MinReplicaSetSize]">
             <UniformInt64Partition PartitionCount="[Counter_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
