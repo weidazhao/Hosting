@@ -1,7 +1,7 @@
 ﻿using System.Fabric;
 using System.Threading;
 
-namespace Web
+namespace Counter
 {
     public static class Program
     {
@@ -9,7 +9,7 @@ namespace Web
         {
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("WebType", typeof(CounterService));
+                fabricRuntime.RegisterServiceType("CounterType", typeof(CounterService));
 
                 Thread.Sleep(Timeout.Infinite);
             }

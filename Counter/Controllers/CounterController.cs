@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Mvc;
 using System.Threading.Tasks;
 
-namespace Web.Controllers
+namespace Counter.Controllers
 {
     [Route("api/[controller]")]
     public class CounterController

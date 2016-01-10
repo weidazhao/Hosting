@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Web
+namespace Counter
 {
     public interface ICounterService
     {

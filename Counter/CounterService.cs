@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Web
+namespace Counter
 {
     public class CounterService : StatefulService, ICounterService
     {
@@ -68,7 +68,7 @@ namespace Web
                                                     .Build();
 
             // Replace the address with the one dynamically allocated by Service Fabric.
-            var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("WebTypeEndpoint");
+            var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("CounterTypeEndpoint");
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
 

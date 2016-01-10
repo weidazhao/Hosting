@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="Web" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="Counter" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <ServiceTypes>
-    <StatefulServiceType ServiceTypeName="WebType" HasPersistedState="true" />
+    <StatefulServiceType ServiceTypeName="CounterType" HasPersistedState="true" />
   </ServiceTypes>
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
         <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16357\bin\dnx.exe</Program>
-        <Arguments>--project approot\src\Web Web</Arguments>
+        <Arguments>--project approot\src\Counter Counter</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
       </ExeHost>
@@ -15,7 +15,7 @@
   </CodePackage>
   <Resources>
     <Endpoints>
-      <Endpoint Name="WebTypeEndpoint" Protocol="http" Type="Input" />
+      <Endpoint Name="CounterTypeEndpoint" Protocol="http" Type="Input" />
     </Endpoints>
   </Resources>
 </ServiceManifest>
