@@ -33,7 +33,7 @@ namespace Gateway
         {
             _token = _webApp.Start();
 
-            return Task.FromResult(_webApp.GetAddresses().First());
+            return Task.FromResult(_webApp.GetAddresses().First().Replace("+", FabricRuntime.GetNodeContext().IPAddressOrFQDN));
         }
     }
 }
