@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
+using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
