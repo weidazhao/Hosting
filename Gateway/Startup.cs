@@ -30,7 +30,7 @@ namespace Gateway
         {
             var handler = new GatewayHttpClientHandler(new Uri("fabric:/Hosting/CounterService"), message => message.GetHashCode());
 
-            var proxyOptions = new ProxyOptions() { Host = "localhost", BackChannelMessageHandler = handler };
+            var proxyOptions = new ProxyOptions() { Host = "unused", BackChannelMessageHandler = handler };
 
             app.RunProxy(proxyOptions);
         }
