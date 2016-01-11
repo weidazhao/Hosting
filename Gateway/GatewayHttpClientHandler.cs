@@ -12,54 +12,75 @@ namespace Gateway
     public class GatewayHttpClientHandler : HttpClientHandler
     {
         private readonly Uri _serviceName;
-        private readonly Func<HttpRequestMessage, long> _computePartitionKey;
+        private readonly Func<HttpRequestMessage, long> _computePartitionKeyAsLong;
+        private readonly Func<HttpRequestMessage, string> _computePartitionKeyAsString;
 
         public GatewayHttpClientHandler(Uri serviceName)
-            : this(serviceName, null)
-        {
-        }
-
-        public GatewayHttpClientHandler(Uri serviceName, Func<HttpRequestMessage, long> computePartitionKey)
         {
             _serviceName = serviceName;
-            _computePartitionKey = computePartitionKey;
+        }
+
+        public GatewayHttpClientHandler(Uri serviceName, Func<HttpRequestMessage, long> computePartitionKeyAsLong)
+            : this(serviceName)
+        {
+            _computePartitionKeyAsLong = computePartitionKeyAsLong;
+        }
+
+        public GatewayHttpClientHandler(Uri serviceName, Func<HttpRequestMessage, string> computePartitionKeyAsString)
+            : this(serviceName)
+        {
+            _computePartitionKeyAsString = computePartitionKeyAsString;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var resolver = ServicePartitionResolver.GetDefault();
+            await RewriteRequestUriAsync(request, cancellationToken);
 
+            return await base.SendAsync(request, cancellationToken);
+        }
+
+        private async Task RewriteRequestUriAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var resolver = new ServicePartitionResolver(() => new FabricClient());
+
+            //
+            // Resolve service endpoint
+            //
             ResolvedServiceEndpoint endpoint = null;
-            if (_computePartitionKey != null)
+            if (_computePartitionKeyAsLong != null)
             {
-                var partition = await resolver.ResolveAsync(_serviceName, _computePartitionKey(request), cancellationToken);
-
+                var partition = await resolver.ResolveAsync(_serviceName, _computePartitionKeyAsLong(request), cancellationToken);
+                endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
+            }
+            else if (_computePartitionKeyAsString != null)
+            {
+                var partition = await resolver.ResolveAsync(_serviceName, _computePartitionKeyAsString(request), cancellationToken);
                 endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
             }
             else
             {
                 var partition = await resolver.ResolveAsync(_serviceName, cancellationToken);
-
                 endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.Stateless);
             }
 
+            //
+            // Parse the endpoint
+            //
             dynamic address = JsonConvert.DeserializeObject(endpoint.Address);
             string urlString = address.Endpoints[""];
             Uri url = new Uri(urlString, UriKind.Absolute);
-            request.RequestUri = ReplaceUri(request.RequestUri, url.Scheme, url.Host, url.Port);
 
-            return await base.SendAsync(request, cancellationToken);
-        }
+            //
+            // Rewrite request URL
+            //
+            var builder = new UriBuilder(request.RequestUri)
+            {
+                Scheme = url.Scheme,
+                Host = url.Host,
+                Port = url.Port
+            };
 
-        private static Uri ReplaceUri(Uri uri, string scheme, string host, int port)
-        {
-            UriBuilder builder = new UriBuilder(uri);
-
-            builder.Scheme = scheme;
-            builder.Host = host;
-            builder.Port = port;
-
-            return builder.Uri;
+            request.RequestUri = builder.Uri;
         }
     }
 }
