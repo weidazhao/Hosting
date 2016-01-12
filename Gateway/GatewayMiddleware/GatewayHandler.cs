@@ -55,13 +55,13 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             ResolvedServiceEndpoint endpoint = null;
             if (_options.ComputeUniformInt64PartitionKeyAsync != null)
             {
-                long partitionKey = await _options.ComputeUniformInt64PartitionKeyAsync(request);
+                long partitionKey = await _options.ComputeUniformInt64PartitionKeyAsync(request, serviceName);
                 var partition = await resolver.ResolveAsync(serviceName, partitionKey, cancellationToken);
                 endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
             }
             else if (_options.ComputeNamedPartitionKeyAsync != null)
             {
-                string partitionKey = await _options.ComputeNamedPartitionKeyAsync(request);
+                string partitionKey = await _options.ComputeNamedPartitionKeyAsync(request, serviceName);
                 var partition = await resolver.ResolveAsync(serviceName, partitionKey, cancellationToken);
                 endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
             }

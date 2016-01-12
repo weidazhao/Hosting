@@ -30,7 +30,7 @@ namespace Gateway
         {
             app.RunGateway(new GatewayOptions()
             {
-                ComputeUniformInt64PartitionKeyAsync = request => Task.FromResult((long)request.GetHashCode())
+                ComputeUniformInt64PartitionKeyAsync = (request, serviceName) => Task.FromResult((long)request.GetHashCode())
             });
         }
     }
