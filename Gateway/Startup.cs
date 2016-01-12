@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Proxy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
+using Microsoft.ServiceFabric.AspNet.Gateway;
+using System.Threading.Tasks;
 
 namespace Gateway
 {
@@ -28,11 +28,10 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            var handler = new GatewayHttpClientHandler(new Uri("fabric:/Hosting/CounterService"), message => message.GetHashCode());
-
-            var proxyOptions = new ProxyOptions() { Host = "unused", BackChannelMessageHandler = handler };
-
-            app.RunProxy(proxyOptions);
+            app.RunGateway(new GatewayOptions()
+            {
+                ComputeUniformInt64PartitionKeyAsync = request => Task.FromResult((long)request.GetHashCode())
+            });
         }
     }
 }
