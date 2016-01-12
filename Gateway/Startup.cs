@@ -31,7 +31,7 @@ namespace Gateway
         {
             var serviceRouters = new[]
             {
-                new UrlPrefixtServiceRouter(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
+                new HeaderBasedServiceRouter(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
             };
 
             app.RunGateway(serviceRouters);
