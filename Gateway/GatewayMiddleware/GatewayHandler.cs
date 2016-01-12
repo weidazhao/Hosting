@@ -26,17 +26,17 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            await RewriteRequestUriAsync(request, cancellationToken);
+            await RewriteRequestAsync(request, cancellationToken);
 
             return await base.SendAsync(request, cancellationToken);
         }
 
-        private async Task RewriteRequestUriAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        private async Task RewriteRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var resolver = new ServicePartitionResolver(() => new FabricClient());
 
             //
-            // Extract application name and service name from request URI path
+            // Extract service name from request URI path
             //
             var requestUriBuilder = new UriBuilder(request.RequestUri);
 
@@ -79,7 +79,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             Uri url = new Uri(urlString, UriKind.Absolute);
 
             //
-            // Rewrite request URL
+            // Rewrite request
             //
             var builder = new UriBuilder(request.RequestUri)
             {
