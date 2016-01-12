@@ -40,7 +40,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             //
             var requestUriBuilder = new UriBuilder(request.RequestUri);
 
-            var pathSegments = requestUriBuilder.Path.Split('/');
+            var pathSegments = requestUriBuilder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (pathSegments.Length < 2)
             {
