@@ -81,15 +81,12 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             //
             // Rewrite request
             //
-            var builder = new UriBuilder(request.RequestUri)
-            {
-                Scheme = url.Scheme,
-                Host = url.Host,
-                Port = url.Port,
-                Path = string.Join("/", pathSegments.Skip(2))
-            };
+            requestUriBuilder.Scheme = url.Scheme;
+            requestUriBuilder.Host = url.Host;
+            requestUriBuilder.Port = url.Port;
+            requestUriBuilder.Path = string.Join("/", pathSegments.Skip(2));
 
-            request.RequestUri = builder.Uri;
+            request.RequestUri = requestUriBuilder.Uri;
             request.Headers.Host = url.Host + ":" + url.Port;
         }
 
