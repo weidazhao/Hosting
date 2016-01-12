@@ -4,7 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.AspNet.Gateway;
-using System.Threading.Tasks;
+using System;
+using System.Fabric;
 
 namespace Gateway
 {
@@ -28,10 +29,12 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.RunGateway(new GatewayOptions()
+            var serviceRequestRouters = new[]
             {
-                ComputeUniformInt64PartitionKeyAsync = (request, serviceName) => Task.FromResult((long)request.GetHashCode())
-            });
+                new UrlPrefixtRouter(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
+            };
+
+            app.RunGateway(serviceRequestRouters);
         }
     }
 }

@@ -12,83 +12,75 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public class GatewayHandler : HttpClientHandler
     {
-        private readonly GatewayOptions _options;
+        private readonly IServiceRequestRouter[] _routers;
 
-        public GatewayHandler(GatewayOptions options)
+        public GatewayHandler(IEnumerable<IServiceRequestRouter> routers)
         {
-            if (options == null)
+            if (routers == null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new ArgumentNullException(nameof(routers));
             }
 
-            _options = options;
+            _routers = routers.ToArray();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            await RewriteRequestAsync(request, cancellationToken);
-
-            return await base.SendAsync(request, cancellationToken);
-        }
-
-        private async Task RewriteRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var resolver = new ServicePartitionResolver(() => new FabricClient());
-
-            //
-            // Extract service name from request URI path
-            //
-            var requestUriBuilder = new UriBuilder(request.RequestUri);
-
-            var pathSegments = requestUriBuilder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (pathSegments.Length < 2)
+            if (!await RouteRequestAsync(request, cancellationToken))
             {
                 throw new InvalidOperationException();
             }
 
-            Uri serviceName = new Uri($"fabric:/{pathSegments[0]}/{pathSegments[1]}", UriKind.Absolute);
+            return await base.SendAsync(request, cancellationToken);
+        }
 
-            //
-            // Resolve service endpoint
-            //
-            ResolvedServiceEndpoint endpoint = null;
-            if (_options.ComputeUniformInt64PartitionKeyAsync != null)
+        private async Task<bool> RouteRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var resolver = new ServicePartitionResolver(() => new FabricClient());
+
+            foreach (var router in _routers)
             {
-                long partitionKey = await _options.ComputeUniformInt64PartitionKeyAsync(request, serviceName);
-                var partition = await resolver.ResolveAsync(serviceName, partitionKey, cancellationToken);
-                endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
-            }
-            else if (_options.ComputeNamedPartitionKeyAsync != null)
-            {
-                string partitionKey = await _options.ComputeNamedPartitionKeyAsync(request, serviceName);
-                var partition = await resolver.ResolveAsync(serviceName, partitionKey, cancellationToken);
-                endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
-            }
-            else
-            {
-                var partition = await resolver.ResolveAsync(serviceName, cancellationToken);
-                endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.Stateless);
+                if (await router.CanRouteRequestAsync(request))
+                {
+                    ResolvedServicePartition partition = null;
+                    ResolvedServiceEndpoint endpoint = null;
+
+                    switch (router.PartitionKind)
+                    {
+                        case ServicePartitionKind.Singleton:
+                            partition = await resolver.ResolveAsync(router.ServiceName, cancellationToken);
+                            endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.Stateless);
+                            break;
+
+                        case ServicePartitionKind.Int64Range:
+                            long int64RangeKey = await router.ComputeUniformInt64PartitionKeyAsync(request);
+                            partition = await resolver.ResolveAsync(router.ServiceName, int64RangeKey, cancellationToken);
+                            endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
+                            break;
+
+                        case ServicePartitionKind.Named:
+                            string namedKey = await router.ComputeNamedPartitionKeyAsync(request);
+                            partition = await resolver.ResolveAsync(router.ServiceName, namedKey, cancellationToken);
+                            endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (partition != null && endpoint != null)
+                    {
+                        var serviceAddress = JsonConvert.DeserializeObject<Address>(endpoint.Address);
+                        var serviceEndpoint = new Uri(serviceAddress.Endpoints.First().Value, UriKind.Absolute);
+
+                        await router.RouteRequestAsync(request, serviceEndpoint);
+
+                        return true;
+                    }
+                }
             }
 
-            //
-            // Parse the endpoint
-            //
-            var internalAddress = JsonConvert.DeserializeObject<Address>(endpoint.Address);
-            var internalUrlString = internalAddress.Endpoints.First().Value;
-            var internalUrlBuilder = new UriBuilder(new Uri(internalUrlString, UriKind.Absolute));
-            var internalPathSegments = internalUrlBuilder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-
-            //
-            // Rewrite request
-            //
-            requestUriBuilder.Scheme = internalUrlBuilder.Scheme;
-            requestUriBuilder.Host = internalUrlBuilder.Host;
-            requestUriBuilder.Port = internalUrlBuilder.Port;
-            requestUriBuilder.Path = string.Join("/", internalPathSegments.Concat(pathSegments.Skip(2)));
-
-            request.RequestUri = requestUriBuilder.Uri;
-            request.Headers.Host = internalUrlBuilder.Host + ":" + internalUrlBuilder.Port;
+            return false;
         }
 
         private sealed class Address
