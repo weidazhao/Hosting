@@ -1,8 +1,8 @@
-﻿using Microsoft.ServiceFabric.AspNet.Gateway;
+﻿using Microsoft.AspNet.Builder;
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AspNet.Builder
+namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public static class GatewayExtensions
     {
