@@ -74,20 +74,21 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             //
             // Parse the endpoint
             //
-            var address = JsonConvert.DeserializeObject<Address>(endpoint.Address);
-            string urlString = address.Endpoints.First().Value;
-            Uri url = new Uri(urlString, UriKind.Absolute);
+            var internalAddress = JsonConvert.DeserializeObject<Address>(endpoint.Address);
+            var internalUrlString = internalAddress.Endpoints.First().Value;
+            var internalUrlBuilder = new UriBuilder(new Uri(internalUrlString, UriKind.Absolute));
+            var internalPathSegments = internalUrlBuilder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             //
             // Rewrite request
             //
-            requestUriBuilder.Scheme = url.Scheme;
-            requestUriBuilder.Host = url.Host;
-            requestUriBuilder.Port = url.Port;
-            requestUriBuilder.Path = string.Join("/", pathSegments.Skip(2));
+            requestUriBuilder.Scheme = internalUrlBuilder.Scheme;
+            requestUriBuilder.Host = internalUrlBuilder.Host;
+            requestUriBuilder.Port = internalUrlBuilder.Port;
+            requestUriBuilder.Path = string.Join("/", internalPathSegments.Concat(pathSegments.Skip(2)));
 
             request.RequestUri = requestUriBuilder.Uri;
-            request.Headers.Host = url.Host + ":" + url.Port;
+            request.Headers.Host = internalUrlBuilder.Host + ":" + internalUrlBuilder.Port;
         }
 
         private sealed class Address
