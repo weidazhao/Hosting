@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Hosting;
+using Microsoft.ServiceFabric.AspNet;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
@@ -15,9 +16,9 @@ namespace Gateway
                                                     .Build();
 
             // Replace the address with the one dynamically allocated by Service Fabric.
-            var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("GatewayTypeEndpoint");
+            string listeningAddress = AspNetCommunicationListener.GetListeningAddress(ServiceInitializationParameters, "GatewayTypeEndpoint");
             webApp.GetAddresses().Clear();
-            webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
+            webApp.GetAddresses().Add(listeningAddress);
 
             return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webApp)) };
         }

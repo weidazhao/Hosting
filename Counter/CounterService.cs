@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ServiceFabric.AspNet;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -68,9 +69,9 @@ namespace Counter
                                                     .Build();
 
             // Replace the address with the one dynamically allocated by Service Fabric.
-            var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("CounterTypeEndpoint");
+            string listeningAddress = AspNetCommunicationListener.GetListeningAddress(ServiceInitializationParameters, "CounterTypeEndpoint");
             webApp.GetAddresses().Clear();
-            webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
+            webApp.GetAddresses().Add(listeningAddress);
 
             return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp)) };
         }
