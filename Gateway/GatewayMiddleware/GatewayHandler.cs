@@ -12,16 +12,16 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public class GatewayHandler : HttpClientHandler
     {
-        private readonly IServiceRequestRouter[] _routers;
+        private readonly IServiceRouter[] _serviceRouters;
 
-        public GatewayHandler(IEnumerable<IServiceRequestRouter> routers)
+        public GatewayHandler(IEnumerable<IServiceRouter> serviceRouters)
         {
-            if (routers == null)
+            if (serviceRouters == null)
             {
-                throw new ArgumentNullException(nameof(routers));
+                throw new ArgumentNullException(nameof(serviceRouters));
             }
 
-            _routers = routers.ToArray();
+            _serviceRouters = serviceRouters.ToArray();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -38,29 +38,29 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
         {
             var resolver = new ServicePartitionResolver(() => new FabricClient());
 
-            foreach (var router in _routers)
+            foreach (var serviceRouter in _serviceRouters)
             {
-                if (await router.CanRouteRequestAsync(request))
+                if (await serviceRouter.CanRouteRequestAsync(request))
                 {
                     ResolvedServicePartition partition = null;
                     ResolvedServiceEndpoint endpoint = null;
 
-                    switch (router.PartitionKind)
+                    switch (serviceRouter.PartitionKind)
                     {
                         case ServicePartitionKind.Singleton:
-                            partition = await resolver.ResolveAsync(router.ServiceName, cancellationToken);
+                            partition = await resolver.ResolveAsync(serviceRouter.ServiceName, cancellationToken);
                             endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.Stateless);
                             break;
 
                         case ServicePartitionKind.Int64Range:
-                            long int64RangeKey = await router.ComputeUniformInt64PartitionKeyAsync(request);
-                            partition = await resolver.ResolveAsync(router.ServiceName, int64RangeKey, cancellationToken);
+                            long int64RangeKey = await serviceRouter.ComputeUniformInt64PartitionKeyAsync(request);
+                            partition = await resolver.ResolveAsync(serviceRouter.ServiceName, int64RangeKey, cancellationToken);
                             endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
                             break;
 
                         case ServicePartitionKind.Named:
-                            string namedKey = await router.ComputeNamedPartitionKeyAsync(request);
-                            partition = await resolver.ResolveAsync(router.ServiceName, namedKey, cancellationToken);
+                            string namedKey = await serviceRouter.ComputeNamedPartitionKeyAsync(request);
+                            partition = await resolver.ResolveAsync(serviceRouter.ServiceName, namedKey, cancellationToken);
                             endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
                             break;
 
@@ -73,7 +73,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                         var serviceAddress = JsonConvert.DeserializeObject<Address>(endpoint.Address);
                         var serviceEndpoint = new Uri(serviceAddress.Endpoints.First().Value, UriKind.Absolute);
 
-                        await router.RouteRequestAsync(request, serviceEndpoint);
+                        await serviceRouter.RouteRequestAsync(request, serviceEndpoint);
 
                         return true;
                     }

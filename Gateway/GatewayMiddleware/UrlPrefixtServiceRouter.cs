@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public class UrlPrefixtRouter : IServiceRequestRouter
+    public class UrlPrefixtServiceRouter : IServiceRouter
     {
         private readonly Uri _serviceName;
         private readonly ServicePartitionKind _partitionKind;
 
-        public UrlPrefixtRouter(Uri serviceName, ServicePartitionKind partitionKind)
+        public UrlPrefixtServiceRouter(Uri serviceName, ServicePartitionKind partitionKind)
         {
             if (serviceName == null)
             {

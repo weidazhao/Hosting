@@ -6,19 +6,19 @@ namespace Microsoft.AspNet.Builder
 {
     public static class GatewayExtensions
     {
-        public static IApplicationBuilder RunGateway(this IApplicationBuilder app, IEnumerable<IServiceRequestRouter> routers)
+        public static IApplicationBuilder RunGateway(this IApplicationBuilder app, IEnumerable<IServiceRouter> serviceRouters)
         {
             if (app == null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
-            if (routers == null)
+            if (serviceRouters == null)
             {
-                throw new ArgumentNullException(nameof(routers));
+                throw new ArgumentNullException(nameof(serviceRouters));
             }
 
-            return app.UseMiddleware<GatewayMiddleware>(routers);
+            return app.UseMiddleware<GatewayMiddleware>(serviceRouters);
         }
     }
 }

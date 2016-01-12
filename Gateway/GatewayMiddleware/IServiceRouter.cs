@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public interface IServiceRequestRouter
+    public interface IServiceRouter
     {
         Uri ServiceName { get; }
 

@@ -10,22 +10,22 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
     {
         private readonly ProxyMiddleware _proxyMiddleware;
 
-        public GatewayMiddleware(RequestDelegate next, IEnumerable<IServiceRequestRouter> routers)
+        public GatewayMiddleware(RequestDelegate next, IEnumerable<IServiceRouter> serviceRouters)
         {
             if (next == null)
             {
                 throw new ArgumentNullException(nameof(next));
             }
 
-            if (routers == null)
+            if (serviceRouters == null)
             {
-                throw new ArgumentNullException(nameof(routers));
+                throw new ArgumentNullException(nameof(serviceRouters));
             }
 
             var proxyOptions = new ProxyOptions()
             {
                 Host = "must_not_be_empty",
-                BackChannelMessageHandler = new GatewayHandler(routers)
+                BackChannelMessageHandler = new GatewayHandler(serviceRouters)
             };
 
             _proxyMiddleware = new ProxyMiddleware(next, proxyOptions);
