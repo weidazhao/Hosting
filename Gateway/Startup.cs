@@ -29,13 +29,13 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            var serviceRouters = new IServiceRouter[]
-            {
-                new UrlPrefixtBasedServiceRouter(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range),
-                new HeaderBasedServiceRouter(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
-            };
+            var counterServiceName = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute);
 
-            app.RunGateway(serviceRouters);
+            app.RunGateway(new IServiceRouter[]
+            {
+                new UrlPrefixtBasedServiceRouter(counterServiceName, ServicePartitionKind.Int64Range),
+                new HeaderBasedServiceRouter(counterServiceName, ServicePartitionKind.Int64Range)
+            });
         }
     }
 }
