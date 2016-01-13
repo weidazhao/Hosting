@@ -4,10 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.AspNet.Gateway;
-using System;
-using System.Fabric;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Gateway
 {
@@ -35,17 +31,15 @@ namespace Gateway
             {
                 subApp.RunGateway(new IServiceRouter[]
                 {
-                    new ServiceRouter(new SmsServiceDescription())
+                    new ServiceRouter(Singleton<SmsServiceDescription>.Instance)
                 });
             });
-
-            var counterServiceDescription = new CounterServiceDescription();
 
             app.Map("/counter", subApp =>
             {
                 subApp.RunGateway(new IServiceRouter[]
                 {
-                    new ServiceRouter(counterServiceDescription)
+                    new ServiceRouter(Singleton<CounterServiceDescription>.Instance)
                 });
             });
 
@@ -54,43 +48,9 @@ namespace Gateway
             //
             app.RunGateway(new IServiceRouter[]
             {
-                new UrlPrefixtBasedServiceRouter(counterServiceDescription),
-                new HeaderBasedServiceRouter(counterServiceDescription)
+                new UrlPrefixtBasedServiceRouter(Singleton<CounterServiceDescription>.Instance),
+                new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance)
             });
-        }
-
-        private class CounterServiceDescription : ServiceDescription
-        {
-            public CounterServiceDescription()
-                : base(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
-            {
-            }
-
-            public override Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
-            {
-                //
-                // TODO
-                // Override the method to provide custom logic for computing partition key.
-                //
-                return base.ComputeNamedPartitionKeyAsync(request);
-            }
-        }
-
-        private class SmsServiceDescription : ServiceDescription
-        {
-            public SmsServiceDescription()
-                : base(new Uri("fabric:/Hosting/SmsService", UriKind.Absolute), ServicePartitionKind.Int64Range)
-            {
-            }
-
-            public override Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
-            {
-                //
-                // TODO
-                // Override the method to provide custom logic for computing partition key.
-                //
-                return base.ComputeNamedPartitionKeyAsync(request);
-            }
         }
     }
 }
