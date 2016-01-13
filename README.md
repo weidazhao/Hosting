@@ -30,9 +30,9 @@ public class MyStatefulService : StatefulService
                                                 .Build();
 
         // Replace the address with the one dynamically allocated by Service Fabric.
-        var endpoint = ServiceInitializationParameters.CodePackageActivationContext.GetEndpoint("WebTypeEndpoint");
+        string listeningAddress = AspNetCommunicationListener.GetListeningAddress(ServiceInitializationParameters, "MyStatefulTypeEndpoint");
         webApp.GetAddresses().Clear();
-        webApp.GetAddresses().Add($"{endpoint.Protocol}://+:{endpoint.Port}");
+        webApp.GetAddresses().Add(listeningAddress);
 
         return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp)) };
     }
@@ -67,7 +67,37 @@ public class AspNetCommunicationListener : ICommunicationListener
     {
         _token = _webApp.Start();
 
-        return Task.FromResult(_webApp.GetAddresses().First());
+        return Task.FromResult(GetPublishingAddress(_webApp.GetAddresses().First()));
+    }
+
+    public static string GetListeningAddress(ServiceInitializationParameters parameters, string endpointName)
+    {
+        var endpoint = parameters.CodePackageActivationContext.GetEndpoint(endpointName);
+
+        if (parameters is StatefulServiceInitializationParameters)
+        {
+            var statefulInitParams = (StatefulServiceInitializationParameters)parameters;
+
+            return $"{endpoint.Protocol}://+:{endpoint.Port}/{statefulInitParams.PartitionId}/{statefulInitParams.ReplicaId}/{Guid.NewGuid()}";
+        }
+        else if (parameters is StatelessServiceInitializationParameters)
+        {
+            return $"{endpoint.Protocol}://+:{endpoint.Port}";
+        }
+        else
+        {
+            throw new InvalidOperationException();
+        }
+    }
+
+    public static string GetPublishingAddress(ServiceInitializationParameters parameters, string endpointName)
+    {
+        return GetPublishingAddress(GetListeningAddress(parameters, endpointName));
+    }
+
+    public static string GetPublishingAddress(string listeningAddress)
+    {
+        return listeningAddress.Replace("+", FabricRuntime.GetNodeContext().IPAddressOrFQDN);
     }
 }
 ```
@@ -86,7 +116,7 @@ public class AspNetCommunicationListener : ICommunicationListener
   <CodePackage Name="C" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16351\bin\dnx.exe</Program>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16357\bin\dnx.exe</Program>
         <Arguments>--project approot\src\Web Web</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
