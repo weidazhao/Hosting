@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.AspNet.Gateway;
 using System;
 using System.Fabric;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Gateway
 {
@@ -29,14 +31,30 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            var counterServiceName = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute);
-            var counterServiceDescription = new ServiceDescription(counterServiceName, ServicePartitionKind.Int64Range);
+            var counterServiceDescription = new CounterServiceDescription();
 
             app.RunGateway(new IServiceRouter[]
             {
                 new UrlPrefixtBasedServiceRouter(counterServiceDescription),
                 new HeaderBasedServiceRouter(counterServiceDescription)
             });
+        }
+
+        private class CounterServiceDescription : ServiceDescription
+        {
+            public CounterServiceDescription()
+                : base(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
+            {
+            }
+
+            public override Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
+            {
+                //
+                // TODO
+                // Override the method to provide custom logic for computing partition key.
+                //
+                return base.ComputeNamedPartitionKeyAsync(request);
+            }
         }
     }
 }
