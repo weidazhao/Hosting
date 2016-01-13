@@ -31,6 +31,14 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.Map("/sms", subApp =>
+            {
+                subApp.RunGateway(new IServiceRouter[]
+                {
+                    new ServiceRouter(new SmsServiceDescription())
+                });
+            });
+
             var counterServiceDescription = new CounterServiceDescription();
 
             app.Map("/counter-service", subApp =>
@@ -52,6 +60,23 @@ namespace Gateway
         {
             public CounterServiceDescription()
                 : base(new Uri("fabric:/Hosting/CounterService", UriKind.Absolute), ServicePartitionKind.Int64Range)
+            {
+            }
+
+            public override Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
+            {
+                //
+                // TODO
+                // Override the method to provide custom logic for computing partition key.
+                //
+                return base.ComputeNamedPartitionKeyAsync(request);
+            }
+        }
+
+        private class SmsServiceDescription : ServiceDescription
+        {
+            public SmsServiceDescription()
+                : base(new Uri("fabric:/Hosting/SmsService", UriKind.Absolute), ServicePartitionKind.Int64Range)
             {
             }
 
