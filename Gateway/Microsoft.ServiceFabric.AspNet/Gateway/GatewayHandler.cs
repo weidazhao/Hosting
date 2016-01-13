@@ -48,22 +48,22 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                     ResolvedServicePartition partition = null;
                     ResolvedServiceEndpoint endpoint = null;
 
-                    switch (serviceRouter.PartitionKind)
+                    switch (serviceRouter.ServiceDescription.PartitionKind)
                     {
                         case ServicePartitionKind.Singleton:
-                            partition = await resolver.ResolveAsync(serviceRouter.ServiceName, cancellationToken);
+                            partition = await resolver.ResolveAsync(serviceRouter.ServiceDescription.ServiceName, cancellationToken);
                             endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.Stateless);
                             break;
 
                         case ServicePartitionKind.Int64Range:
-                            long int64RangeKey = await serviceRouter.ComputeUniformInt64PartitionKeyAsync(request);
-                            partition = await resolver.ResolveAsync(serviceRouter.ServiceName, int64RangeKey, cancellationToken);
+                            long int64RangeKey = await serviceRouter.ServiceDescription.ComputeUniformInt64PartitionKeyAsync(request);
+                            partition = await resolver.ResolveAsync(serviceRouter.ServiceDescription.ServiceName, int64RangeKey, cancellationToken);
                             endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
                             break;
 
                         case ServicePartitionKind.Named:
-                            string namedKey = await serviceRouter.ComputeNamedPartitionKeyAsync(request);
-                            partition = await resolver.ResolveAsync(serviceRouter.ServiceName, namedKey, cancellationToken);
+                            string namedKey = await serviceRouter.ServiceDescription.ComputeNamedPartitionKeyAsync(request);
+                            partition = await resolver.ResolveAsync(serviceRouter.ServiceDescription.ServiceName, namedKey, cancellationToken);
                             endpoint = partition.Endpoints.First(p => p.Role == ServiceEndpointRole.StatefulPrimary);
                             break;
 

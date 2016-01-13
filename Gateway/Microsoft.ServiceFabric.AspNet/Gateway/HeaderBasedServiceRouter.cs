@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Fabric;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public class HeaderBasedServiceRouter : ServiceRouterBase
+    public class HeaderBasedServiceRouter : ServiceRouter
     {
-        public HeaderBasedServiceRouter(Uri serviceName, ServicePartitionKind partitionKind)
-            : base(serviceName, partitionKind)
+        public HeaderBasedServiceRouter(ServiceDescription serviceDescription)
+            : base(serviceDescription)
         {
         }
 
@@ -27,7 +26,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                     Uri serviceName;
                     if (Uri.TryCreate(value, UriKind.Absolute, out serviceName))
                     {
-                        canRouteRequest = ServiceName == serviceName;
+                        canRouteRequest = ServiceDescription.ServiceName == serviceName;
                     }
                 }
             }

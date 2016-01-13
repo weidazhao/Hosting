@@ -30,11 +30,12 @@ namespace Gateway
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var counterServiceName = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute);
+            var counterServiceDescription = new ServiceDescription(counterServiceName, ServicePartitionKind.Int64Range);
 
             app.RunGateway(new IServiceRouter[]
             {
-                new UrlPrefixtBasedServiceRouter(counterServiceName, ServicePartitionKind.Int64Range),
-                new HeaderBasedServiceRouter(counterServiceName, ServicePartitionKind.Int64Range)
+                new UrlPrefixtBasedServiceRouter(counterServiceDescription),
+                new HeaderBasedServiceRouter(counterServiceDescription)
             });
         }
     }

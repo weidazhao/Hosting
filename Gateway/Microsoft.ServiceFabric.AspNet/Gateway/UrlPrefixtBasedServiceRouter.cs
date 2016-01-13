@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Fabric;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public class UrlPrefixtBasedServiceRouter : ServiceRouterBase
+    public class UrlPrefixtBasedServiceRouter : ServiceRouter
     {
-        public UrlPrefixtBasedServiceRouter(Uri serviceName, ServicePartitionKind partitionKind)
-            : base(serviceName, partitionKind)
+        public UrlPrefixtBasedServiceRouter(ServiceDescription serviceDescription)
+            : base(serviceDescription)
         {
         }
 
@@ -17,9 +16,9 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
         {
             var requestUriBuilder = new UriBuilder(request.RequestUri);
             var requestUriPathSegments = requestUriBuilder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var serviceName = new Uri($"fabric:/{requestUriPathSegments[0]}/{requestUriPathSegments[1]}", UriKind.Absolute);
 
-            bool canRouteRequest = requestUriPathSegments.Length >= 2 &&
-                                   ServiceName == new Uri($"fabric:/{requestUriPathSegments[0]}/{requestUriPathSegments[1]}", UriKind.Absolute);
+            bool canRouteRequest = requestUriPathSegments.Length >= 2 && ServiceDescription.ServiceName == serviceName;
 
             return Task.FromResult(canRouteRequest);
         }

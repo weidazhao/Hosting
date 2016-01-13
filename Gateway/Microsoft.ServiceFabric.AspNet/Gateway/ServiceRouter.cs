@@ -1,36 +1,28 @@
 ﻿using System;
-using System.Fabric;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public abstract class ServiceRouterBase : IServiceRouter
+    public class ServiceRouter : IServiceRouter
     {
-        public ServiceRouterBase(Uri serviceName, ServicePartitionKind partitionKind)
+        public ServiceRouter(ServiceDescription serviceDescription)
         {
-            if (serviceName == null)
+            if (serviceDescription == null)
             {
-                throw new ArgumentNullException(nameof(serviceName));
+                throw new ArgumentNullException(nameof(serviceDescription));
             }
 
-            if (partitionKind != ServicePartitionKind.Singleton &&
-                partitionKind != ServicePartitionKind.Int64Range &&
-                partitionKind != ServicePartitionKind.Named)
-            {
-                throw new ArgumentException(null, nameof(partitionKind));
-            }
-
-            ServiceName = serviceName;
-            PartitionKind = partitionKind;
+            ServiceDescription = serviceDescription;
         }
 
-        public Uri ServiceName { get; }
+        public ServiceDescription ServiceDescription { get; }
 
-        public ServicePartitionKind PartitionKind { get; }
-
-        public abstract Task<bool> CanRouteRequestAsync(HttpRequestMessage request);
+        public virtual Task<bool> CanRouteRequestAsync(HttpRequestMessage request)
+        {
+            return Task.FromResult(true);
+        }
 
         public virtual Task RouteRequestAsync(HttpRequestMessage request, Uri serviceEndpoint)
         {
@@ -49,16 +41,6 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             request.Headers.Host = serviceEndpointBuilder.Host + ":" + serviceEndpointBuilder.Port;
 
             return Task.FromResult(true);
-        }
-
-        public virtual Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
-        {
-            return Task.FromResult(request.ToString());
-        }
-
-        public virtual Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequestMessage request)
-        {
-            return Task.FromResult<long>(request.GetHashCode());
         }
     }
 }
