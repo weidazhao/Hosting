@@ -42,6 +42,9 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             {
                 if (await serviceRouter.CanRouteRequestAsync(request))
                 {
+                    //
+                    // Resolve partition and endpoint
+                    //
                     ResolvedServicePartition partition = null;
                     ResolvedServiceEndpoint endpoint = null;
 
@@ -68,15 +71,15 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                             break;
                     }
 
-                    if (partition != null && endpoint != null)
-                    {
-                        var serviceAddress = JsonConvert.DeserializeObject<Address>(endpoint.Address);
-                        var serviceEndpoint = new Uri(serviceAddress.Endpoints.First().Value, UriKind.Absolute);
+                    //
+                    // Parse endpoint and route the request to it
+                    //
+                    var serviceAddress = JsonConvert.DeserializeObject<Address>(endpoint.Address);
+                    var serviceEndpoint = new Uri(serviceAddress.Endpoints.First().Value, UriKind.Absolute);
 
-                        await serviceRouter.RouteRequestAsync(request, serviceEndpoint);
+                    await serviceRouter.RouteRequestAsync(request, serviceEndpoint);
 
-                        return true;
-                    }
+                    return true;
                 }
             }
 
