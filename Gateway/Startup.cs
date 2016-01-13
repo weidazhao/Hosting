@@ -41,7 +41,7 @@ namespace Gateway
 
             var counterServiceDescription = new CounterServiceDescription();
 
-            app.Map("/counter-service", subApp =>
+            app.Map("/counter", subApp =>
             {
                 subApp.RunGateway(new IServiceRouter[]
                 {
@@ -49,6 +49,9 @@ namespace Gateway
                 });
             });
 
+            //
+            // Demostrates the scenarios of side by side / multiple kinds of clients.
+            //
             app.RunGateway(new IServiceRouter[]
             {
                 new UrlPrefixtBasedServiceRouter(counterServiceDescription),
