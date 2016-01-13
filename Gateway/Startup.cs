@@ -33,6 +33,14 @@ namespace Gateway
         {
             var counterServiceDescription = new CounterServiceDescription();
 
+            app.Map("/counter-service", subApp =>
+            {
+                subApp.RunGateway(new IServiceRouter[]
+                {
+                    new ServiceRouter(counterServiceDescription)
+                });
+            });
+
             app.RunGateway(new IServiceRouter[]
             {
                 new UrlPrefixtBasedServiceRouter(counterServiceDescription),
