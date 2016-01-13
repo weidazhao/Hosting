@@ -44,7 +44,7 @@ namespace Gateway
             });
 
             //
-            // Demostrates the scenarios of side by side / multiple kinds of clients.
+            // Demostrates the scenarios of side by side versioning / multiple kinds of clients.
             //
             app.RunGateway(new IServiceRouter[]
             {
