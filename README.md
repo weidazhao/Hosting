@@ -34,7 +34,7 @@ public class MyStatefulService : StatefulService
         webApp.GetAddresses().Clear();
         webApp.GetAddresses().Add(listeningAddress);
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp)) };
+        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp, AddressUtilities.GetPublishingAddress(listeningAddress))) };
     }
 }
 ```
@@ -43,12 +43,14 @@ public class MyStatefulService : StatefulService
 ```csharp
 public class AspNetCommunicationListener : ICommunicationListener
 {
-    private IWebApplication _webApp;
+    private readonly IWebApplication _webApp;
+    private readonly string _publishingAddress;
     private IDisposable _token;
 
-    public AspNetCommunicationListener(IWebApplication webApp)
+    public AspNetCommunicationListener(IWebApplication webApp, string publishingAddress)
     {
         _webApp = webApp;
+        _publishingAddress = publishingAddress;
     }
 
     public void Abort()
@@ -67,7 +69,7 @@ public class AspNetCommunicationListener : ICommunicationListener
     {
         _token = _webApp.Start();
 
-        return Task.FromResult(GetPublishingAddress(_webApp.GetAddresses().First()));
+        return Task.FromResult(_publishingAddress);
     }
 }
 ```
