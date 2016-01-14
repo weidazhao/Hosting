@@ -30,11 +30,11 @@ namespace Hosting.Tests
 
                 // SMS
                 {
-                    var response = await client.PostAsync("/sms/api/sms/userA/hello", new StringContent(string.Empty));
+                    var response = await client.PostAsync("/sms/api/sms/unicone/hello", new StringContent(string.Empty));
                     response.EnsureSuccessStatusCode();
                 }
                 {
-                    var response = await client.GetAsync("/sms/api/sms/userA");
+                    var response = await client.GetAsync("/sms/api/sms/unicone");
                     response.EnsureSuccessStatusCode();
                 }
 
