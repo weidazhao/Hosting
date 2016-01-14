@@ -10,7 +10,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
     {
         private readonly string _headerName;
 
-        public HeaderBasedServiceRouter(ServiceDescription serviceDescription, string headerName)
+        public HeaderBasedServiceRouter(IServiceDescription serviceDescription, string headerName)
             : base(serviceDescription)
         {
             if (string.IsNullOrEmpty(headerName))

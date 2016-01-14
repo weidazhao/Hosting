@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public class ServiceDescription
+    public class ServiceDescription : IServiceDescription
     {
         public ServiceDescription(Uri serviceName, ServicePartitionKind partitionKind, string listenerName = "")
         {

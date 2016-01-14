@@ -7,7 +7,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public class ServiceRouter : IServiceRouter
     {
-        public ServiceRouter(ServiceDescription serviceDescription)
+        public ServiceRouter(IServiceDescription serviceDescription)
         {
             if (serviceDescription == null)
             {
@@ -17,7 +17,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             ServiceDescription = serviceDescription;
         }
 
-        public ServiceDescription ServiceDescription { get; }
+        public IServiceDescription ServiceDescription { get; }
 
         public virtual Task<bool> CanRouteRequestAsync(HttpRequestMessage request)
         {

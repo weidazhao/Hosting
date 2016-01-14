@@ -6,7 +6,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public interface IServiceRouter
     {
-        ServiceDescription ServiceDescription { get; }
+        IServiceDescription ServiceDescription { get; }
 
         Task<bool> CanRouteRequestAsync(HttpRequestMessage request);
 

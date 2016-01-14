@@ -7,7 +7,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public class UrlPrefixtBasedServiceRouter : ServiceRouter
     {
-        public UrlPrefixtBasedServiceRouter(ServiceDescription serviceDescription)
+        public UrlPrefixtBasedServiceRouter(IServiceDescription serviceDescription)
             : base(serviceDescription)
         {
         }
