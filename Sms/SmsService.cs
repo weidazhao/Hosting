@@ -61,7 +61,7 @@ namespace Sms
                                                     .Build();
 
             // Replace the address with the one dynamically allocated by Service Fabric.
-            string listeningAddress = AspNetCommunicationListener.GetListeningAddress(ServiceInitializationParameters, "SmsTypeEndpoint");
+            string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "SmsTypeEndpoint");
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add(listeningAddress);
 

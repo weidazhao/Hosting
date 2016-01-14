@@ -16,7 +16,7 @@ namespace Gateway
                                                     .Build();
 
             // Replace the address with the one dynamically allocated by Service Fabric.
-            string listeningAddress = AspNetCommunicationListener.GetListeningAddress(ServiceInitializationParameters, "GatewayTypeEndpoint");
+            string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "GatewayTypeEndpoint");
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add(listeningAddress);
 

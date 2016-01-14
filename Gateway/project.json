@@ -10,6 +10,7 @@
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-15952",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-15952",
     "Microsoft.ServiceFabric": "4.4.87-preview",
+    "Microsoft.ServiceFabric.AspNet": "1.0.0-*",
     "Microsoft.ServiceFabric.Services": "1.4.87-preview"
   },
 

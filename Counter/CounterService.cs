@@ -69,7 +69,7 @@ namespace Counter
                                                     .Build();
 
             // Replace the address with the one dynamically allocated by Service Fabric.
-            string listeningAddress = AspNetCommunicationListener.GetListeningAddress(ServiceInitializationParameters, "CounterTypeEndpoint");
+            string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "CounterTypeEndpoint");
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add(listeningAddress);
 
