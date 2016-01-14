@@ -20,7 +20,7 @@ namespace Gateway
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add(listeningAddress);
 
-            return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webApp)) };
+            return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webApp, AddressUtilities.GetPublishingAddress(listeningAddress))) };
         }
     }
 }

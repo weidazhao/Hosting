@@ -73,7 +73,7 @@ namespace Counter
             webApp.GetAddresses().Clear();
             webApp.GetAddresses().Add(listeningAddress);
 
-            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp)) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp, AddressUtilities.GetPublishingAddress(listeningAddress))) };
         }
     }
 }
