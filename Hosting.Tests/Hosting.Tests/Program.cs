@@ -11,15 +11,13 @@ namespace Hosting.Tests
             try
             {
                 RunTestsAsync().GetAwaiter().GetResult();
-
-                Console.WriteLine("All passed.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
-            Console.Read();
+            Console.WriteLine("Completed.");
         }
 
         public static async Task RunTestsAsync()
@@ -29,36 +27,26 @@ namespace Hosting.Tests
                 client.BaseAddress = new Uri("http://localhost:8000");
 
                 // SMS
-                {
-                    var response = await client.PostAsync("/sms/api/sms/unicone/hello", new StringContent(string.Empty));
-                    response.EnsureSuccessStatusCode();
-                }
-                {
-                    var response = await client.GetAsync("/sms/api/sms/unicone");
-                    response.EnsureSuccessStatusCode();
-                }
+                LogResult(await client.PostAsync("/sms/api/sms/unicone/hello", new StringContent(string.Empty)));
 
-                // Counter       
-                {
-                    var response = await client.PostAsync("/counter/api/counter", new StringContent(string.Empty));
-                    response.EnsureSuccessStatusCode();
-                }
-                {
-                    var response = await client.GetAsync("/counter/api/counter");
-                    response.EnsureSuccessStatusCode();
-                }
-                {
-                    var response = await client.GetAsync("/Hosting/CounterService/api/counter");
-                    response.EnsureSuccessStatusCode();
-                }
-                {
-                    var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
-                    request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
+                LogResult(await client.GetAsync("/sms/api/sms/unicone"));
 
-                    var response = await client.SendAsync(request);
-                    response.EnsureSuccessStatusCode();
-                }
+                // Counter
+                LogResult(await client.PostAsync("/counter/api/counter", new StringContent(string.Empty)));
+
+                LogResult(await client.GetAsync("/counter/api/counter"));
+
+                LogResult(await client.GetAsync("/Hosting/CounterService/api/counter"));
+
+                var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
+                request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
+                LogResult(await client.SendAsync(request));
             }
+        }
+
+        private static void LogResult(HttpResponseMessage response)
+        {
+            Console.WriteLine($"Status: {response.StatusCode} Method: {response.RequestMessage.Method} URL: {response.RequestMessage.RequestUri}");
         }
     }
 }
