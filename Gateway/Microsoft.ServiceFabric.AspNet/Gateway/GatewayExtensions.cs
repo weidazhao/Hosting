@@ -1,24 +1,23 @@
 ﻿using Microsoft.AspNet.Builder;
 using System;
-using System.Collections.Generic;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public static class GatewayExtensions
     {
-        public static IApplicationBuilder RunGateway(this IApplicationBuilder app, IEnumerable<IServiceRouter> serviceRouters)
+        public static IApplicationBuilder RunGateway(this IApplicationBuilder app, GatewayOptions options)
         {
             if (app == null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
-            if (serviceRouters == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(serviceRouters));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            return app.UseMiddleware<GatewayMiddleware>(serviceRouters);
+            return app.UseMiddleware<GatewayMiddleware>(options);
         }
     }
 }

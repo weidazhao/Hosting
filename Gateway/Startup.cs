@@ -29,28 +29,25 @@ namespace Gateway
         {
             app.Map("/sms", subApp =>
             {
-                subApp.RunGateway(new IServiceRouter[]
-                {
-                    new ServiceRouter(Singleton<SmsServiceDescription>.Instance)
-                });
+                subApp.RunGateway(
+                    new GatewayOptions(
+                        new ServiceRouter(Singleton<SmsServiceDescription>.Instance)));
             });
 
             app.Map("/counter", subApp =>
             {
-                subApp.RunGateway(new IServiceRouter[]
-                {
-                    new ServiceRouter(Singleton<CounterServiceDescription>.Instance)
-                });
+                subApp.RunGateway(
+                    new GatewayOptions(
+                        new ServiceRouter(Singleton<CounterServiceDescription>.Instance)));
             });
 
             //
             // Demostrates the scenarios of side by side versioning / multiple kinds of clients.
             //
-            app.RunGateway(new IServiceRouter[]
-            {
-                new UrlPrefixtBasedServiceRouter(Singleton<CounterServiceDescription>.Instance),
-                new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance)
-            });
+            app.RunGateway(
+                new GatewayOptions(
+                    new UrlPrefixtBasedServiceRouter(Singleton<CounterServiceDescription>.Instance),
+                    new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance)));
         }
     }
 }

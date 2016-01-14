@@ -12,16 +12,16 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public class GatewayHandler : HttpClientHandler
     {
-        private readonly IServiceRouter[] _serviceRouters;
+        private readonly GatewayOptions _options;
 
-        public GatewayHandler(IEnumerable<IServiceRouter> serviceRouters)
+        public GatewayHandler(GatewayOptions options)
         {
-            if (serviceRouters == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(serviceRouters));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            _serviceRouters = serviceRouters.ToArray();
+            _options = options;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
         {
             var resolver = new ServicePartitionResolver(() => new FabricClient());
 
-            foreach (var serviceRouter in _serviceRouters)
+            foreach (var serviceRouter in _options.ServiceRouters)
             {
                 if (await serviceRouter.CanRouteRequestAsync(request))
                 {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Proxy;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
@@ -10,22 +9,22 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
     {
         private readonly ProxyMiddleware _proxyMiddleware;
 
-        public GatewayMiddleware(RequestDelegate next, IEnumerable<IServiceRouter> serviceRouters)
+        public GatewayMiddleware(RequestDelegate next, GatewayOptions options)
         {
             if (next == null)
             {
                 throw new ArgumentNullException(nameof(next));
             }
 
-            if (serviceRouters == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(serviceRouters));
+                throw new ArgumentNullException(nameof(options));
             }
 
             var proxyOptions = new ProxyOptions()
             {
                 Host = "must_not_be_empty",
-                BackChannelMessageHandler = new GatewayHandler(serviceRouters)
+                BackChannelMessageHandler = new GatewayHandler(options)
             };
 
             _proxyMiddleware = new ProxyMiddleware(next, proxyOptions);
