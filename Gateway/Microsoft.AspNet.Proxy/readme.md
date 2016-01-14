@@ -1,1 +1,0 @@
-The code is copied from https://github.com/aspnet/Proxy.

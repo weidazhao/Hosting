@@ -5,6 +5,7 @@
   },
 
   "dependencies": {
+    "Microsoft.AspNet.Proxy": "1.0.0-rc2-16034",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-16236",
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-15952",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-15952",

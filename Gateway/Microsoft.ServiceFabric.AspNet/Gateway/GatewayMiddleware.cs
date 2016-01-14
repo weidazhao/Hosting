@@ -32,7 +32,17 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         public Task Invoke(HttpContext context)
         {
-            return _proxyMiddleware.Invoke(context);
+            var pathBase = context.Request.PathBase;
+            context.Request.PathBase = PathString.Empty;
+
+            try
+            {
+                return _proxyMiddleware.Invoke(context);
+            }
+            finally
+            {
+                context.Request.PathBase = pathBase;
+            }
         }
     }
 }
