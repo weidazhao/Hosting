@@ -13,13 +13,15 @@ namespace Gateway
         {
         }
 
-        public override Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
+        public override Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequestMessage request)
         {
-            //
-            // TODO
-            // Override the method to provide custom logic for computing partition key.
-            //
-            return base.ComputeNamedPartitionKeyAsync(request);
+            var builder = new UriBuilder(request.RequestUri);
+            var pathSegments = builder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Assumes that the last two segments in the path are {user}/{message}
+            string user = pathSegments[pathSegments.Length - 2];
+
+            return Task.FromResult((long)user.GetHashCode());
         }
     }
 }
