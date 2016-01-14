@@ -47,7 +47,7 @@ namespace Gateway
             app.RunGateway(
                 new GatewayOptions(
                     new UrlPrefixtBasedServiceRouter(Singleton<CounterServiceDescription>.Instance),
-                    new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance)));
+                    new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance, "SF-ServiceName")));
         }
     }
 }

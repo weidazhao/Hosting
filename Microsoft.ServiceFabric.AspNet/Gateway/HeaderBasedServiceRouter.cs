@@ -8,9 +8,17 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
     public class HeaderBasedServiceRouter : ServiceRouter
     {
-        public HeaderBasedServiceRouter(ServiceDescription serviceDescription)
+        private readonly string _headerName;
+
+        public HeaderBasedServiceRouter(ServiceDescription serviceDescription, string headerName)
             : base(serviceDescription)
         {
+            if (string.IsNullOrEmpty(headerName))
+            {
+                throw new ArgumentException(null, nameof(headerName));
+            }
+
+            _headerName = headerName;
         }
 
         public override Task<bool> CanRouteRequestAsync(HttpRequestMessage request)
@@ -18,7 +26,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             bool canRouteRequest = false;
 
             IEnumerable<string> values;
-            if (request.Headers.TryGetValues("SF-ServiceName", out values))
+            if (request.Headers.TryGetValues(_headerName, out values))
             {
                 string value = values.FirstOrDefault();
                 if (!string.IsNullOrEmpty(value))
