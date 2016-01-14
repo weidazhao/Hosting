@@ -1,4 +1,5 @@
-﻿using Microsoft.ServiceFabric.Services.Communication.Client;
+﻿using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 using System.Fabric;
 using System.Net.Http;
@@ -10,7 +11,6 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
     public class GatewayHandler : HttpClientHandler
     {
         private readonly GatewayOptions _options;
-        private readonly CommunicationClientFactory _clientFactory;
 
         public GatewayHandler(GatewayOptions options)
         {
@@ -20,7 +20,6 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             }
 
             _options = options;
-            _clientFactory = new CommunicationClientFactory();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -39,30 +38,30 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             {
                 if (await serviceRouter.CanRouteRequestAsync(request))
                 {
+                    var clientFactory = new CommunicationClientFactory();
                     CommunicationClient client = null;
-
                     switch (serviceRouter.ServiceDescription.PartitionKind)
                     {
                         case ServicePartitionKind.Singleton:
-                            client = await _clientFactory.GetClientAsync(serviceRouter.ServiceDescription.ServiceName,
-                                                                         serviceRouter.ServiceDescription.ListenerName,
-                                                                         cancellationToken);
+                            client = await clientFactory.GetClientAsync(serviceRouter.ServiceDescription.ServiceName,
+                                                                        serviceRouter.ServiceDescription.ListenerName,
+                                                                        cancellationToken);
                             break;
 
                         case ServicePartitionKind.Int64Range:
                             long int64RangeKey = await serviceRouter.ServiceDescription.ComputeUniformInt64PartitionKeyAsync(request);
-                            client = await _clientFactory.GetClientAsync(serviceRouter.ServiceDescription.ServiceName,
-                                                                         int64RangeKey,
-                                                                         serviceRouter.ServiceDescription.ListenerName,
-                                                                         cancellationToken);
+                            client = await clientFactory.GetClientAsync(serviceRouter.ServiceDescription.ServiceName,
+                                                                        int64RangeKey,
+                                                                        serviceRouter.ServiceDescription.ListenerName,
+                                                                        cancellationToken);
                             break;
 
                         case ServicePartitionKind.Named:
                             string namedKey = await serviceRouter.ServiceDescription.ComputeNamedPartitionKeyAsync(request);
-                            client = await _clientFactory.GetClientAsync(serviceRouter.ServiceDescription.ServiceName,
-                                                                         namedKey,
-                                                                         serviceRouter.ServiceDescription.ListenerName,
-                                                                         cancellationToken);
+                            client = await clientFactory.GetClientAsync(serviceRouter.ServiceDescription.ServiceName,
+                                                                        namedKey,
+                                                                        serviceRouter.ServiceDescription.ListenerName,
+                                                                        cancellationToken);
                             break;
 
                         default:
@@ -87,6 +86,13 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         private sealed class CommunicationClientFactory : CommunicationClientFactoryBase<CommunicationClient>
         {
+            public CommunicationClientFactory()
+                : base(new ServicePartitionResolver(() => new FabricClient()))
+            {
+                // TODO
+                // There seems to be a caching issue with ServicePartitionResolver. Investigation needed.
+            }
+
             protected override void AbortClient(CommunicationClient client)
             {
             }
