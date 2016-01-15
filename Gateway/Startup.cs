@@ -28,6 +28,12 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            //
+            // Scenarios:
+            // 1. Multiple services.
+            // 2. Various versions or kinds of clients side by side.
+            //
+
             app.Map("/sms",
                 subApp =>
                 {
@@ -35,9 +41,6 @@ namespace Gateway
                 }
             );
 
-            //
-            // Demostrates the scenarios of side by side versioning / multiple kinds of clients.
-            //
             app.Map("/counter",
                 subApp =>
                 {
