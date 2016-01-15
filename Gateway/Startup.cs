@@ -34,6 +34,9 @@ namespace Gateway
                         new ServiceRouter(Singleton<SmsServiceDescription>.Instance)));
             });
 
+            //
+            // Demostrates the scenarios of side by side versioning / multiple kinds of clients.
+            //
             app.Map("/counter", subApp =>
             {
                 subApp.RunGateway(
@@ -41,12 +44,15 @@ namespace Gateway
                         new ServiceRouter(Singleton<CounterServiceDescription>.Instance)));
             });
 
-            //
-            // Demostrates the scenarios of side by side versioning / multiple kinds of clients.
-            //
+            app.Map("/Hosting/CounterService", subApp =>
+            {
+                subApp.RunGateway(
+                    new GatewayOptions(
+                        new ServiceRouter(Singleton<CounterServiceDescription>.Instance)));
+            });
+
             app.RunGateway(
                 new GatewayOptions(
-                    new UrlPrefixtBasedServiceRouter(Singleton<CounterServiceDescription>.Instance),
                     new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance, "SF-ServiceName")));
         }
     }
