@@ -37,6 +37,10 @@ namespace Hosting.Tests
                 LogResult(await client.GetAsync("/counter/api/counter"));
 
                 LogResult(await client.GetAsync("/Hosting/CounterService/api/counter"));
+
+                var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
+                request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
+                LogResult(await client.SendAsync(request));
             }
         }
 

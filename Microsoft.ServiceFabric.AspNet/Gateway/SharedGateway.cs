@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Routing;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 using System.Fabric;
@@ -10,56 +9,34 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
 {
-    public class ServiceRouter : IRouter
+    public class SharedGateway
     {
-        private readonly IServiceDescription _serviceDescription;
-        private readonly CommunicationClientFactory _clientFactory;
-        private readonly HttpClient _httpClient;
+        public static readonly SharedGateway Default = new SharedGateway();
 
-        public ServiceRouter(IServiceDescription serviceDescription)
-        {
-            if (serviceDescription == null)
-            {
-                throw new ArgumentNullException(nameof(serviceDescription));
-            }
+        private readonly HttpClient _httpClient = new HttpClient();
 
-            _serviceDescription = serviceDescription;
-            _clientFactory = new CommunicationClientFactory();
-            _httpClient = new HttpClient();
-        }
+        private readonly CommunicationClientFactory _communicationClientFactory = new CommunicationClientFactory();
 
-        public VirtualPathData GetVirtualPath(VirtualPathContext context)
-        {
-            return null;
-        }
-
-        public virtual Task RouteAsync(RouteContext context)
-        {
-            context.Handler = InvokeAsync;
-
-            return Task.FromResult(true);
-        }
-
-        protected virtual async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, GatewayOptions options)
         {
             //
             // NOTE:
             // Some of the code is copied from https://github.com/aspnet/Proxy/blob/dev/src/Microsoft.AspNet.Proxy/ProxyMiddleware.cs for prototype purpose.
-            // Review the license of the code will be needed if this code is going to be used in production.
+            // Reviewing the license of the code will be needed if this code is to be used in production.
             //
 
             const int MaxRetry = 5;
             const int DelayInSeconds = 1;
 
-            CommunicationClient client = null;
+            CommunicationClient communicationClient = null;
 
             for (int retry = 0; retry < MaxRetry; retry++)
             {
                 try
                 {
-                    client = await ResolveCommunicationClientAsync(context.Request, client);
+                    communicationClient = await ResolveCommunicationClientAsync(context.Request, options.ServiceDescription, communicationClient);
 
-                    if (client != null)
+                    if (communicationClient != null)
                     {
                         var requestMessage = new HttpRequestMessage();
 
@@ -94,17 +71,17 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                         // Construct the request URL
                         //
                         var requestUriBuilder = new UriBuilder();
-                        requestUriBuilder.Scheme = client.ResolvedServiceEndpoint.Scheme;
-                        requestUriBuilder.Host = client.ResolvedServiceEndpoint.Host;
-                        requestUriBuilder.Port = client.ResolvedServiceEndpoint.Port;
-                        requestUriBuilder.Path = PathString.FromUriComponent(client.ResolvedServiceEndpoint) + context.Request.Path + context.Request.QueryString;
+                        requestUriBuilder.Scheme = communicationClient.ResolvedServiceEndpoint.Scheme;
+                        requestUriBuilder.Host = communicationClient.ResolvedServiceEndpoint.Host;
+                        requestUriBuilder.Port = communicationClient.ResolvedServiceEndpoint.Port;
+                        requestUriBuilder.Path = PathString.FromUriComponent(communicationClient.ResolvedServiceEndpoint) + context.Request.Path + context.Request.QueryString;
 
                         requestMessage.RequestUri = requestUriBuilder.Uri;
 
                         //
                         // Set host header
                         //
-                        requestMessage.Headers.Host = client.ResolvedServiceEndpoint.Host + ":" + client.ResolvedServiceEndpoint.Port;
+                        requestMessage.Headers.Host = communicationClient.ResolvedServiceEndpoint.Host + ":" + communicationClient.ResolvedServiceEndpoint.Port;
 
                         //
                         // Send request and copy the result back to HttpResponse
@@ -157,26 +134,26 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             }
         }
 
-        private async Task<CommunicationClient> ResolveCommunicationClientAsync(HttpRequest request, CommunicationClient previous)
+        private async Task<CommunicationClient> ResolveCommunicationClientAsync(HttpRequest request, IServiceDescription serviceDescription, CommunicationClient previous)
         {
             CommunicationClient current = null;
 
             if (previous == null)
             {
-                switch (_serviceDescription.PartitionKind)
+                switch (serviceDescription.PartitionKind)
                 {
                     case ServicePartitionKind.Singleton:
-                        current = await _clientFactory.GetClientAsync(_serviceDescription.ServiceName, _serviceDescription.ListenerName, default(CancellationToken));
+                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, serviceDescription.ListenerName, default(CancellationToken));
                         break;
 
                     case ServicePartitionKind.Int64Range:
-                        long int64RangeKey = await _serviceDescription.ComputeUniformInt64PartitionKeyAsync(request);
-                        current = await _clientFactory.GetClientAsync(_serviceDescription.ServiceName, int64RangeKey, _serviceDescription.ListenerName, default(CancellationToken));
+                        long int64RangeKey = await serviceDescription.ComputeUniformInt64PartitionKeyAsync(request);
+                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, int64RangeKey, serviceDescription.ListenerName, default(CancellationToken));
                         break;
 
                     case ServicePartitionKind.Named:
-                        string namedKey = await _serviceDescription.ComputeNamedPartitionKeyAsync(request);
-                        current = await _clientFactory.GetClientAsync(_serviceDescription.ServiceName, namedKey, _serviceDescription.ListenerName, default(CancellationToken));
+                        string namedKey = await serviceDescription.ComputeNamedPartitionKeyAsync(request);
+                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, namedKey, serviceDescription.ListenerName, default(CancellationToken));
                         break;
 
                     default:
@@ -185,7 +162,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             }
             else
             {
-                current = await _clientFactory.GetClientAsync(previous.ResolvedServicePartition, _serviceDescription.ListenerName, default(CancellationToken));
+                current = await _communicationClientFactory.GetClientAsync(previous.ResolvedServicePartition, serviceDescription.ListenerName, default(CancellationToken));
             }
 
             return current;
