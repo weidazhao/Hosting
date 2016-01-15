@@ -29,9 +29,7 @@ namespace Gateway
         {
             app.Map("/sms", subApp =>
             {
-                subApp.RunGateway(
-                    new GatewayOptions(
-                        new ServiceRouter(Singleton<SmsServiceDescription>.Instance)));
+                subApp.UseRouter(new ServiceRouter(Singleton<SmsServiceDescription>.Instance));
             });
 
             //
@@ -39,21 +37,13 @@ namespace Gateway
             //
             app.Map("/counter", subApp =>
             {
-                subApp.RunGateway(
-                    new GatewayOptions(
-                        new ServiceRouter(Singleton<CounterServiceDescription>.Instance)));
+                subApp.UseRouter(new ServiceRouter(Singleton<CounterServiceDescription>.Instance));
             });
 
             app.Map("/Hosting/CounterService", subApp =>
             {
-                subApp.RunGateway(
-                    new GatewayOptions(
-                        new ServiceRouter(Singleton<CounterServiceDescription>.Instance)));
+                subApp.UseRouter(new ServiceRouter(Singleton<CounterServiceDescription>.Instance));
             });
-
-            app.RunGateway(
-                new GatewayOptions(
-                    new HeaderBasedServiceRouter(Singleton<CounterServiceDescription>.Instance, "SF-ServiceName")));
         }
     }
 }

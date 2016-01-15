@@ -1,7 +1,7 @@
-﻿using Microsoft.ServiceFabric.AspNet.Gateway;
+﻿using Microsoft.AspNet.Http;
+using Microsoft.ServiceFabric.AspNet.Gateway;
 using System;
 using System.Fabric;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Gateway
@@ -13,10 +13,9 @@ namespace Gateway
         {
         }
 
-        public override Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequestMessage request)
+        public override Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequest request)
         {
-            var builder = new UriBuilder(request.RequestUri);
-            var pathSegments = builder.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var pathSegments = request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             // Assumes that the last two segments in the path are {user}/{message}
             string user = pathSegments[pathSegments.Length - 2];

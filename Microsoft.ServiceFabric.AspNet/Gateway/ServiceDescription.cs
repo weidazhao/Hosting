@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNet.Http;
+using System;
 using System.Fabric;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNet.Gateway
@@ -37,12 +37,12 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         public string ListenerName { get; }
 
-        public virtual Task<string> ComputeNamedPartitionKeyAsync(HttpRequestMessage request)
+        public virtual Task<string> ComputeNamedPartitionKeyAsync(HttpRequest request)
         {
             return Task.FromResult(request.ToString());
         }
 
-        public virtual Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequestMessage request)
+        public virtual Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequest request)
         {
             return Task.FromResult<long>(request.GetHashCode());
         }

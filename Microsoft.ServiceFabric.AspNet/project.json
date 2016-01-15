@@ -7,8 +7,8 @@
   "licenseUrl": "",
 
   "dependencies": {
-    "Microsoft.AspNet.Proxy": "1.0.0-rc2-16034",
     "Microsoft.AspNet.Hosting": "1.0.0-rc2-16161",
+    "Microsoft.AspNet.Routing": "1.0.0-rc2-16139",
     "Microsoft.ServiceFabric": "4.4.87-preview",
     "Microsoft.ServiceFabric.Services": "1.4.87-preview"
   },
