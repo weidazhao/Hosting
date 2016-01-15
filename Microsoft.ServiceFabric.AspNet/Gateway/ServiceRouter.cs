@@ -42,6 +42,12 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         protected virtual async Task InvokeAsync(HttpContext context)
         {
+            //
+            // NOTE:
+            // Some of the code is copied from https://github.com/aspnet/Proxy/blob/dev/src/Microsoft.AspNet.Proxy/ProxyMiddleware.cs for prototype purpose.
+            // Review the license of the code will be needed if this code is going to be used in production.
+            //
+
             const int MaxRetry = 5;
             const int DelayInSeconds = 1;
 
