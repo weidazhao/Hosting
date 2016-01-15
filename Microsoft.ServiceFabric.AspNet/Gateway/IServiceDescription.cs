@@ -13,8 +13,8 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         string ListenerName { get; }
 
-        Task<string> ComputeNamedPartitionKeyAsync(HttpRequest request);
+        Task<string> ComputeNamedPartitionKeyAsync(HttpContext context);
 
-        Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequest request);
+        Task<long> ComputeUniformInt64PartitionKeyAsync(HttpContext context);
     }
 }

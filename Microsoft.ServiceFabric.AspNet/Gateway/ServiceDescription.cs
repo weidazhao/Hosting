@@ -37,14 +37,14 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         public string ListenerName { get; }
 
-        public virtual Task<string> ComputeNamedPartitionKeyAsync(HttpRequest request)
+        public virtual Task<string> ComputeNamedPartitionKeyAsync(HttpContext context)
         {
-            return Task.FromResult(request.ToString());
+            return Task.FromResult(context.Request.ToString());
         }
 
-        public virtual Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequest request)
+        public virtual Task<long> ComputeUniformInt64PartitionKeyAsync(HttpContext context)
         {
-            return Task.FromResult<long>(request.GetHashCode());
+            return Task.FromResult<long>(context.Request.GetHashCode());
         }
     }
 }

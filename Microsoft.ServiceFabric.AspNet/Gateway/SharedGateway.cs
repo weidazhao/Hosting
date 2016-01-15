@@ -34,7 +34,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             {
                 try
                 {
-                    communicationClient = await ResolveCommunicationClientAsync(context.Request, options.ServiceDescription, communicationClient);
+                    communicationClient = await ResolveCommunicationClientAsync(context, options.ServiceDescription, communicationClient);
 
                     if (communicationClient != null)
                     {
@@ -113,9 +113,9 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                             // Copy the response content
                             //
                             await responseMessage.Content.CopyToAsync(context.Response.Body);
-
-                            break;
                         }
+
+                        break;
                     }
                 }
                 catch
@@ -134,7 +134,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             }
         }
 
-        private async Task<CommunicationClient> ResolveCommunicationClientAsync(HttpRequest request, IServiceDescription serviceDescription, CommunicationClient previous)
+        private async Task<CommunicationClient> ResolveCommunicationClientAsync(HttpContext context, IServiceDescription serviceDescription, CommunicationClient previous)
         {
             CommunicationClient current = null;
 
@@ -143,17 +143,17 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
                 switch (serviceDescription.PartitionKind)
                 {
                     case ServicePartitionKind.Singleton:
-                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, serviceDescription.ListenerName, default(CancellationToken));
+                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, serviceDescription.ListenerName, context.RequestAborted);
                         break;
 
                     case ServicePartitionKind.Int64Range:
-                        long int64RangeKey = await serviceDescription.ComputeUniformInt64PartitionKeyAsync(request);
-                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, int64RangeKey, serviceDescription.ListenerName, default(CancellationToken));
+                        long int64RangeKey = await serviceDescription.ComputeUniformInt64PartitionKeyAsync(context);
+                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, int64RangeKey, serviceDescription.ListenerName, context.RequestAborted);
                         break;
 
                     case ServicePartitionKind.Named:
-                        string namedKey = await serviceDescription.ComputeNamedPartitionKeyAsync(request);
-                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, namedKey, serviceDescription.ListenerName, default(CancellationToken));
+                        string namedKey = await serviceDescription.ComputeNamedPartitionKeyAsync(context);
+                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, namedKey, serviceDescription.ListenerName, context.RequestAborted);
                         break;
 
                     default:
@@ -162,7 +162,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             }
             else
             {
-                current = await _communicationClientFactory.GetClientAsync(previous.ResolvedServicePartition, serviceDescription.ListenerName, default(CancellationToken));
+                current = await _communicationClientFactory.GetClientAsync(previous.ResolvedServicePartition, serviceDescription.ListenerName, context.RequestAborted);
             }
 
             return current;

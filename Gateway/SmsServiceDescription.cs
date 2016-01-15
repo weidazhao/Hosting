@@ -13,9 +13,9 @@ namespace Gateway
         {
         }
 
-        public override Task<long> ComputeUniformInt64PartitionKeyAsync(HttpRequest request)
+        public override Task<long> ComputeUniformInt64PartitionKeyAsync(HttpContext context)
         {
-            var pathSegments = request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             // Assumes that the last two segments in the path are {user}/{message}
             string user = pathSegments[pathSegments.Length - 2];
