@@ -25,147 +25,116 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             // Reviewing the license of the code will be needed if this code is to be used in production.
             //
 
-            const int MaxRetry = 5;
-            const int DelayInSeconds = 1;
+            var servicePartitionClient = await ResolveServicePartitionClientAsync(context, options);
 
-            CommunicationClient communicationClient = null;
-
-            for (int retry = 0; retry < MaxRetry; retry++)
+            await servicePartitionClient.InvokeWithRetryAsync(async communicationClient =>
             {
-                try
+                var requestMessage = new HttpRequestMessage();
+
+                //
+                // Copy the request method
+                //
+                requestMessage.Method = new HttpMethod(context.Request.Method);
+
+                //
+                // Copy the request content
+                //
+                if (!StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "GET") &&
+                    !StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "HEAD") &&
+                    !StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "DELETE") &&
+                    !StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "TRACE"))
                 {
-                    communicationClient = await ResolveCommunicationClientAsync(context, options.ServiceDescription, communicationClient);
+                    requestMessage.Content = new StreamContent(context.Request.Body);
+                }
 
-                    if (communicationClient != null)
+                //
+                // Copy the request headers
+                //
+                foreach (var header in context.Request.Headers)
+                {
+                    if (!requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray()) && requestMessage.Content != null)
                     {
-                        var requestMessage = new HttpRequestMessage();
-
-                        //
-                        // Copy the request method
-                        //
-                        requestMessage.Method = new HttpMethod(context.Request.Method);
-
-                        //
-                        // Copy the request content
-                        //
-                        if (!StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "GET") &&
-                            !StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "HEAD") &&
-                            !StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "DELETE") &&
-                            !StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "TRACE"))
-                        {
-                            requestMessage.Content = new StreamContent(context.Request.Body);
-                        }
-
-                        //
-                        // Copy the request headers
-                        //
-                        foreach (var header in context.Request.Headers)
-                        {
-                            if (!requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray()) && requestMessage.Content != null)
-                            {
-                                requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
-                            }
-                        }
-
-                        //
-                        // Construct the request URL
-                        //
-                        var requestUriBuilder = new UriBuilder();
-                        requestUriBuilder.Scheme = communicationClient.ResolvedServiceEndpoint.Scheme;
-                        requestUriBuilder.Host = communicationClient.ResolvedServiceEndpoint.Host;
-                        requestUriBuilder.Port = communicationClient.ResolvedServiceEndpoint.Port;
-                        requestUriBuilder.Path = PathString.FromUriComponent(communicationClient.ResolvedServiceEndpoint) + context.Request.Path + context.Request.QueryString;
-
-                        requestMessage.RequestUri = requestUriBuilder.Uri;
-
-                        //
-                        // Set host header
-                        //
-                        requestMessage.Headers.Host = communicationClient.ResolvedServiceEndpoint.Host + ":" + communicationClient.ResolvedServiceEndpoint.Port;
-
-                        //
-                        // Send request and copy the result back to HttpResponse
-                        //
-                        using (var responseMessage = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, context.RequestAborted))
-                        {
-                            //
-                            // Copy the status code
-                            //
-                            context.Response.StatusCode = (int)responseMessage.StatusCode;
-
-                            //
-                            // Copy the response headers
-                            //
-                            foreach (var header in responseMessage.Headers)
-                            {
-                                context.Response.Headers[header.Key] = header.Value.ToArray();
-                            }
-
-                            foreach (var header in responseMessage.Content.Headers)
-                            {
-                                context.Response.Headers[header.Key] = header.Value.ToArray();
-                            }
-
-                            // SendAsync removes chunking from the response. This removes the header so it doesn't expect a chunked response.
-                            context.Response.Headers.Remove("transfer-encoding");
-
-                            //
-                            // Copy the response content
-                            //
-                            await responseMessage.Content.CopyToAsync(context.Response.Body);
-                        }
-
-                        break;
+                        requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
                     }
                 }
-                catch
-                {
-                    // TODO
-                    // Analyze the exception and decide whether to retry
-                }
 
                 //
-                // Wait for some time before retry
+                // Construct the request URL
                 //
-                if (retry < MaxRetry - 1)
+                var requestUriBuilder = new UriBuilder();
+                requestUriBuilder.Scheme = communicationClient.ResolvedServiceEndpoint.Scheme;
+                requestUriBuilder.Host = communicationClient.ResolvedServiceEndpoint.Host;
+                requestUriBuilder.Port = communicationClient.ResolvedServiceEndpoint.Port;
+                requestUriBuilder.Path = PathString.FromUriComponent(communicationClient.ResolvedServiceEndpoint) + context.Request.Path + context.Request.QueryString;
+
+                requestMessage.RequestUri = requestUriBuilder.Uri;
+
+                //
+                // Set host header
+                //
+                requestMessage.Headers.Host = communicationClient.ResolvedServiceEndpoint.Host + ":" + communicationClient.ResolvedServiceEndpoint.Port;
+
+                //
+                // Send request and copy the result back to HttpResponse
+                //
+                using (var responseMessage = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, context.RequestAborted))
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(DelayInSeconds));
+                    //
+                    // Copy the status code
+                    //
+                    context.Response.StatusCode = (int)responseMessage.StatusCode;
+
+                    //
+                    // Copy the response headers
+                    //
+                    foreach (var header in responseMessage.Headers)
+                    {
+                        context.Response.Headers[header.Key] = header.Value.ToArray();
+                    }
+
+                    foreach (var header in responseMessage.Content.Headers)
+                    {
+                        context.Response.Headers[header.Key] = header.Value.ToArray();
+                    }
+
+                    // SendAsync removes chunking from the response. This removes the header so it doesn't expect a chunked response.
+                    context.Response.Headers.Remove("transfer-encoding");
+
+                    //
+                    // Copy the response content
+                    //
+                    await responseMessage.Content.CopyToAsync(context.Response.Body);
                 }
-            }
+            });
         }
 
-        private async Task<CommunicationClient> ResolveCommunicationClientAsync(HttpContext context, IServiceDescription serviceDescription, CommunicationClient previous)
+        private async Task<ServicePartitionClient<CommunicationClient>> ResolveServicePartitionClientAsync(HttpContext context, GatewayOptions options)
         {
-            CommunicationClient current = null;
+            ServicePartitionClient<CommunicationClient> client = null;
 
-            if (previous == null)
+            switch (options.ServiceDescription.PartitionKind)
             {
-                switch (serviceDescription.PartitionKind)
-                {
-                    case ServicePartitionKind.Singleton:
-                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, serviceDescription.ListenerName, context.RequestAborted);
-                        break;
+                case ServicePartitionKind.Singleton:
+                    client = new ServicePartitionClient<CommunicationClient>(_communicationClientFactory, options.ServiceDescription.ServiceName);
+                    break;
 
-                    case ServicePartitionKind.Int64Range:
-                        long int64RangeKey = await serviceDescription.ComputeUniformInt64PartitionKeyAsync(context);
-                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, int64RangeKey, serviceDescription.ListenerName, context.RequestAborted);
-                        break;
+                case ServicePartitionKind.Int64Range:
+                    long int64RangeKey = await options.ServiceDescription.ComputeUniformInt64PartitionKeyAsync(context);
+                    client = new ServicePartitionClient<CommunicationClient>(_communicationClientFactory, options.ServiceDescription.ServiceName, int64RangeKey);
+                    break;
 
-                    case ServicePartitionKind.Named:
-                        string namedKey = await serviceDescription.ComputeNamedPartitionKeyAsync(context);
-                        current = await _communicationClientFactory.GetClientAsync(serviceDescription.ServiceName, namedKey, serviceDescription.ListenerName, context.RequestAborted);
-                        break;
+                case ServicePartitionKind.Named:
+                    string namedKey = await options.ServiceDescription.ComputeNamedPartitionKeyAsync(context);
+                    client = new ServicePartitionClient<CommunicationClient>(_communicationClientFactory, options.ServiceDescription.ServiceName, namedKey);
+                    break;
 
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                current = await _communicationClientFactory.GetClientAsync(previous.ResolvedServicePartition, serviceDescription.ListenerName, context.RequestAborted);
+                default:
+                    break;
             }
 
-            return current;
+            client.ListenerName = options.ServiceDescription.ListenerName;
+
+            return client;
         }
 
         private sealed class CommunicationClient : ICommunicationClient
