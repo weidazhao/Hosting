@@ -1,7 +1,7 @@
 # About The Sample
 Today the scenario we've enabled is to host ASP.NET 5 web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET 5 Web API as communication listeners in their stateless services or stateful services, just like what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET 5 RC2, this becomes possible.
 
-This sample demonstrates how ASP.NET 5 Web API is used as a communication listener in a stateful service. Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
+This sample demonstrates how ASP.NET 5 Web API is used in a communication listener of stateful services as well as how to build a shared HTTP gateway to forward requests to multiple stateful services behind it. Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
 
 # How to Build & Run The Sample
 
@@ -11,7 +11,8 @@ This sample demonstrates how ASP.NET 5 Web API is used as a communication listen
 4. In the command prompt, run _dnvm install 1.0.0-rc2-16357 -a x64 -u_.
 5. Clone the repo and open the solution in Visual Studio running as admin.
 6. In Visual Studio, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetvnext/api/v3/index.json.
-7. After all the packages are restored, F5 to run the app.
+7. After all the packages are restored, Ctrl F5 / F5 to run the app.
+8. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services.
 
 # Key Code Snippets
 
@@ -101,4 +102,64 @@ public class AspNetCommunicationListener : ICommunicationListener
     </Endpoints>
   </Resources>
 </ServiceManifest>
+```
+
+## Configure HTTP Gateway
+```csharp
+public class Startup
+{
+    ...
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    {
+        //
+        // Scenarios:
+        // 1. Multiple services.
+        // 2. Various versions or kinds of clients side by side.
+        //
+
+        //
+        // SMS
+        //
+        app.Map("/sms",
+            subApp =>
+            {
+                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new SmsServiceDescription() });
+            }
+        );
+
+        //
+        // Counter
+        //
+        app.Map("/counter",
+            subApp =>
+            {
+                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new CounterServiceDescription() });
+            }
+        );
+
+        app.Map("/Hosting/CounterService",
+            subApp =>
+            {
+                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new CounterServiceDescription() });
+            }
+        );
+
+        app.MapWhen(
+            context =>
+            {
+                StringValues serviceNames;
+
+                return context.Request.Headers.TryGetValue("SF-ServiceName", out serviceNames) &&
+                       serviceNames.Count == 1 &&
+                       serviceNames[0] == "fabric:/Hosting/CounterService";
+            },
+            subApp =>
+            {
+                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new CounterServiceDescription() });
+            }
+        );
+    }
+}
 ```
