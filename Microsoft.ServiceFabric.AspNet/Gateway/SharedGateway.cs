@@ -164,6 +164,23 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
             {
                 return client.ResolvedServiceEndpoint == new Uri(endpoint, UriKind.Absolute);
             }
+
+            protected override bool OnHandleException(Exception ex, out ExceptionHandlingResult result)
+            {
+                //
+                // TODO:
+                // Analyze the given exception and return a proper result.
+
+                result = new ExceptionHandlingRetryResult()
+                {
+                    ExceptionId = ex.GetType().GUID.ToString(),
+                    IsTransient = false,
+                    MaxRetryCount = 5,
+                    RetryDelay = TimeSpan.FromSeconds(1)
+                };
+
+                return true;
+            }
         }
     }
 }
