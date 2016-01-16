@@ -34,6 +34,9 @@ namespace Gateway
             // 2. Various versions or kinds of clients side by side.
             //
 
+            //
+            // SMS
+            //
             app.Map("/sms",
                 subApp =>
                 {
@@ -41,6 +44,9 @@ namespace Gateway
                 }
             );
 
+            //
+            // Counter
+            //
             app.Map("/counter",
                 subApp =>
                 {
