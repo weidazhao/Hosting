@@ -27,9 +27,9 @@ namespace Hosting.Tests
                 client.BaseAddress = new Uri("http://localhost:8000");
 
                 // SMS
-                LogResult(await client.PostAsync("/sms/api/sms/unicone/hello", new StringContent(string.Empty)));
+                LogResult(await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty)));
 
-                LogResult(await client.GetAsync("/sms/api/sms/unicone"));
+                LogResult(await client.GetAsync("/sms/api/sms/unicorn"));
 
                 // Counter
                 LogResult(await client.PostAsync("/counter/api/counter", new StringContent(string.Empty)));
