@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,31 +7,30 @@ namespace Microsoft.ServiceFabric.AspNet
 {
     public class AspNetCommunicationListener : ICommunicationListener
     {
-        private readonly IWebApplication _webApp;
+        private readonly IWebHost _webHost;
         private readonly string _publishingAddress;
-        private IDisposable _token;
 
-        public AspNetCommunicationListener(IWebApplication webApp, string publishingAddress)
+        public AspNetCommunicationListener(IWebHostBuilder webHostBuilder, string publishingAddress)
         {
-            _webApp = webApp;
+            _webHost = webHostBuilder.Build();
             _publishingAddress = publishingAddress;
         }
 
         public void Abort()
         {
-            _token?.Dispose();
+            _webHost.Dispose();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            _token?.Dispose();
+            _webHost.Dispose();
 
             return Task.FromResult(true);
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            _token = _webApp.Start();
+            _webHost.Start();
 
             return Task.FromResult(_publishingAddress);
         }

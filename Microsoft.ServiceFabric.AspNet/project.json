@@ -7,7 +7,7 @@
   "licenseUrl": "",
 
   "dependencies": {
-    "Microsoft.AspNet.Hosting": "1.0.0-rc2-16161",
+    "Microsoft.AspNet.Hosting": "1.0.0-rc2-16239",
     "Microsoft.ServiceFabric": "4.4.87-preview",
     "Microsoft.ServiceFabric.Services": "1.4.87-preview"
   },

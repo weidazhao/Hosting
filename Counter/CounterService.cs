@@ -62,18 +62,16 @@ namespace Counter
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Build an ASP.NET 5 web application that serves as the communication listener.
-            var webApp = new WebApplicationBuilder().UseConfiguration(WebApplicationConfiguration.GetDefault())
-                                                    .UseStartup<Startup>()
-                                                    .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
-                                                    .Build();
-
-            // Replace the address with the one dynamically allocated by Service Fabric.
+            // Get the address dynamically allocated by Service Fabric.
             string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "CounterTypeEndpoint");
-            webApp.GetAddresses().Clear();
-            webApp.GetAddresses().Add(listeningAddress);
 
-            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp, AddressUtilities.GetPublishingAddress(listeningAddress))) };
+            // Build an ASP.NET 5 web application that serves as the communication listener.
+            var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
+                                                     .UseStartup<Startup>()
+                                                     .UseUrls(listeningAddress)
+                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this));
+
+            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder, AddressUtilities.GetPublishingAddress(listeningAddress))) };
         }
     }
 }

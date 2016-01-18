@@ -7,12 +7,13 @@ This sample demonstrates how ASP.NET 5 Web API is used in a communication listen
 
 1. Install Service Fabric runtime, SDK and tools - 1.4.87: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
 2. Launch 'Developer Command Prompt for VS2015' as admin and upgrade DNVM by running: https://github.com/aspnet/home#cmd
-3. In the command prompt, run _dnvm install 1.0.0-rc2-16357 -a x86 -u_.
-4. In the command prompt, run _dnvm install 1.0.0-rc2-16357 -a x64 -u_.
-5. Clone the repo and open the solution in Visual Studio running as admin.
-6. In Visual Studio, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetvnext/api/v3/index.json.
-7. After all the packages are restored, Ctrl F5 / F5 to run the app.
-8. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services.
+3. In the command prompt, run _set DNX_UNSTABLE_FEED=https://www.myget.org/F/aspnetcidev/_.
+4. In the command prompt, run _dnvm install 1.0.0-rc2-16397 -a x86 -u_.
+5. In the command prompt, run _dnvm install 1.0.0-rc2-16397 -a x64 -u_.
+6. Clone the repo and open the solution in Visual Studio running as admin.
+7. In Visual Studio, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
+8. After all the packages are restored, Ctrl F5 / F5 to run the app.
+9. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services.
 
 # Key Code Snippets
 
@@ -24,18 +25,16 @@ public class MyStatefulService : StatefulService
     
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        // Build an ASP.NET 5 web application that serves as the communication listener.
-        var webApp = new WebApplicationBuilder().UseConfiguration(WebApplicationConfiguration.GetDefault())
-                                                .UseStartup<Startup>()
-                                                .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this))
-                                                .Build();
-
-        // Replace the address with the one dynamically allocated by Service Fabric.
+        // Get the address dynamically allocated by Service Fabric.
         string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "MyStatefulTypeEndpoint");
-        webApp.GetAddresses().Clear();
-        webApp.GetAddresses().Add(listeningAddress);
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webApp, AddressUtilities.GetPublishingAddress(listeningAddress))) };
+        // Build an ASP.NET 5 web application that serves as the communication listener.
+        var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
+                                                 .UseStartup<Startup>()
+                                                 .UseUrls(listeningAddress)
+                                                 .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this));
+
+        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder, AddressUtilities.GetPublishingAddress(listeningAddress))) };
     }
 }
 ```
@@ -44,31 +43,30 @@ public class MyStatefulService : StatefulService
 ```csharp
 public class AspNetCommunicationListener : ICommunicationListener
 {
-    private readonly IWebApplication _webApp;
+    private readonly IWebHost _webHost;
     private readonly string _publishingAddress;
-    private IDisposable _token;
 
-    public AspNetCommunicationListener(IWebApplication webApp, string publishingAddress)
+    public AspNetCommunicationListener(IWebHostBuilder webHostBuilder, string publishingAddress)
     {
-        _webApp = webApp;
+        _webHost = webHostBuilder.Build();
         _publishingAddress = publishingAddress;
     }
 
     public void Abort()
     {
-        _token?.Dispose();
+        _webHost.Dispose();
     }
 
     public Task CloseAsync(CancellationToken cancellationToken)
     {
-        _token?.Dispose();
+        _webHost.Dispose();
 
         return Task.FromResult(true);
     }
 
     public Task<string> OpenAsync(CancellationToken cancellationToken)
     {
-        _token = _webApp.Start();
+        _webHost.Start();
 
         return Task.FromResult(_publishingAddress);
     }
@@ -78,19 +76,19 @@ public class AspNetCommunicationListener : ICommunicationListener
 ## ServiceManifest.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<ServiceManifest Name="Web"
+<ServiceManifest Name="MyStateful"
                  Version="1.0.0"
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ServiceTypes>
-    <StatefulServiceType ServiceTypeName="WebType" HasPersistedState="true" />
+    <StatefulServiceType ServiceTypeName="MyStatefulType" HasPersistedState="true" />
   </ServiceTypes>
-  <CodePackage Name="C" Version="1.0.0">
+  <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16357\bin\dnx.exe</Program>
-        <Arguments>--project approot\src\Web Web</Arguments>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16397\bin\dnx.exe</Program>
+        <Arguments>--project approot\src\MyStateful MyStateful</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
       </ExeHost>
@@ -98,7 +96,7 @@ public class AspNetCommunicationListener : ICommunicationListener
   </CodePackage>
   <Resources>
     <Endpoints>
-      <Endpoint Name="WebTypeEndpoint" Protocol="http" Type="Input" />
+      <Endpoint Name="MyStatefulTypeEndpoint" Protocol="http" Type="Input" />
     </Endpoints>
   </Resources>
 </ServiceManifest>
