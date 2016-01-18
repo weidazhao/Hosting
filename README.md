@@ -10,8 +10,8 @@ This sample demonstrates how ASP.NET 5 Web API is used in a communication listen
 3. In the command prompt, run _set DNX_UNSTABLE_FEED=https://www.myget.org/F/aspnetcidev/_.
 4. In the command prompt, run _dnvm install 1.0.0-rc2-16397 -a x86 -u_.
 5. In the command prompt, run _dnvm install 1.0.0-rc2-16397 -a x64 -u_.
-6. Clone the repo and open the solution in Visual Studio running as admin.
-7. In Visual Studio, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
+6. Open Visual Studio running as admin, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
+7. Clone the repo and open the solution.
 8. After all the packages are restored, Ctrl F5 / F5 to run the app.
 9. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services.
 
