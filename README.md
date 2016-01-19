@@ -1,7 +1,11 @@
 # About The Sample
 Today the scenario we've enabled is to host ASP.NET 5 web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET 5 Web API as communication listeners in their stateless services or stateful services, just like what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET 5 RC2, this becomes possible.
 
-This sample demonstrates how ASP.NET 5 Web API is used in a communication listener of stateful services as well as how to build a shared HTTP gateway to forward requests to multiple stateful services behind it. Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
+This sample demonstrates:
+1. How ASP.NET 5 Web API can be used in a communication listener of stateless/stateful services.
+2. How to build a shared HTTP gateway to forward requests to multiple services behind it.
+
+Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
 
 # How to Build & Run The Sample
 
