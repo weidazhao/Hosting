@@ -5,9 +5,9 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-16329",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-16000",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-16000",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
     "Microsoft.ServiceFabric": "4.4.87-preview",
     "Microsoft.ServiceFabric.AspNet": "1.0.0-*",
     "Microsoft.ServiceFabric.Services": "1.4.87-preview"
