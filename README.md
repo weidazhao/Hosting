@@ -4,7 +4,7 @@ Today the scenario we've enabled is to host ASP.NET 5 web application as a state
 This sample demonstrates:
 
 1. How ASP.NET 5 Web API can be used in a communication listener of stateless/stateful services.
-2. How to build a shared HTTP gateway to forward requests to multiple services behind it.
+2. How to build an HTTP gateway service to forward requests to multiple services behind it with the reusable and modular components.
 
 Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
 
