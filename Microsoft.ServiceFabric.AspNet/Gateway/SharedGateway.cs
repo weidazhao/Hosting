@@ -19,6 +19,16 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         public async Task InvokeAsync(HttpContext context, GatewayOptions options)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             //
             // NOTE:
             // Some of the code is copied from https://github.com/aspnet/Proxy/blob/dev/src/Microsoft.AspNet.Proxy/ProxyMiddleware.cs for prototype purpose.

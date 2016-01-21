@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,16 @@ namespace Microsoft.ServiceFabric.AspNet
 
         public AspNetCommunicationListener(IWebHostBuilder webHostBuilder, string publishingAddress)
         {
+            if (webHostBuilder == null)
+            {
+                throw new ArgumentNullException(nameof(webHostBuilder));
+            }
+
+            if (publishingAddress == null)
+            {
+                throw new ArgumentNullException(nameof(publishingAddress));
+            }
+
             _webHost = webHostBuilder.Build();
             _publishingAddress = publishingAddress;
         }

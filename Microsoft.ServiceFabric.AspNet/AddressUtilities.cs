@@ -7,6 +7,16 @@ namespace Microsoft.ServiceFabric.AspNet
     {
         public static string GetListeningAddress(ServiceInitializationParameters parameters, string endpointName)
         {
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            if (endpointName == null)
+            {
+                throw new ArgumentNullException(nameof(endpointName));
+            }
+
             var endpoint = parameters.CodePackageActivationContext.GetEndpoint(endpointName);
 
             if (parameters is StatefulServiceInitializationParameters)
@@ -27,6 +37,11 @@ namespace Microsoft.ServiceFabric.AspNet
 
         public static string GetPublishingAddress(string listeningAddress)
         {
+            if (listeningAddress == null)
+            {
+                throw new ArgumentNullException(nameof(listeningAddress));
+            }
+
             return listeningAddress.Replace("+", FabricRuntime.GetNodeContext().IPAddressOrFQDN);
         }
     }

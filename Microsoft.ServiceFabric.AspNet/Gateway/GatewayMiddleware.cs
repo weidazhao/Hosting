@@ -10,6 +10,11 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         public GatewayMiddleware(RequestDelegate next, GatewayOptions options)
         {
+            if (next == null)
+            {
+                throw new ArgumentNullException(nameof(next));
+            }
+
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
@@ -20,6 +25,11 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
         public Task Invoke(HttpContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             return SharedGateway.Default.InvokeAsync(context, _options);
         }
     }
