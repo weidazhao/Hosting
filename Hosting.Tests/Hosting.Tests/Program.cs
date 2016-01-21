@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hosting.Tests
@@ -22,31 +24,47 @@ namespace Hosting.Tests
 
         public static async Task RunTestsAsync()
         {
-            using (var client = new HttpClient())
+            using (var client = new HttpClient(new ConsoleLoggingHandler(), true))
             {
                 client.BaseAddress = new Uri("http://localhost:8000");
 
                 // SMS
-                LogResult(await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty)));
+                await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty));
 
-                LogResult(await client.GetAsync("/sms/api/sms/unicorn"));
+                await client.GetAsync("/sms/api/sms/unicorn");
 
                 // Counter
-                LogResult(await client.PostAsync("/counter/api/counter", new StringContent(string.Empty)));
+                await client.PostAsync("/counter/api/counter", new StringContent(string.Empty));
 
-                LogResult(await client.GetAsync("/counter/api/counter"));
+                await client.GetAsync("/counter/api/counter");
 
-                LogResult(await client.GetAsync("/Hosting/CounterService/api/counter"));
+                await client.GetAsync("/Hosting/CounterService/api/counter");
 
                 var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
                 request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
-                LogResult(await client.SendAsync(request));
+                await client.SendAsync(request);
             }
         }
 
-        private static void LogResult(HttpResponseMessage response)
+        private sealed class ConsoleLoggingHandler : DelegatingHandler
         {
-            Console.WriteLine($"Status: {response.StatusCode} Method: {response.RequestMessage.Method} URL: {response.RequestMessage.RequestUri}");
+            public ConsoleLoggingHandler()
+            {
+                InnerHandler = new HttpClientHandler();
+            }
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                var stopWatch = Stopwatch.StartNew();
+
+                var response = await base.SendAsync(request, cancellationToken);
+
+                stopWatch.Stop();
+
+                Console.WriteLine($"Status: {response.StatusCode} Method: {response.RequestMessage.Method} URL: {response.RequestMessage.RequestUri} Time elapsed: {stopWatch.Elapsed}");
+
+                return response;
+            }
         }
     }
 }
