@@ -30,16 +30,13 @@ public class MyStatefulService : StatefulService
     
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        // Get the address dynamically allocated by Service Fabric.
-        string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "MyStatefulTypeEndpoint");
-
         // Build an ASP.NET 5 web application that serves as the communication listener.
         var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
                                                  .UseStartup<Startup>()
-                                                 .UseUrls(listeningAddress)
+                                                 .UseServiceFabricEndpoint(ServiceInitializationParameters, "MyStatefulTypeEndpoint")
                                                  .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this));
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder, AddressUtilities.GetPublishingAddress(listeningAddress))) };
+        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
     }
 }
 ```
@@ -48,32 +45,40 @@ public class MyStatefulService : StatefulService
 ```csharp
 public class AspNetCommunicationListener : ICommunicationListener
 {
-    private readonly IWebHost _webHost;
-    private readonly string _publishingAddress;
+    private readonly IWebHostBuilder _webHostBuilder;
+    private IWebHost _webHost;
 
-    public AspNetCommunicationListener(IWebHostBuilder webHostBuilder, string publishingAddress)
+    public AspNetCommunicationListener(IWebHostBuilder webHostBuilder)
     {
-        _webHost = webHostBuilder.Build();
-        _publishingAddress = publishingAddress;
+        if (webHostBuilder == null)
+        {
+            throw new ArgumentNullException(nameof(webHostBuilder));
+        }
+
+        _webHostBuilder = webHostBuilder;
     }
 
     public void Abort()
     {
-        _webHost.Dispose();
+        _webHost?.Dispose();
     }
 
     public Task CloseAsync(CancellationToken cancellationToken)
     {
-        _webHost.Dispose();
+        _webHost?.Dispose();
 
         return Task.FromResult(true);
     }
 
     public Task<string> OpenAsync(CancellationToken cancellationToken)
     {
+        _webHost = _webHostBuilder.Build();
+
         _webHost.Start();
 
-        return Task.FromResult(_publishingAddress);
+        var feature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
+
+        return Task.FromResult(string.Join(";", feature.Addresses));
     }
 }
 ```

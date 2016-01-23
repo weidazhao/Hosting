@@ -10,15 +10,12 @@ namespace Gateway
     {
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            // Get the address dynamically allocated by Service Fabric.
-            string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "GatewayTypeEndpoint");
-
             // Build an ASP.NET 5 web application that serves as the communication listener.
             var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
                                                      .UseStartup<Startup>()
-                                                     .UseUrls(listeningAddress);
+                                                     .UseServiceFabricEndpoint(ServiceInitializationParameters, "GatewayTypeEndpoint");
 
-            return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webHostBuilder, AddressUtilities.GetPublishingAddress(listeningAddress))) };
+            return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
         }
     }
 }

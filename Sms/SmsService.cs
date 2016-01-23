@@ -54,16 +54,13 @@ namespace Sms
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Get the address dynamically allocated by Service Fabric.
-            string listeningAddress = AddressUtilities.GetListeningAddress(ServiceInitializationParameters, "SmsTypeEndpoint");
-
             // Build an ASP.NET 5 web application that serves as the communication listener.
             var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
                                                      .UseStartup<Startup>()
-                                                     .UseUrls(listeningAddress)
+                                                     .UseServiceFabricEndpoint(ServiceInitializationParameters, "SmsTypeEndpoint")
                                                      .ConfigureServices(services => services.AddSingleton<ISmsService>(this));
 
-            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder, AddressUtilities.GetPublishingAddress(listeningAddress))) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
         }
     }
 }
