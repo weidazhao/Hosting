@@ -55,12 +55,13 @@ namespace Sms
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
             // Build an ASP.NET 5 web application that serves as the communication listener.
-            var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
-                                                     .UseStartup<Startup>()
-                                                     .UseServiceFabricEndpoint(ServiceInitializationParameters, "SmsTypeEndpoint")
-                                                     .ConfigureServices(services => services.AddSingleton<ISmsService>(this));
+            var webHost = new WebHostBuilder().UseDefaultConfiguration()
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "SmsTypeEndpoint")
+                                              .ConfigureServices(services => services.AddSingleton<ISmsService>(this))
+                                              .Build();
 
-            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHost)) };
         }
     }
 }

@@ -31,12 +31,13 @@ public class MyStatefulService : StatefulService
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
         // Build an ASP.NET 5 web application that serves as the communication listener.
-        var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
-                                                 .UseStartup<Startup>()
-                                                 .UseServiceFabricEndpoint(ServiceInitializationParameters, "MyStatefulTypeEndpoint")
-                                                 .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this));
+        var webHost = new WebHostBuilder().UseDefaultConfiguration()
+                                          .UseStartup<Startup>()
+                                          .UseServiceFabricEndpoint(ServiceInitializationParameters, "MyStatefulTypeEndpoint")
+                                          .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this))
+                                          .Build();
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
+        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHost)) };
     }
 }
 ```
@@ -45,40 +46,37 @@ public class MyStatefulService : StatefulService
 ```csharp
 public class AspNetCommunicationListener : ICommunicationListener
 {
-    private readonly IWebHostBuilder _webHostBuilder;
-    private IWebHost _webHost;
+    private readonly IWebHost _webHost;
 
-    public AspNetCommunicationListener(IWebHostBuilder webHostBuilder)
+    public AspNetCommunicationListener(IWebHost webHost)
     {
-        if (webHostBuilder == null)
+        if (webHost == null)
         {
-            throw new ArgumentNullException(nameof(webHostBuilder));
+            throw new ArgumentNullException(nameof(webHost));
         }
 
-        _webHostBuilder = webHostBuilder;
+        _webHost = webHost;
     }
 
     public void Abort()
     {
-        _webHost?.Dispose();
+        _webHost.Dispose();
     }
 
     public Task CloseAsync(CancellationToken cancellationToken)
     {
-        _webHost?.Dispose();
+        _webHost.Dispose();
 
         return Task.FromResult(true);
     }
 
     public Task<string> OpenAsync(CancellationToken cancellationToken)
     {
-        _webHost = _webHostBuilder.Build();
-
         _webHost.Start();
 
-        var feature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
+        var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-        return Task.FromResult(string.Join(";", feature.Addresses));
+        return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
     }
 }
 ```

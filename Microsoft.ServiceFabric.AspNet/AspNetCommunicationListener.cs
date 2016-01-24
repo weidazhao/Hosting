@@ -9,40 +9,37 @@ namespace Microsoft.ServiceFabric.AspNet
 {
     public class AspNetCommunicationListener : ICommunicationListener
     {
-        private readonly IWebHostBuilder _webHostBuilder;
-        private IWebHost _webHost;
+        private readonly IWebHost _webHost;
 
-        public AspNetCommunicationListener(IWebHostBuilder webHostBuilder)
+        public AspNetCommunicationListener(IWebHost webHost)
         {
-            if (webHostBuilder == null)
+            if (webHost == null)
             {
-                throw new ArgumentNullException(nameof(webHostBuilder));
+                throw new ArgumentNullException(nameof(webHost));
             }
 
-            _webHostBuilder = webHostBuilder;
+            _webHost = webHost;
         }
 
         public void Abort()
         {
-            _webHost?.Dispose();
+            _webHost.Dispose();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            _webHost?.Dispose();
+            _webHost.Dispose();
 
             return Task.FromResult(true);
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            _webHost = _webHostBuilder.Build();
-
             _webHost.Start();
 
-            var feature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
+            var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            return Task.FromResult(string.Join(";", feature.Addresses));
+            return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
         }
     }
 }

@@ -63,12 +63,13 @@ namespace Counter
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
             // Build an ASP.NET 5 web application that serves as the communication listener.
-            var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
-                                                     .UseStartup<Startup>()
-                                                     .UseServiceFabricEndpoint(ServiceInitializationParameters, "CounterTypeEndpoint")
-                                                     .ConfigureServices(services => services.AddSingleton<ICounterService>(this));
+            var webHost = new WebHostBuilder().UseDefaultConfiguration()
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "CounterTypeEndpoint")
+                                              .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
+                                              .Build();
 
-            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHost)) };
         }
     }
 }

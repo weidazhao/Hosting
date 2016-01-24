@@ -11,11 +11,12 @@ namespace Gateway
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
             // Build an ASP.NET 5 web application that serves as the communication listener.
-            var webHostBuilder = new WebHostBuilder().UseDefaultConfiguration()
-                                                     .UseStartup<Startup>()
-                                                     .UseServiceFabricEndpoint(ServiceInitializationParameters, "GatewayTypeEndpoint");
+            var webHost = new WebHostBuilder().UseDefaultConfiguration()
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "GatewayTypeEndpoint")
+                                              .Build();
 
-            return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webHostBuilder)) };
+            return new[] { new ServiceInstanceListener(_ => new AspNetCommunicationListener(webHost)) };
         }
     }
 }
