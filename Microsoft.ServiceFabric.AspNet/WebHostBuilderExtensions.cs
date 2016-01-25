@@ -25,7 +25,7 @@ namespace Microsoft.ServiceFabric.AspNet
 
             var endpoint = parameters.CodePackageActivationContext.GetEndpoint(endpointName);
 
-            string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}/{Guid.NewGuid()}";
+            string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
 
             return webHostBuilder.UseUrls(serverUrl);
         }
