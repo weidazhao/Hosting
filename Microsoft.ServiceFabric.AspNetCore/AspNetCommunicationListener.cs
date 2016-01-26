@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Server.Features;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Features;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.AspNet
+namespace Microsoft.ServiceFabric.AspNetCore
 {
-    public class AspNetCommunicationListener : ICommunicationListener
+    public class AspNetCoreCommunicationListener : ICommunicationListener
     {
         private readonly IWebHost _webHost;
 
-        public AspNetCommunicationListener(IWebHost webHost)
+        public AspNetCoreCommunicationListener(IWebHost webHost)
         {
             if (webHost == null)
             {

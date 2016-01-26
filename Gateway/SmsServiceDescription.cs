@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.ServiceFabric.AspNet.Gateway;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.ServiceFabric.AspNetCore.Gateway;
 using System;
 using System.Fabric;
 using System.Threading.Tasks;

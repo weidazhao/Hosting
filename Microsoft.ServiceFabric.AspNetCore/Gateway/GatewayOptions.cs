@@ -1,4 +1,4 @@
-﻿namespace Microsoft.ServiceFabric.AspNet.Gateway
+﻿namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 {
     public class GatewayOptions
     {

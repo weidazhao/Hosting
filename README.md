@@ -1,9 +1,9 @@
 # About The Sample
-Today the scenario we've enabled is to host ASP.NET 5 web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET 5 Web API as communication listeners in their stateless services or stateful services, just like what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET 5 RC2, this becomes possible.
+Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core Web API as communication listeners in their stateless services or stateful services, just like what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
 
 This sample demonstrates:
 
-1. How ASP.NET 5 Web API can be used in a communication listener of stateless/stateful services.
+1. How ASP.NET Core Web API can be used in a communication listener of stateless/stateful services.
 2. How to build an HTTP gateway service to forward requests to multiple services behind it with the reusable and modular components.
 
 Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
@@ -13,8 +13,8 @@ Please share your feedback to help us improve the experience in the future relea
 1. Install Service Fabric runtime, SDK and tools - 1.4.87: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
 2. Launch 'Developer Command Prompt for VS2015' as admin and upgrade DNVM by running: https://github.com/aspnet/home#cmd
 3. In the command prompt, run _set DNX_UNSTABLE_FEED=https://www.myget.org/F/aspnetcidev/_.
-4. In the command prompt, run _dnvm install 1.0.0-rc2-16411 -a x86 -u_.
-5. In the command prompt, run _dnvm install 1.0.0-rc2-16411 -a x64 -u_.
+4. In the command prompt, run _dnvm install 1.0.0-rc2-16430 -a x86 -u_.
+5. In the command prompt, run _dnvm install 1.0.0-rc2-16430 -a x64 -u_.
 6. Open Visual Studio running as admin, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
 7. Clone the repo and open the solution.
 8. After all the packages are restored, Ctrl F5 / F5 to run the app.
@@ -30,7 +30,7 @@ public class MyStatefulService : StatefulService
     
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        // Build an ASP.NET 5 web application that serves as the communication listener.
+        // Build an ASP.NET Core web application that serves as the communication listener.
         var webHost = new WebHostBuilder().UseDefaultConfiguration()
                                           .UseStartup<Startup>()
                                           .UseServiceFabricEndpoint(ServiceInitializationParameters, "MyStatefulTypeEndpoint")
@@ -42,7 +42,7 @@ public class MyStatefulService : StatefulService
 }
 ```
 
-## ASP.NET 5 Communication Listener Adapter
+## ASP.NET Core Communication Listener Adapter
 ```csharp
 public class AspNetCommunicationListener : ICommunicationListener
 {
@@ -95,7 +95,7 @@ public class AspNetCommunicationListener : ICommunicationListener
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16411\bin\dnx.exe</Program>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16430\bin\dnx.exe</Program>
         <Arguments>--project approot\src\MyStateful MyStateful</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />

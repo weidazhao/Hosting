@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 using System.Fabric;
@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.AspNet.Gateway
+namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 {
     public class SharedGateway
     {
@@ -31,7 +31,7 @@ namespace Microsoft.ServiceFabric.AspNet.Gateway
 
             //
             // NOTE:
-            // Some of the code is copied from https://github.com/aspnet/Proxy/blob/dev/src/Microsoft.AspNet.Proxy/ProxyMiddleware.cs for prototype purpose.
+            // Some of the code is copied from https://github.com/AspNet/Proxy/blob/dev/src/Microsoft.AspNetCore.Proxy/ProxyMiddleware.cs for prototype purpose.
             // Reviewing the license of the code will be needed if this code is to be used in production.
             //
 

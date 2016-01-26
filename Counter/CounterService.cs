@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ServiceFabric.AspNet;
+using Microsoft.ServiceFabric.AspNetCore;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -62,14 +62,14 @@ namespace Counter
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Build an ASP.NET 5 web application that serves as the communication listener.
+            // Build an ASP.NET Core web application that serves as a communication listener.
             var webHost = new WebHostBuilder().UseDefaultConfiguration()
                                               .UseStartup<Startup>()
                                               .UseServiceFabricEndpoint(ServiceInitializationParameters, "CounterTypeEndpoint")
                                               .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
                                               .Build();
 
-            return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHost)) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
         }
     }
 }

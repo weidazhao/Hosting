@@ -1,13 +1,13 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "Microsoft.ServiceFabric.AspNet Class Library",
+  "description": "Microsoft.ServiceFabric.AspNetCore Class Library",
   "authors": [ "dazhao" ],
   "tags": [ "" ],
   "projectUrl": "",
   "licenseUrl": "",
 
   "dependencies": {
-    "Microsoft.AspNet.Hosting": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-*",
     "Microsoft.ServiceFabric": "4.4.87-preview",
     "Microsoft.ServiceFabric.Services": "1.4.87-preview"
   },

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using System;
 
-namespace Microsoft.ServiceFabric.AspNet.Gateway
+namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 {
     public static class GatewayExtensions
     {

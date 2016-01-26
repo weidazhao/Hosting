@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Fabric;
 
-namespace Microsoft.ServiceFabric.AspNet
+namespace Microsoft.ServiceFabric.AspNetCore
 {
     public static class WebHostBuilderExtensions
     {

@@ -1,4 +1,4 @@
-﻿using Microsoft.ServiceFabric.AspNet.Gateway;
+﻿using Microsoft.ServiceFabric.AspNetCore.Gateway;
 using System;
 using System.Fabric;
 
