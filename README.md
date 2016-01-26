@@ -37,18 +37,18 @@ public class MyStatefulService : StatefulService
                                           .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this))
                                           .Build();
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCommunicationListener(webHost)) };
+        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
     }
 }
 ```
 
 ## ASP.NET Core Communication Listener Adapter
 ```csharp
-public class AspNetCommunicationListener : ICommunicationListener
+public class AspNetCoreCommunicationListener : ICommunicationListener
 {
     private readonly IWebHost _webHost;
 
-    public AspNetCommunicationListener(IWebHost webHost)
+    public AspNetCoreCommunicationListener(IWebHost webHost)
     {
         if (webHost == null)
         {
