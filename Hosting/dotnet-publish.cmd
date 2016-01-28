@@ -1,36 +1,28 @@
-set CURRENT_FOLDER=%~dp0
 set CONFIGURATION=Debug
 set FRAMEWORK=dnx451
+set SOLUTION_FOLDER=%~dp0..
+set PACKAGE_ROOT=%SOLUTION_FOLDER%\Hosting\pkg\%CONFIGURATION%
 
-if not exist %CURRENT_FOLDER%..\Microsoft.ServiceFabric.AspNetCore\project.lock.json (
-    dotnet restore %CURRENT_FOLDER%..\Microsoft.ServiceFabric.AspNetCore\
+if exist %PACKAGE_ROOT%\ (
+    rmdir /q /s %PACKAGE_ROOT%\
 )
 
-if not exist %CURRENT_FOLDER%..\Counter\project.lock.json (
-    dotnet restore %CURRENT_FOLDER%..\Counter\
+if not exist %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore\project.lock.json (
+    dotnet restore %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore\
 )
-dotnet publish %CURRENT_FOLDER%..\Counter\ -c %CONFIGURATION% -f %FRAMEWORK%
-robocopy /MIR %CURRENT_FOLDER%..\Counter\bin\%CONFIGURATION%\%FRAMEWORK%\ %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Counter\Code\
-copy /Y %CURRENT_FOLDER%..\Counter\appsettings.json %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Counter\Code\
-copy /Y %CURRENT_FOLDER%..\Counter\hosting.json %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Counter\Code\
-copy /Y %CURRENT_FOLDER%..\Counter\PackageRoot\ServiceManifest.xml %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Counter\
 
-if not exist %CURRENT_FOLDER%..\Gateway\project.lock.json (
-    dotnet restore %CURRENT_FOLDER%..\Gateway\
+for %%S in (Counter,Gateway,Sms) do (
+    if not exist %SOLUTION_FOLDER%\%%S\project.lock.json (
+        dotnet restore %SOLUTION_FOLDER%\%%S\
+    )
+
+    dotnet publish %SOLUTION_FOLDER%\%%S\ -c %CONFIGURATION% -f %FRAMEWORK%
+
+    robocopy /E %SOLUTION_FOLDER%\%%S\PackageRoot\ %PACKAGE_ROOT%\%%S\
+    robocopy /E %SOLUTION_FOLDER%\%%S\bin\%CONFIGURATION%\%FRAMEWORK%\ %PACKAGE_ROOT%\%%S\Code\
+    
+    copy /Y %SOLUTION_FOLDER%\%%S\appsettings.json %PACKAGE_ROOT%\%%S\Code\
+    copy /Y %SOLUTION_FOLDER%\%%S\hosting.json %PACKAGE_ROOT%\%%S\Code\
 )
-dotnet publish %CURRENT_FOLDER%..\Gateway\ -c %CONFIGURATION% -f %FRAMEWORK%
-robocopy /MIR %CURRENT_FOLDER%..\Gateway\bin\%CONFIGURATION%\%FRAMEWORK%\ %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Gateway\Code\
-copy /Y %CURRENT_FOLDER%..\Gateway\appsettings.json %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Gateway\Code\
-copy /Y %CURRENT_FOLDER%..\Gateway\hosting.json %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Gateway\Code\
-copy /Y %CURRENT_FOLDER%..\Gateway\PackageRoot\ServiceManifest.xml %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Gateway\
 
-if not exist %CURRENT_FOLDER%..\Sms\project.lock.json (
-    dotnet restore %CURRENT_FOLDER%..\Sms\
-)
-dotnet publish %CURRENT_FOLDER%..\Sms\ -c %CONFIGURATION% -f %FRAMEWORK%
-robocopy /MIR %CURRENT_FOLDER%..\Sms\bin\%CONFIGURATION%\%FRAMEWORK%\ %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Sms\Code\
-copy /Y %CURRENT_FOLDER%..\Sms\appsettings.json %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Sms\Code\
-copy /Y %CURRENT_FOLDER%..\Sms\hosting.json %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Sms\Code\
-copy /Y %CURRENT_FOLDER%..\Sms\PackageRoot\ServiceManifest.xml %CURRENT_FOLDER%\pkg\%CONFIGURATION%\Sms\
-
-copy /Y %CURRENT_FOLDER%ApplicationManifest.xml %CURRENT_FOLDER%\pkg\%CONFIGURATION%\
+copy /Y %SOLUTION_FOLDER%\Hosting\ApplicationManifest.xml %PACKAGE_ROOT%\
