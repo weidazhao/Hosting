@@ -6,6 +6,6 @@
        For a local cluster, you would typically not use any parameters.
          For example: <ClusterConnectionParameters />
   -->
-  <ClusterConnectionParameters />
+  <ClusterConnectionParameters ConnectionEndpoint="localhost:19000" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Local.xml" />
 </PublishProfile>
