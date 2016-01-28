@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,18 @@ namespace Sms
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.Use(next => async context =>
+            {
+                if (context.Request.Path == "/_status")
+                {
+                    await context.Response.WriteAsync("operational");
+                }
+                else
+                {
+                    await next(context);
+                }
+            });
+            
             app.UseMvc();
         }
     }
