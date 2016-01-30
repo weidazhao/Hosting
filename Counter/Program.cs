@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.AspNetCore;
 using System.Fabric;
 
@@ -13,8 +12,7 @@ namespace Counter
         {
             _webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                            .UseStartup<Startup>()
-                                           .UseServiceFabricEndpoint("CounterTypeEndpoint")
-                                           .ConfigureServices(services => services.AddTransient<IStartupFilter, ServiceRepoStartupFilter>())
+                                           .UseServiceFabric("CounterTypeEndpoint")
                                            .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())

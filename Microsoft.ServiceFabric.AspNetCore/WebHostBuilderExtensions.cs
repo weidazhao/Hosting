@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Fabric;
 
@@ -6,7 +7,7 @@ namespace Microsoft.ServiceFabric.AspNetCore
 {
     public static class WebHostBuilderExtensions
     {
-        public static IWebHostBuilder UseServiceFabricEndpoint(this IWebHostBuilder webHostBuilder, string endpointName)
+        public static IWebHostBuilder UseServiceFabric(this IWebHostBuilder webHostBuilder, string endpointName)
         {
             if (webHostBuilder == null)
             {
@@ -22,7 +23,11 @@ namespace Microsoft.ServiceFabric.AspNetCore
 
             string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
 
-            return webHostBuilder.UseUrls(serverUrl);
+            webHostBuilder.UseUrls(serverUrl);
+
+            webHostBuilder.ConfigureServices(services => services.AddTransient<IStartupFilter, ServiceFabricStartupFilter>());
+
+            return webHostBuilder;
         }
     }
 }

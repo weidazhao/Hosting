@@ -4,13 +4,13 @@ using System;
 
 namespace Microsoft.ServiceFabric.AspNetCore
 {
-    public class ServiceRepoStartupFilter : IStartupFilter
+    public class ServiceFabricStartupFilter : IStartupFilter
     {
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         {
             return builder =>
             {
-                builder.UseMiddleware<ServiceRepoMiddleware>();
+                builder.UseMiddleware<ServiceFabricMiddleware>();
                 next.Invoke(builder);
             };
         }

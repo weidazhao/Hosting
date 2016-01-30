@@ -9,7 +9,7 @@ namespace Gateway
     {
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            return new[] { new ServiceInstanceListener(_ => new AspNetCoreCommunicationListener(this, Program._webHost)) };
+            return new[] { new ServiceInstanceListener(_ => new AspNetCoreCommunicationListener(Program._webHost, this)) };
         }
     }
 }

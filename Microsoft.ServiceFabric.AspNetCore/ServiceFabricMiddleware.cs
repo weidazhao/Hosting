@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features.Internal;
 using System;
+using System.Fabric;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNetCore
 {
-    public class ServiceRepoMiddleware
+    public class ServiceFabricMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly IServiceProvider _services;
 
-        public ServiceRepoMiddleware(RequestDelegate next, IServiceProvider services)
+        public ServiceFabricMiddleware(RequestDelegate next, IServiceProvider services)
         {
             if (next == null)
             {
@@ -33,28 +34,14 @@ namespace Microsoft.ServiceFabric.AspNetCore
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var service = ServiceRepo.Instance.GetService(context.Request);
-            if (service.Value == null)
-            {
-                context.Response.StatusCode = 404;
-                return;
-            }
-
-            context.Features.Set<IServiceProvidersFeature>(new MyServiceProvidersFeature(_services, service.Value));
-
-            //
-            // We found the right service instance/replica to process the request.
-            //
-            PathString idPath = new PathString("/" + service.Key);
             PathString remainingPath;
-            if (!context.Request.Path.StartsWithSegments(idPath, out remainingPath))
-            {
-                context.Response.StatusCode = 404;
-                return;
-            }
+            IStatefulServiceReplica replica;
 
-            context.Request.PathBase = context.Request.PathBase + idPath;
-            context.Request.Path = remainingPath;
+            if (UrlPrefixRegistry.Default.StartWithUrlPrefix(context.Request.Path, out remainingPath, out replica))
+            {
+                context.Request.Path = remainingPath;
+                context.Features.Set<IServiceProvidersFeature>(new MyServiceProvidersFeature(_services, replica));
+            }
 
             await _next.Invoke(context);
         }
