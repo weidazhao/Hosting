@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ServiceFabric.AspNetCore;
+﻿using Microsoft.ServiceFabric.AspNetCore;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -54,14 +52,7 @@ namespace Sms
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Build an ASP.NET Core web application that serves as the communication listener.
-            var webHost = new WebHostBuilder().UseDefaultConfiguration()
-                                              .UseStartup<Startup>()
-                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "SmsTypeEndpoint")
-                                              .ConfigureServices(services => services.AddSingleton<ISmsService>(this))
-                                              .Build();
-
-            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(this, Program._webHost)) };
         }
     }
 }

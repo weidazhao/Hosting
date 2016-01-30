@@ -6,16 +6,11 @@ namespace Microsoft.ServiceFabric.AspNetCore
 {
     public static class WebHostBuilderExtensions
     {
-        public static IWebHostBuilder UseServiceFabricEndpoint(this IWebHostBuilder webHostBuilder, ServiceInitializationParameters parameters, string endpointName)
+        public static IWebHostBuilder UseServiceFabricEndpoint(this IWebHostBuilder webHostBuilder, string endpointName)
         {
             if (webHostBuilder == null)
             {
                 throw new ArgumentNullException(nameof(webHostBuilder));
-            }
-
-            if (parameters == null)
-            {
-                throw new ArgumentNullException(nameof(parameters));
             }
 
             if (endpointName == null)
@@ -23,7 +18,7 @@ namespace Microsoft.ServiceFabric.AspNetCore
                 throw new ArgumentNullException(nameof(endpointName));
             }
 
-            var endpoint = parameters.CodePackageActivationContext.GetEndpoint(endpointName);
+            var endpoint = FabricRuntime.GetActivationContext().GetEndpoint(endpointName);
 
             string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
 
