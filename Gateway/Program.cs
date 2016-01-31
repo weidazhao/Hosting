@@ -8,15 +8,7 @@ namespace Gateway
     {
         public static void Main(string[] args)
         {
-            var options = new ServiceFabricOptions()
-            {
-                EndpointName = "GatewayTypeEndpoint"
-            };
-
-            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
-                                              .UseStartup<Startup>()
-                                              .UseServiceFabric(options)
-                                              .Build();
+            var webHost = BuildWebHost(args);
 
             using (var fabricRuntime = FabricRuntime.Create())
             {
@@ -24,6 +16,19 @@ namespace Gateway
 
                 webHost.Run();
             }
+        }
+
+        private static IWebHost BuildWebHost(string[] args)
+        {
+            var options = new ServiceFabricOptions()
+            {
+                EndpointName = "GatewayTypeEndpoint"
+            };
+
+            return new WebHostBuilder().UseDefaultConfiguration(args)
+                                       .UseStartup<Startup>()
+                                       .UseServiceFabric(options)
+                                       .Build();
         }
     }
 }
