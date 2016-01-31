@@ -28,9 +28,15 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        var options = new ServiceFabricOptions()
+        {
+            EndpointName = "MyStatefulTypeEndpoint",
+            ServiceType = typeof(MyStatefulService)
+        };
+
         var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                           .UseStartup<Startup>()
-                                          .UseServiceFabric(new ServiceFabricOptions("MyStatefulTypeEndpoint"))
+                                          .UseServiceFabric(options)
                                           .Build();
 
         using (var fabricRuntime = FabricRuntime.Create())
