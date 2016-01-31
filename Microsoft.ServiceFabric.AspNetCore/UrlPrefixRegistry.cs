@@ -9,48 +9,69 @@ namespace Microsoft.ServiceFabric.AspNetCore
     public class UrlPrefixRegistry
     {
         private readonly object _lockObject = new object();
-        private readonly List<Entry> _entries = new List<Entry>();
+        private readonly SortedList<string, object> _entries = new SortedList<string, object>();
 
         public static readonly UrlPrefixRegistry Default = new UrlPrefixRegistry();
 
-        public string Register(IStatefulServiceReplica replica)
+        public string Register(object instanceOrReplica)
         {
-            if (replica == null)
+            if (instanceOrReplica == null)
             {
-                throw new ArgumentNullException(nameof(replica));
+                throw new ArgumentNullException(nameof(instanceOrReplica));
+            }
+
+            if (!(instanceOrReplica is IStatelessServiceInstance) && !(instanceOrReplica is IStatefulServiceReplica))
+            {
+                throw new ArgumentException(null, nameof(instanceOrReplica));
             }
 
             lock (_lockObject)
             {
-                if (_entries.Any(p => p.Replica == replica))
+                if (_entries.ContainsValue(instanceOrReplica))
                 {
-                    throw new ArgumentException(null, nameof(replica));
+                    throw new ArgumentException(null, nameof(instanceOrReplica));
                 }
 
-                string urlPrefix = $"/replica-{Guid.NewGuid()}";
+                string urlPrefix = null;
 
-                _entries.Add(new Entry() { UrlPrefix = urlPrefix, Replica = replica });
+                if (instanceOrReplica is IStatelessServiceInstance)
+                {
+                    urlPrefix = "/";
+                }
+
+                if (instanceOrReplica is IStatefulServiceReplica)
+                {
+                    urlPrefix = $"/replica-{Guid.NewGuid()}";
+                }
+
+                _entries.Add(urlPrefix, instanceOrReplica);
 
                 return urlPrefix;
             }
         }
 
-        public bool Unregister(IStatefulServiceReplica replica)
+        public bool Unregister(object instanceOrReplica)
         {
-            if (replica == null)
+            if (instanceOrReplica == null)
             {
-                throw new ArgumentNullException(nameof(replica));
+                throw new ArgumentNullException(nameof(instanceOrReplica));
             }
 
             lock (_lockObject)
             {
-                Entry entry = _entries.FirstOrDefault(p => p.Replica == replica);
+                int index = _entries.IndexOfValue(instanceOrReplica);
 
-                return entry != null ? _entries.Remove(entry) : false;
+                if (index >= 0)
+                {
+                    _entries.RemoveAt(index);
+                    return true;
+                }
+
+                return false;
             }
         }
 
-        public bool StartWithUrlPrefix(PathString path, out PathString remainingPath, out IStatefulServiceReplica replica)
+        public bool StartWithUrlPrefix(PathString path, out PathString remainingPath, out object instanceOrReplica)
         {
             if (path == null)
             {
@@ -58,25 +79,18 @@ namespace Microsoft.ServiceFabric.AspNetCore
             }
 
             remainingPath = null;
-            replica = null;
+            instanceOrReplica = null;
 
-            foreach (Entry entry in _entries)
+            foreach (var entry in _entries.Reverse())
             {
-                if (path.StartsWithSegments(entry.UrlPrefix, out remainingPath))
+                if (path.StartsWithSegments(entry.Key, out remainingPath))
                 {
-                    replica = entry.Replica;
+                    instanceOrReplica = entry.Value;
                     return true;
                 }
             }
 
             return false;
-        }
-
-        private class Entry
-        {
-            public string UrlPrefix { get; set; }
-
-            public IStatefulServiceReplica Replica { get; set; }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Microsoft.ServiceFabric.AspNetCore
             return builder =>
             {
                 builder.UseMiddleware<ServiceFabricMiddleware>();
+
                 next.Invoke(builder);
             };
         }

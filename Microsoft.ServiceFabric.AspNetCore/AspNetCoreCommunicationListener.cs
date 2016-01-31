@@ -11,112 +11,59 @@ namespace Microsoft.ServiceFabric.AspNetCore
 {
     public class AspNetCoreCommunicationListener : ICommunicationListener
     {
-        private readonly ICommunicationListener _impl;
+        private readonly IWebHost _webHost;
+        private readonly object _instanceOrReplica;
 
-        public AspNetCoreCommunicationListener(IWebHost webHost, IStatelessServiceInstance instance)
+        public AspNetCoreCommunicationListener(IWebHost webHost, object instanceOrReplica)
         {
-            _impl = new StatelessServiceInstanceCommunicationListener(webHost, instance);
-        }
+            if (webHost == null)
+            {
+                throw new ArgumentNullException(nameof(webHost));
+            }
 
-        public AspNetCoreCommunicationListener(IWebHost webHost, IStatefulServiceReplica replica)
-        {
-            _impl = new StatefulServiceReplicaCommunicationListener(webHost, replica);
+            if (instanceOrReplica == null)
+            {
+                throw new ArgumentNullException(nameof(instanceOrReplica));
+            }
+
+            if (!(instanceOrReplica is IStatelessServiceInstance) && !(instanceOrReplica is IStatefulServiceReplica))
+            {
+                throw new ArgumentException(null, nameof(instanceOrReplica));
+            }
+
+            _webHost = webHost;
+            _instanceOrReplica = instanceOrReplica;
         }
 
         public void Abort()
         {
-            _impl.Abort();
+            UrlPrefixRegistry.Default.Unregister(_instanceOrReplica);
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            return _impl.CloseAsync(cancellationToken);
+            UrlPrefixRegistry.Default.Unregister(_instanceOrReplica);
+
+            return Task.FromResult(true);
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            return _impl.OpenAsync(cancellationToken);
-        }
+            string urlPrefix = UrlPrefixRegistry.Default.Register(_instanceOrReplica);
 
-        private class StatelessServiceInstanceCommunicationListener : ICommunicationListener
-        {
-            private readonly IWebHost _webHost;
-            private readonly IStatelessServiceInstance _instance;
+            var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            public StatelessServiceInstanceCommunicationListener(IWebHost webHost, IStatelessServiceInstance instance)
+            if (_instanceOrReplica is IStatelessServiceInstance)
             {
-                if (webHost == null)
-                {
-                    throw new ArgumentNullException(nameof(webHost));
-                }
-
-                if (instance == null)
-                {
-                    throw new ArgumentNullException(nameof(instance));
-                }
-
-                _webHost = webHost;
-                _instance = instance;
-            }
-
-            public void Abort()
-            {
-            }
-
-            public Task CloseAsync(CancellationToken cancellationToken)
-            {
-                return Task.FromResult(true);
-            }
-
-            public Task<string> OpenAsync(CancellationToken cancellationToken)
-            {
-                var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
-
                 return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
             }
-        }
 
-        private class StatefulServiceReplicaCommunicationListener : ICommunicationListener
-        {
-            private readonly IWebHost _webHost;
-            private readonly IStatefulServiceReplica _replica;
-
-            public StatefulServiceReplicaCommunicationListener(IWebHost webHost, IStatefulServiceReplica replica)
+            if (_instanceOrReplica is IStatefulServiceReplica)
             {
-                if (webHost == null)
-                {
-                    throw new ArgumentNullException(nameof(webHost));
-                }
-
-                if (replica == null)
-                {
-                    throw new ArgumentNullException(nameof(replica));
-                }
-
-                _webHost = webHost;
-                _replica = replica;
-            }
-
-            public void Abort()
-            {
-                UrlPrefixRegistry.Default.Unregister(_replica);
-            }
-
-            public Task CloseAsync(CancellationToken cancellationToken)
-            {
-                UrlPrefixRegistry.Default.Unregister(_replica);
-
-                return Task.FromResult(true);
-            }
-
-            public Task<string> OpenAsync(CancellationToken cancellationToken)
-            {
-                var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
-
-                string urlPrefix = UrlPrefixRegistry.Default.Register(_replica);
-
                 return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{urlPrefix}")));
             }
+
+            return null;
         }
     }
 }
