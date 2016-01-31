@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="HostingType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <Parameters>
-      <Parameter Name="Gateway_InstanceCount" DefaultValue="-1" />
+      <Parameter Name="Gateway_InstanceCount" DefaultValue="1" />
       <Parameter Name="Counter_TargetReplicaSetSize" DefaultValue="3" />
       <Parameter Name="Counter_MinReplicaSetSize" DefaultValue="2" />
       <Parameter Name="Counter_PartitionCount" DefaultValue="1" />
       <Parameter Name="Sms_TargetReplicaSetSize" DefaultValue="3" />
       <Parameter Name="Sms_MinReplicaSetSize" DefaultValue="2" />
-      <Parameter Name="Sms_PartitionCount" DefaultValue="10" />
+      <Parameter Name="Sms_PartitionCount" DefaultValue="7" />
    </Parameters>
    <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="Sms" ServiceManifestVersion="1.0.0" />
