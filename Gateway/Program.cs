@@ -1,5 +1,6 @@
-﻿using System.Fabric;
-using System.Threading;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.ServiceFabric.AspNetCore;
+using System.Fabric;
 
 namespace Gateway
 {
@@ -7,11 +8,16 @@ namespace Gateway
     {
         public static void Main(string[] args)
         {
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(endpointName: "GatewayTypeEndpoint")
+                                              .Build();
+
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("GatewayType", typeof(GatewayService));
+                fabricRuntime.RegisterStatelessServiceFactory("GatewayType", () => new GatewayService(webHost));
 
-                Thread.Sleep(Timeout.Infinite);
+                webHost.Run();
             }
         }
     }

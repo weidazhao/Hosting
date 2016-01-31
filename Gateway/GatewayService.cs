@@ -8,15 +8,16 @@ namespace Gateway
 {
     public class GatewayService : StatelessService
     {
+        private readonly IWebHost _webHost;
+
+        public GatewayService(IWebHost webHost)
+        {
+            _webHost = webHost;
+        }
+
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            // Build an ASP.NET Core web application that serves as a communication listener.
-            var webHost = new WebHostBuilder().UseDefaultConfiguration()
-                                              .UseStartup<Startup>()
-                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "GatewayTypeEndpoint")
-                                              .Build();
-
-            return new[] { new ServiceInstanceListener(_ => new AspNetCoreCommunicationListener(webHost)) };
+            return new[] { new ServiceInstanceListener(_ => new AspNetCoreCommunicationListener(_webHost, this)) };
         }
     }
 }

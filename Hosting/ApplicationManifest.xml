@@ -7,7 +7,7 @@
       <Parameter Name="Counter_PartitionCount" DefaultValue="1" />
       <Parameter Name="Sms_TargetReplicaSetSize" DefaultValue="3" />
       <Parameter Name="Sms_MinReplicaSetSize" DefaultValue="2" />
-      <Parameter Name="Sms_PartitionCount" DefaultValue="3" />
+      <Parameter Name="Sms_PartitionCount" DefaultValue="10" />
    </Parameters>
    <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="Sms" ServiceManifestVersion="1.0.0" />

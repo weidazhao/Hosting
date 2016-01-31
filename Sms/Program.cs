@@ -1,5 +1,6 @@
-﻿using System.Fabric;
-using System.Threading;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.ServiceFabric.AspNetCore;
+using System.Fabric;
 
 namespace Sms
 {
@@ -7,11 +8,16 @@ namespace Sms
     {
         public static void Main(string[] args)
         {
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(endpointName: "SmsTypeEndpoint", serviceType: typeof(ISmsService))
+                                              .Build();
+
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("SmsType", typeof(SmsService));
+                fabricRuntime.RegisterStatefulServiceFactory("SmsType", () => new SmsService(webHost));
 
-                Thread.Sleep(Timeout.Infinite);
+                webHost.Run();
             }
         }
     }

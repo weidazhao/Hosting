@@ -1,5 +1,6 @@
-﻿using System.Fabric;
-using System.Threading;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.ServiceFabric.AspNetCore;
+using System.Fabric;
 
 namespace Counter
 {
@@ -7,11 +8,16 @@ namespace Counter
     {
         public static void Main(string[] args)
         {
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(endpointName: "CounterTypeEndpoint", serviceType: typeof(ICounterService))
+                                              .Build();
+
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("CounterType", typeof(CounterService));
+                fabricRuntime.RegisterStatefulServiceFactory("CounterType", () => new CounterService(webHost));
 
-                Thread.Sleep(Timeout.Infinite);
+                webHost.Run();
             }
         }
     }
