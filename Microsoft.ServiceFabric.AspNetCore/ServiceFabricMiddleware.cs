@@ -32,12 +32,14 @@ namespace Microsoft.ServiceFabric.AspNetCore
                 throw new ArgumentNullException(nameof(context));
             }
 
+            PathString urlPrefix;
             PathString remainingPath;
             object instanceOrReplica;
 
-            if (UrlPrefixRegistry.Default.StartWithUrlPrefix(context.Request.Path, out remainingPath, out instanceOrReplica))
+            if (UrlPrefixRegistry.Default.StartWithUrlPrefix(context.Request.Path, out urlPrefix, out remainingPath, out instanceOrReplica))
             {
                 context.Request.Path = remainingPath;
+                context.Request.PathBase = context.Request.PathBase + urlPrefix;
 
                 if (_options.ServiceType != null)
                 {
