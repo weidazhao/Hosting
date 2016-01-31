@@ -22,61 +22,43 @@ Please share your feedback to help us improve the experience in the future relea
 
 # Key Code Snippets
 
+## Program.cs
+```csharp
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                          .UseStartup<Startup>()
+                                          .UseServiceFabric(new ServiceFabricOptions("MyStatefulTypeEndpoint"))
+                                          .Build();
+
+        using (var fabricRuntime = FabricRuntime.Create())
+        {
+            fabricRuntime.RegisterStatefulServiceFactory("MyStatefulType", () => new MyStatefulService(webHost));
+
+            webHost.Run();
+        }
+    }
+}
+```
+
 ## Create Communication Listener
 ```csharp
 public class MyStatefulService : StatefulService
 {
     ...
     
-    protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
-    {
-        // Build an ASP.NET Core web application that serves as the communication listener.
-        var webHost = new WebHostBuilder().UseDefaultConfiguration()
-                                          .UseStartup<Startup>()
-                                          .UseServiceFabricEndpoint(ServiceInitializationParameters, "MyStatefulTypeEndpoint")
-                                          .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this))
-                                          .Build();
+    private readonly IWebHost _webHost;    
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
-    }
-}
-```
-
-## ASP.NET Core Communication Listener Adapter
-```csharp
-public class AspNetCoreCommunicationListener : ICommunicationListener
-{
-    private readonly IWebHost _webHost;
-
-    public AspNetCoreCommunicationListener(IWebHost webHost)
-    {
-        if (webHost == null)
-        {
-            throw new ArgumentNullException(nameof(webHost));
-        }
-
+    public MyStatefulService(IWebHost webHost)
+    {            
         _webHost = webHost;
     }
-
-    public void Abort()
+    
+    protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        _webHost.Dispose();
-    }
-
-    public Task CloseAsync(CancellationToken cancellationToken)
-    {
-        _webHost.Dispose();
-
-        return Task.FromResult(true);
-    }
-
-    public Task<string> OpenAsync(CancellationToken cancellationToken)
-    {
-        _webHost.Start();
-
-        var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
-
-        return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
+        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(_webHost, this)) };
     }
 }
 ```
