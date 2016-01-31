@@ -10,7 +10,7 @@ namespace Gateway
         {
             var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                               .UseStartup<Startup>()
-                                              .UseServiceFabric(endpointName: "GatewayTypeEndpoint")
+                                              .UseServiceFabric(new ServiceFabricOptions("GatewayTypeEndpoint"))
                                               .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())

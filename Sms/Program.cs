@@ -10,7 +10,7 @@ namespace Sms
         {
             var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                               .UseStartup<Startup>()
-                                              .UseServiceFabric(endpointName: "SmsTypeEndpoint", serviceType: typeof(ISmsService))
+                                              .UseServiceFabric(new ServiceFabricOptions("SmsTypeEndpoint") { ServiceType = typeof(ISmsService) })
                                               .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())

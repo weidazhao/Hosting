@@ -9,19 +9,23 @@ namespace Microsoft.ServiceFabric.AspNetCore
 {
     public static class WebHostBuilderExtensions
     {
-        public static IWebHostBuilder UseServiceFabric(this IWebHostBuilder webHostBuilder, string endpointName, Type serviceType = null)
+        public static IWebHostBuilder UseServiceFabric(this IWebHostBuilder webHostBuilder, ServiceFabricOptions options)
         {
             if (webHostBuilder == null)
             {
                 throw new ArgumentNullException(nameof(webHostBuilder));
             }
 
-            if (endpointName == null)
+            if (options == null)
             {
-                throw new ArgumentNullException(nameof(endpointName));
+                throw new ArgumentNullException(nameof(options));
             }
 
-            var endpoint = FabricRuntime.GetActivationContext().GetEndpoint(endpointName);
+            //
+            // Configure server URL.
+            //
+
+            var endpoint = FabricRuntime.GetActivationContext().GetEndpoint(options.EndpointName);
 
             string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
 
@@ -29,27 +33,39 @@ namespace Microsoft.ServiceFabric.AspNetCore
 
             webHostBuilder.ConfigureServices(services =>
             {
-                services.AddTransient<IStartupFilter, ServiceFabricStartupFilter>();
-
+                //
+                // Add ServiceFabricMiddleware to pipe line.
+                //
                 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-                if (serviceType != null)
+                services.AddTransient<IStartupFilter>(serviceProvider => new ServiceFabricStartupFilter(options));
+
+                //
+                // Add Service Fabric service to DI container.
+                //
+                if (options.ServiceType != null)
                 {
-                    services.AddScoped(serviceType, serviceProvider =>
+                    services.AddScoped(options.ServiceType, serviceProvider =>
                     {
                         var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
                         var serviceFabricFeature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
 
-                        var instanceOrReplica = serviceFabricFeature.InstanceOrReplica;
-
-                        if (instanceOrReplica != null && serviceType.IsAssignableFrom(instanceOrReplica.GetType()))
+                        if (serviceFabricFeature != null && serviceFabricFeature.ServiceType == options.ServiceType)
                         {
-                            return instanceOrReplica;
+                            return serviceFabricFeature.InstanceOrReplica;
                         }
 
                         return null;
                     });
+                }
+
+                //
+                // Allow configuring other services.
+                //
+                if (options.ConfigureServices != null)
+                {
+                    options.ConfigureServices.Invoke(services);
                 }
             });
 
