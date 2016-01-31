@@ -24,7 +24,6 @@ namespace Microsoft.ServiceFabric.AspNetCore
             //
             // Configure server URL.
             //
-
             var endpoint = FabricRuntime.GetActivationContext().GetEndpoint(options.EndpointName);
 
             string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
@@ -34,10 +33,8 @@ namespace Microsoft.ServiceFabric.AspNetCore
             webHostBuilder.ConfigureServices(services =>
             {
                 //
-                // Add ServiceFabricMiddleware to pipe line.
+                // Add ServiceFabricMiddleware to pipeline.
                 //
-                services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
                 services.AddTransient<IStartupFilter>(serviceProvider => new ServiceFabricStartupFilter(options));
 
                 //
@@ -45,27 +42,24 @@ namespace Microsoft.ServiceFabric.AspNetCore
                 //
                 if (options.ServiceType != null)
                 {
+                    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
                     services.AddScoped(options.ServiceType, serviceProvider =>
                     {
                         var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
                         var serviceFabricFeature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
 
-                        if (serviceFabricFeature != null && serviceFabricFeature.ServiceType == options.ServiceType)
-                        {
-                            return serviceFabricFeature.InstanceOrReplica;
-                        }
-
-                        return null;
+                        return serviceFabricFeature?.InstanceOrReplica;
                     });
                 }
 
                 //
-                // Allow configuring other services.
+                // Configure other services.
                 //
                 if (options.ConfigureServices != null)
                 {
-                    options.ConfigureServices.Invoke(services);
+                    options.ConfigureServices(services);
                 }
             });
 

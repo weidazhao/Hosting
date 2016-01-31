@@ -53,17 +53,7 @@ namespace Microsoft.ServiceFabric.AspNetCore
 
             var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            if (_instanceOrReplica is IStatelessServiceInstance)
-            {
-                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
-            }
-
-            if (_instanceOrReplica is IStatefulServiceReplica)
-            {
-                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{urlPrefix}")));
-            }
-
-            return null;
+            return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{urlPrefix}")));
         }
     }
 }

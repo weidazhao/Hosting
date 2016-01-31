@@ -41,7 +41,7 @@ namespace Microsoft.ServiceFabric.AspNetCore
 
                 if (_options.ServiceType != null)
                 {
-                    context.Features.Set(new ServiceFabricFeature(_options.ServiceType, instanceOrReplica));
+                    context.Features.Set(new ServiceFabricFeature { InstanceOrReplica = instanceOrReplica });
                 }
             }
 

@@ -8,9 +8,15 @@ namespace Counter
     {
         public static void Main(string[] args)
         {
+            var options = new ServiceFabricOptions()
+            {
+                EndpointName = "CounterTypeEndpoint",
+                ServiceType = typeof(ICounterService)
+            };
+
             var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                               .UseStartup<Startup>()
-                                              .UseServiceFabric(new ServiceFabricOptions("CounterTypeEndpoint") { ServiceType = typeof(ICounterService) })
+                                              .UseServiceFabric(options)
                                               .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())
