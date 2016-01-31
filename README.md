@@ -28,16 +28,7 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        var options = new ServiceFabricOptions()
-        {
-            EndpointName = "MyStatefulTypeEndpoint",
-            ServiceType = typeof(MyStatefulService)
-        };
-
-        var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
-                                          .UseStartup<Startup>()
-                                          .UseServiceFabric(options)
-                                          .Build();
+        var webHost = BuildWebHost(args);
 
         using (var fabricRuntime = FabricRuntime.Create())
         {
@@ -45,6 +36,20 @@ public static class Program
 
             webHost.Run();
         }
+    }
+
+    private static IWebHost BuildWebHost(string[] args)
+    {
+        var options = new ServiceFabricOptions()
+        {
+            EndpointName = "MyStatefulTypeEndpoint",
+            ServiceType = typeof(MyStatefulService)
+        };
+
+        return new WebHostBuilder().UseDefaultConfiguration(args)
+                                   .UseStartup<Startup>()
+                                   .UseServiceFabric(options)
+                                   .Build();
     }
 }
 ```
