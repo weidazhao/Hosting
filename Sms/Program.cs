@@ -6,20 +6,18 @@ namespace Sms
 {
     public static class Program
     {
-        public static IWebHost _webHost;
-
         public static void Main(string[] args)
         {
-            _webHost = new WebHostBuilder().UseDefaultConfiguration(args)
-                                           .UseStartup<Startup>()
-                                           .UseServiceFabric("SmsTypeEndpoint", typeof(ISmsService))
-                                           .Build();
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(endpointName: "SmsTypeEndpoint", serviceType: typeof(ISmsService))
+                                              .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("SmsType", typeof(SmsService));
+                fabricRuntime.RegisterStatefulServiceFactory("SmsType", () => new SmsService(webHost));
 
-                _webHost.Run();
+                webHost.Run();
             }
         }
     }

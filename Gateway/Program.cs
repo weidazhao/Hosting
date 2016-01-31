@@ -6,20 +6,18 @@ namespace Gateway
 {
     public static class Program
     {
-        public static IWebHost _webHost;
-
         public static void Main(string[] args)
         {
-            _webHost = new WebHostBuilder().UseDefaultConfiguration(args)
-                                           .UseStartup<Startup>()
-                                           .UseServiceFabric("GatewayTypeEndpoint")
-                                           .Build();
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(endpointName: "GatewayTypeEndpoint")
+                                              .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("GatewayType", typeof(GatewayService));
+                fabricRuntime.RegisterStatelessServiceFactory("GatewayType", () => new GatewayService(webHost));
 
-                _webHost.Run();
+                webHost.Run();
             }
         }
     }

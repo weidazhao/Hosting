@@ -6,20 +6,18 @@ namespace Counter
 {
     public static class Program
     {
-        public static IWebHost _webHost;
-
         public static void Main(string[] args)
         {
-            _webHost = new WebHostBuilder().UseDefaultConfiguration(args)
-                                           .UseStartup<Startup>()
-                                           .UseServiceFabric("CounterTypeEndpoint", typeof(ICounterService))
-                                           .Build();
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(endpointName: "CounterTypeEndpoint", serviceType: typeof(ICounterService))
+                                              .Build();
 
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterServiceType("CounterType", typeof(CounterService));
+                fabricRuntime.RegisterStatefulServiceFactory("CounterType", () => new CounterService(webHost));
 
-                _webHost.Run();
+                webHost.Run();
             }
         }
     }
