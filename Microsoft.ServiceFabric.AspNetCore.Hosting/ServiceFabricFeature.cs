@@ -1,4 +1,4 @@
-﻿namespace Microsoft.ServiceFabric.AspNetCore
+﻿namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public class ServiceFabricFeature
     {

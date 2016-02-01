@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Fabric;
 
-namespace Microsoft.ServiceFabric.AspNetCore
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public static class WebHostBuilderExtensions
     {

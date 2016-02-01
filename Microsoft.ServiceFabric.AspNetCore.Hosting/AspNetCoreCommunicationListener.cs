@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.AspNetCore
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public class AspNetCoreCommunicationListener : ICommunicationListener
     {

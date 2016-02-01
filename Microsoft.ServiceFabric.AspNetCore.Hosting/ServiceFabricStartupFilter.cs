@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 
-namespace Microsoft.ServiceFabric.AspNetCore
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public class ServiceFabricStartupFilter : IStartupFilter
     {

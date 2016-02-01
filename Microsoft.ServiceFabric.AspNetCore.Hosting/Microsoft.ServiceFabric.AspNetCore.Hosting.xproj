@@ -7,8 +7,8 @@
 
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>a326ac7d-a3a8-4bd5-82c5-3ac8dd52af16</ProjectGuid>
-    <RootNamespace>Microsoft.ServiceFabric.AspNetCore</RootNamespace>
+    <ProjectGuid>6efaacb6-2cf0-42c6-afc4-ffc1aedb60a3</ProjectGuid>
+    <RootNamespace>Microsoft.ServiceFabric.AspNetCore.Hosting</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">..\artifacts\obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">..\artifacts\bin\$(MSBuildProjectName)\</OutputPath>
   </PropertyGroup>

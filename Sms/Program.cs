@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.ServiceFabric.AspNetCore;
+using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using System.Fabric;
 
 namespace Sms

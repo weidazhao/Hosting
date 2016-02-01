@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Fabric;
 
-namespace Microsoft.ServiceFabric.AspNetCore
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public class UrlPrefixRegistry
     {
