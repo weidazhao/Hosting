@@ -17,10 +17,18 @@ namespace Gateway
         {
             var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Assumes that the last two segments in the path are {user}/{message}
-            string user = pathSegments[pathSegments.Length - 2];
+            string user = null;
 
-            return Task.FromResult((long)user.GetHashCode());
+            if (StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "GET"))
+            {
+                user = pathSegments[pathSegments.Length - 1];
+            }
+            else if (StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "POST"))
+            {
+                user = pathSegments[pathSegments.Length - 2];
+            }
+
+            return Task.FromResult(HashCodeUtilities.GetInt64HashCode(user));
         }
     }
 }

@@ -4,7 +4,6 @@
       <Parameter Name="Gateway_InstanceCount" Value="-1" />
       <Parameter Name="Counter_TargetReplicaSetSize" Value="3" />
       <Parameter Name="Counter_MinReplicaSetSize" Value="2" />
-      <Parameter Name="Counter_PartitionCount" Value="10" />
       <Parameter Name="Sms_TargetReplicaSetSize" Value="3" />
       <Parameter Name="Sms_MinReplicaSetSize" Value="2" />
       <Parameter Name="Sms_PartitionCount" Value="100" />
