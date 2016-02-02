@@ -30,18 +30,15 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 
             webHostBuilder.UseUrls(serverUrl);
 
+            //
+            // Configure services and middlewares.
+            //
             webHostBuilder.ConfigureServices(services =>
             {
-                //
-                // Add ServiceFabricMiddleware to pipeline.
-                //
-                services.AddTransient<IStartupFilter>(serviceProvider => new ServiceFabricStartupFilter(options));
-
-                //
-                // Add Service Fabric service to DI container.
-                //
-                if (options.InterfaceTypes != null)
+                if (typeof(IStatelessServiceInstance).IsAssignableFrom(options.ServiceType) && options.InterfaceTypes != null)
                 {
+                    services.AddTransient<IStartupFilter>(serviceProvider => new StatelessServiceStartupFilter(options));
+
                     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
                     foreach (var interfaceType in options.InterfaceTypes)
@@ -50,16 +47,34 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                         {
                             var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
-                            var serviceFabricFeature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
+                            var feature = httpContextAccessor.HttpContext.Features.Get<StatelessServiceFeature>();
 
-                            return serviceFabricFeature?.InstanceOrReplica;
+                            return feature?.Instance;
                         });
                     }
                 }
+                else if (typeof(IStatefulServiceReplica).IsAssignableFrom(options.ServiceType))
+                {
+                    services.AddTransient<IStartupFilter>(serviceProvider => new StatefulServiceStartupFilter(options));
 
-                //
-                // Configure other services.
-                //
+                    if (options.InterfaceTypes != null)
+                    {
+                        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+                        foreach (var interfaceType in options.InterfaceTypes)
+                        {
+                            services.AddScoped(interfaceType, serviceProvider =>
+                            {
+                                var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+
+                                var feature = httpContextAccessor.HttpContext.Features.Get<StatefulServiceFeature>();
+
+                                return feature?.Replica;
+                            });
+                        }
+                    }
+                }
+
                 if (options.ConfigureServices != null)
                 {
                     options.ConfigureServices(services);

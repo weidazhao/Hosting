@@ -41,7 +41,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             {
                 context.Request.Path = remainingPath;
                 context.Request.PathBase = context.Request.PathBase + replicaUrlPrefix;
-                context.Features.Set(new ServiceFabricFeature { InstanceOrReplica = replica });
+                context.Features.Set(new StatefulServiceFeature { Replica = replica });
             }
 
             await _next.Invoke(context);

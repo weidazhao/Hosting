@@ -36,7 +36,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             IStatelessServiceInstance instance;
             if (StatelessServiceInstanceCache.Default.TryGet(out instance))
             {
-                context.Features.Set(new ServiceFabricFeature { InstanceOrReplica = instance });
+                context.Features.Set(new StatelessServiceFeature { Instance = instance });
             }
 
             await _next.Invoke(context);
