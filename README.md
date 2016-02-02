@@ -43,7 +43,8 @@ public static class Program
         var options = new ServiceFabricOptions()
         {
             EndpointName = "MyStatefulTypeEndpoint",
-            ServiceType = typeof(MyStatefulService)
+            ServiceType = typeof(MyStatefulService),
+            InterfaceTypes = new[] { typeof(IMyStatefulService) }
         };
 
         return new WebHostBuilder().UseDefaultConfiguration(args)
