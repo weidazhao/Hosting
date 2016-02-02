@@ -3,7 +3,7 @@ using System;
 using System.Collections.Immutable;
 using System.Fabric;
 
-namespace Microsoft.ServiceFabric.AspNetCore.Hosting
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
     public class StatefulServiceReplicaCache
     {

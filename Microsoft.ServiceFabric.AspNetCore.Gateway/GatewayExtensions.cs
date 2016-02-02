@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.ServiceFabric.AspNetCore.Gateway.Internal;
 using System;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Gateway

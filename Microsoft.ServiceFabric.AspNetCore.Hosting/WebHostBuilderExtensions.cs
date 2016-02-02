@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ServiceFabric.AspNetCore.Hosting.Internal;
 using System;
 using System.Fabric;
 

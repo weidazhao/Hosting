@@ -2,7 +2,7 @@
 using System.Fabric;
 using System.Threading;
 
-namespace Microsoft.ServiceFabric.AspNetCore.Hosting
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
     public class StatelessServiceInstanceCache
     {

@@ -3,7 +3,7 @@ using System;
 using System.Fabric;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.AspNetCore.Hosting
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
     public class StatelessServiceMiddleware
     {

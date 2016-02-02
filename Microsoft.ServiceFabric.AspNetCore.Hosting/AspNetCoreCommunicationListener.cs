@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Features;
+using Microsoft.ServiceFabric.AspNetCore.Hosting.Internal;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
 using System.Fabric;
