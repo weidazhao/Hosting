@@ -23,7 +23,8 @@ namespace Counter
             var options = new ServiceFabricOptions()
             {
                 EndpointName = "CounterTypeEndpoint",
-                ServiceType = typeof(ICounterService)
+                ServiceType = typeof(CounterService),
+                InterfaceTypes = new[] { typeof(ICounterService) }
             };
 
             return new WebHostBuilder().UseDefaultConfiguration(args)

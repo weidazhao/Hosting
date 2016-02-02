@@ -40,18 +40,21 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                 //
                 // Add Service Fabric service to DI container.
                 //
-                if (options.ServiceType != null)
+                if (options.InterfaceTypes != null)
                 {
                     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-                    services.AddScoped(options.ServiceType, serviceProvider =>
+                    foreach (var interfaceType in options.InterfaceTypes)
                     {
-                        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                        services.AddScoped(interfaceType, serviceProvider =>
+                        {
+                            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
-                        var serviceFabricFeature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
+                            var serviceFabricFeature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
 
-                        return serviceFabricFeature?.InstanceOrReplica;
-                    });
+                            return serviceFabricFeature?.InstanceOrReplica;
+                        });
+                    }
                 }
 
                 //

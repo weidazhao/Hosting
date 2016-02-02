@@ -9,6 +9,8 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 
         public Type ServiceType { get; set; }
 
+        public Type[] InterfaceTypes { get; set; }
+
         public Action<IServiceCollection> ConfigureServices { get; set; }
     }
 }

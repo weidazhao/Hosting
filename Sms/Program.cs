@@ -23,7 +23,8 @@ namespace Sms
             var options = new ServiceFabricOptions()
             {
                 EndpointName = "SmsTypeEndpoint",
-                ServiceType = typeof(ISmsService)
+                ServiceType = typeof(SmsService),
+                InterfaceTypes = new[] { typeof(ISmsService) }
             };
 
             return new WebHostBuilder().UseDefaultConfiguration(args)
