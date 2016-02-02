@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Features;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using System;
 using System.Fabric;
 using System.Linq;
 using System.Threading;
@@ -17,6 +18,16 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public StatefulServiceCommunicationListener(IWebHost webHost, IStatefulServiceReplica replica)
         {
+            if (webHost == null)
+            {
+                throw new ArgumentNullException(nameof(webHost));
+            }
+
+            if (replica == null)
+            {
+                throw new ArgumentNullException(nameof(replica));
+            }
+
             _webHost = webHost;
             _replica = replica;
         }

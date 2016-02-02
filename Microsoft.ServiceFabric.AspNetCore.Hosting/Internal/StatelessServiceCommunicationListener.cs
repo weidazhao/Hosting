@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Features;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using System;
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,16 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public StatelessServiceCommunicationListener(IWebHost webHost, IStatelessServiceInstance instance)
         {
+            if (webHost == null)
+            {
+                throw new ArgumentNullException(nameof(webHost));
+            }
+
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             _webHost = webHost;
             _instance = instance;
         }
