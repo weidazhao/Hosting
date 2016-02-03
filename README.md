@@ -39,12 +39,17 @@ public static class Program
     }
 
     private static IWebHost BuildWebHost(string[] args)
-    {
+    {    
+        var serviceDescription = new ServiceDescription()
+        {
+            ServiceType = typeof(MyStatefulService),
+            InterfaceTypes = ImmutableArray.Create(typeof(IMyStatefulService))
+        };
+        
         var options = new ServiceFabricOptions()
         {
             EndpointName = "MyStatefulTypeEndpoint",
-            ServiceType = typeof(MyStatefulService),
-            InterfaceTypes = new[] { typeof(IMyStatefulService) }
+            ServiceDescriptions = ImmutableArray.Create(serviceDescription)
         };
 
         return new WebHostBuilder().UseDefaultConfiguration(args)
@@ -70,7 +75,7 @@ public class MyStatefulService : StatefulService
     
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(_webHost, this)) };
+        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(this, _webHost, withUrlPrefix: true)) };
     }
 }
 ```
