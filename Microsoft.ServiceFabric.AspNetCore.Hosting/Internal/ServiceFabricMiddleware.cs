@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
-using System.Fabric;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
-    public class StatelessServiceMiddleware
+    public class ServiceFabricMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ServiceFabricOptions _options;
 
-        public StatelessServiceMiddleware(RequestDelegate next, ServiceFabricOptions options)
+        public ServiceFabricMiddleware(RequestDelegate next, ServiceFabricOptions options)
         {
             if (next == null)
             {
@@ -33,10 +32,15 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 throw new ArgumentNullException(nameof(context));
             }
 
-            IStatelessServiceInstance instance;
-            if (StatelessServiceInstanceCache.Default.TryGet(out instance))
+            PathString urlPrefix;
+            PathString remainingPath;
+            object instanceOrReplica;
+
+            if (ServiceFabricRegistry.Default.TryGet(context.Request.Path, out urlPrefix, out remainingPath, out instanceOrReplica))
             {
-                context.Features.Set(new StatelessServiceFeature { Instance = instance });
+                context.Request.Path = remainingPath;
+                context.Request.PathBase = context.Request.PathBase + urlPrefix;
+                context.Features.Set(new ServiceFabricFeature { InstanceOrReplica = instanceOrReplica });
             }
 
             await _next.Invoke(context);

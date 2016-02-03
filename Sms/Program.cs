@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
+using System.Collections.Immutable;
 using System.Fabric;
 
 namespace Sms
@@ -20,11 +21,16 @@ namespace Sms
 
         private static IWebHost BuildWebHost(string[] args)
         {
+            var serviceDescription = new ServiceDescription()
+            {
+                ServiceType = typeof(SmsService),
+                InterfaceTypes = ImmutableArray.Create(typeof(ISmsService))
+            };
+
             var options = new ServiceFabricOptions()
             {
                 EndpointName = "SmsTypeEndpoint",
-                ServiceType = typeof(SmsService),
-                InterfaceTypes = new[] { typeof(ISmsService) }
+                ServiceDescriptions = ImmutableArray.Create(serviceDescription)
             };
 
             return new WebHostBuilder().UseDefaultConfiguration(args)

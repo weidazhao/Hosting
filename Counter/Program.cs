@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
+using System.Collections.Immutable;
 using System.Fabric;
 
 namespace Counter
@@ -20,11 +21,16 @@ namespace Counter
 
         private static IWebHost BuildWebHost(string[] args)
         {
+            var serviceDescription = new ServiceDescription()
+            {
+                ServiceType = typeof(CounterService),
+                InterfaceTypes = ImmutableArray.Create(typeof(ICounterService))
+            };
+
             var options = new ServiceFabricOptions()
             {
                 EndpointName = "CounterTypeEndpoint",
-                ServiceType = typeof(CounterService),
-                InterfaceTypes = new[] { typeof(ICounterService) }
+                ServiceDescriptions = ImmutableArray.Create(serviceDescription)
             };
 
             return new WebHostBuilder().UseDefaultConfiguration(args)

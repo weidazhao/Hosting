@@ -36,41 +36,25 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             //
             webHostBuilder.ConfigureServices(services =>
             {
-                if (typeof(IStatelessServiceInstance).IsAssignableFrom(options.ServiceType) && options.InterfaceTypes != null)
+                if (options.ServiceDescriptions != null)
                 {
-                    services.AddTransient<IStartupFilter>(serviceProvider => new StatelessServiceStartupFilter(options));
+                    services.AddTransient<IStartupFilter>(serviceProvider => new ServiceFabricStartupFilter(options));
 
                     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-                    foreach (var interfaceType in options.InterfaceTypes)
+                    foreach (var serviceDescription in options.ServiceDescriptions)
                     {
-                        services.AddScoped(interfaceType, serviceProvider =>
-                        {
-                            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-
-                            var feature = httpContextAccessor.HttpContext.Features.Get<StatelessServiceFeature>();
-
-                            return feature?.Instance;
-                        });
-                    }
-                }
-                else if (typeof(IStatefulServiceReplica).IsAssignableFrom(options.ServiceType))
-                {
-                    services.AddTransient<IStartupFilter>(serviceProvider => new StatefulServiceStartupFilter(options));
-
-                    if (options.InterfaceTypes != null)
-                    {
-                        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-                        foreach (var interfaceType in options.InterfaceTypes)
+                        foreach (var interfaceType in serviceDescription.InterfaceTypes)
                         {
                             services.AddScoped(interfaceType, serviceProvider =>
                             {
                                 var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
-                                var feature = httpContextAccessor.HttpContext.Features.Get<StatefulServiceFeature>();
+                                var feature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
 
-                                return feature?.Replica;
+                                var instanceOrReplica = feature?.InstanceOrReplica;
+
+                                return instanceOrReplica?.GetType() == serviceDescription.ServiceType ? instanceOrReplica : null;
                             });
                         }
                     }

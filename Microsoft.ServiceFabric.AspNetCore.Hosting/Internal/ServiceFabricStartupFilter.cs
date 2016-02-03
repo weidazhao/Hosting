@@ -4,11 +4,11 @@ using System;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
-    public class StatefulServiceStartupFilter : IStartupFilter
+    public class ServiceFabricStartupFilter : IStartupFilter
     {
         private readonly ServiceFabricOptions _options;
 
-        public StatefulServiceStartupFilter(ServiceFabricOptions options)
+        public ServiceFabricStartupFilter(ServiceFabricOptions options)
         {
             if (options == null)
             {
@@ -22,7 +22,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
         {
             return builder =>
             {
-                builder.UseMiddleware<StatefulServiceMiddleware>(_options);
+                builder.UseMiddleware<ServiceFabricMiddleware>(_options);
 
                 next.Invoke(builder);
             };

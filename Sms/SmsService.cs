@@ -60,7 +60,7 @@ namespace Sms
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(_webHost, this)) };
+            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(this, _webHost, true)) };
         }
     }
 }
