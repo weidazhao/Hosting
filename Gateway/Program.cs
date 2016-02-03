@@ -8,27 +8,29 @@ namespace Gateway
     {
         public static void Main(string[] args)
         {
-            var webHost = BuildWebHost(args);
+            var context = CreateAspNetCoreCommunicationContext(args);
 
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterStatelessServiceFactory("GatewayType", () => new GatewayService(webHost));
+                fabricRuntime.RegisterStatelessServiceFactory("GatewayType", () => new GatewayService(context));
 
-                webHost.Run();
+                context.WebHost.Run();
             }
         }
 
-        private static IWebHost BuildWebHost(string[] args)
+        private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
         {
             var options = new ServiceFabricOptions()
             {
                 EndpointName = "GatewayTypeEndpoint"
             };
 
-            return new WebHostBuilder().UseDefaultConfiguration(args)
-                                       .UseStartup<Startup>()
-                                       .UseServiceFabric(options)
-                                       .Build();
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(options)
+                                              .Build();
+
+            return new AspNetCoreCommunicationContext(webHost, addUrlPrefix: false);
         }
     }
 }

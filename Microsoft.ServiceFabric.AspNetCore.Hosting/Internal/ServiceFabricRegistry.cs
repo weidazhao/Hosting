@@ -23,7 +23,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 throw new ArgumentException(null, nameof(instanceOrReplica));
             }
 
-            urlPrefix = UrlPrefix.GenerateUrlPrefix();
+            urlPrefix = UrlPrefix.NewUrlPrefix();
 
             return ImmutableInterlocked.TryAdd(ref _entries, urlPrefix, instanceOrReplica);
         }
@@ -49,7 +49,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             remainingPath = null;
             instanceOrReplica = null;
 
-            if (!UrlPrefix.TryResolveUrlPrefix(path, out urlPrefix))
+            if (!UrlPrefix.TryGetUrlPrefix(path, out urlPrefix, out remainingPath))
             {
                 return false;
             }
@@ -59,24 +59,23 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 return false;
             }
 
-            if (!path.StartsWithSegments(urlPrefix, out remainingPath))
-            {
-                return false;
-            }
-
             return true;
         }
 
+        //
+        // Leave UrlPrefix as a nested private class inside ServiceFabricRegistry,
+        // since UrlPrefix.TryGetUrlPrefix() doesn't validate format for perf reasons.
+        //
         private static class UrlPrefix
         {
-            private static readonly int LengthOfUrlPrefix = GenerateUrlPrefix().Value.Length;
+            private static readonly int LengthOfUrlPrefix = NewUrlPrefix().Value.Length;
 
-            public static PathString GenerateUrlPrefix()
+            public static PathString NewUrlPrefix()
             {
                 return $"/sf-{Guid.NewGuid().ToString("N")}";
             }
 
-            public static bool TryResolveUrlPrefix(PathString path, out PathString urlPrefix)
+            public static bool TryGetUrlPrefix(PathString path, out PathString urlPrefix, out PathString remainingPath)
             {
                 if (path == null)
                 {
@@ -84,6 +83,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 }
 
                 urlPrefix = null;
+                remainingPath = null;
 
                 if (!path.HasValue || path.Value.Length < LengthOfUrlPrefix)
                 {
@@ -96,6 +96,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 }
 
                 urlPrefix = path.Value.Substring(0, LengthOfUrlPrefix);
+                remainingPath = path.Value.Length > LengthOfUrlPrefix ? path.Value.Substring(LengthOfUrlPrefix) : string.Empty;
 
                 return true;
             }

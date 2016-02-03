@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.ServiceFabric.AspNetCore.Hosting;
+﻿using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -11,12 +10,12 @@ namespace Counter
 {
     public class CounterService : StatefulService, ICounterService
     {
-        private readonly IWebHost _webHost;
+        private readonly AspNetCoreCommunicationContext _context;
         private readonly SemaphoreSlim _semaphore;
 
-        public CounterService(IWebHost webHost)
+        public CounterService(AspNetCoreCommunicationContext context)
         {
-            _webHost = webHost;
+            _context = context;
             _semaphore = new SemaphoreSlim(1, 1);
         }
 
@@ -68,7 +67,7 @@ namespace Counter
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(this, _webHost, true)) };
+            return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
         }
     }
 }

@@ -71,13 +71,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway.Internal
                 //
                 // Construct the request URL
                 //
-                var requestUriBuilder = new UriBuilder();
-                requestUriBuilder.Scheme = communicationClient.ResolvedServiceEndpoint.Scheme;
-                requestUriBuilder.Host = communicationClient.ResolvedServiceEndpoint.Host;
-                requestUriBuilder.Port = communicationClient.ResolvedServiceEndpoint.Port;
-                requestUriBuilder.Path = PathString.FromUriComponent(communicationClient.ResolvedServiceEndpoint) + context.Request.Path + context.Request.QueryString;
+                var endpoint = communicationClient.ResolvedServiceEndpoint;
+                var pathAndQuery = PathString.FromUriComponent(endpoint) + context.Request.Path + context.Request.QueryString;
 
-                requestMessage.RequestUri = requestUriBuilder.Uri;
+                requestMessage.RequestUri = new Uri($"{endpoint.Scheme}://{endpoint.Host}:{endpoint.Port}{pathAndQuery}", UriKind.Absolute);
 
                 //
                 // Set host header

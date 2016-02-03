@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Features;
-using Microsoft.ServiceFabric.AspNetCore.Hosting.Internal;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using System;
 using System.Fabric;
@@ -9,25 +8,20 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.AspNetCore.Hosting
+namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
     public class AspNetCoreCommunicationListener : ICommunicationListener
     {
         private readonly object _instanceOrReplica;
         private readonly IWebHost _webHost;
-        private readonly bool _withUrlPrefix;
+        private readonly bool _addUrlPrefix;
         private PathString _urlPrefix;
 
-        public AspNetCoreCommunicationListener(object instanceOrReplica, IWebHost webHost, bool withUrlPrefix)
+        public AspNetCoreCommunicationListener(IStatelessServiceInstance instance, IWebHost webHost, bool addUrlPrefix)
         {
-            if (instanceOrReplica == null)
+            if (instance == null)
             {
-                throw new ArgumentNullException(nameof(instanceOrReplica));
-            }
-
-            if (!(instanceOrReplica is IStatelessServiceInstance) && !(instanceOrReplica is IStatefulServiceReplica))
-            {
-                throw new ArgumentException(null, nameof(instanceOrReplica));
+                throw new ArgumentNullException(nameof(instance));
             }
 
             if (webHost == null)
@@ -35,14 +29,31 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                 throw new ArgumentNullException(nameof(webHost));
             }
 
-            _instanceOrReplica = instanceOrReplica;
+            _instanceOrReplica = instance;
             _webHost = webHost;
-            _withUrlPrefix = withUrlPrefix;
+            _addUrlPrefix = addUrlPrefix;
+        }
+
+        public AspNetCoreCommunicationListener(IStatefulServiceReplica replica, IWebHost webHost, bool addUrlPrefix)
+        {
+            if (replica == null)
+            {
+                throw new ArgumentNullException(nameof(replica));
+            }
+
+            if (webHost == null)
+            {
+                throw new ArgumentNullException(nameof(webHost));
+            }
+
+            _instanceOrReplica = replica;
+            _webHost = webHost;
+            _addUrlPrefix = addUrlPrefix;
         }
 
         public void Abort()
         {
-            if (_withUrlPrefix)
+            if (_addUrlPrefix)
             {
                 object instanceOrReplica;
                 ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica);
@@ -51,7 +62,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            if (_withUrlPrefix)
+            if (_addUrlPrefix)
             {
                 object instanceOrReplica;
                 ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica);
@@ -64,7 +75,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
         {
             var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            if (_withUrlPrefix)
+            if (_addUrlPrefix)
             {
                 ServiceFabricRegistry.Default.TryAdd(_instanceOrReplica, out _urlPrefix);
                 return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{_urlPrefix}")));

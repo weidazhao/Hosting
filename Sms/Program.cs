@@ -9,17 +9,17 @@ namespace Sms
     {
         public static void Main(string[] args)
         {
-            var webHost = BuildWebHost(args);
+            var context = CreateAspNetCoreCommunicationContext(args);
 
             using (var fabricRuntime = FabricRuntime.Create())
             {
-                fabricRuntime.RegisterStatefulServiceFactory("SmsType", () => new SmsService(webHost));
+                fabricRuntime.RegisterStatefulServiceFactory("SmsType", () => new SmsService(context));
 
-                webHost.Run();
+                context.WebHost.Run();
             }
         }
 
-        private static IWebHost BuildWebHost(string[] args)
+        private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
         {
             var serviceDescription = new ServiceDescription()
             {
@@ -33,10 +33,12 @@ namespace Sms
                 ServiceDescriptions = ImmutableArray.Create(serviceDescription)
             };
 
-            return new WebHostBuilder().UseDefaultConfiguration(args)
-                                       .UseStartup<Startup>()
-                                       .UseServiceFabric(options)
-                                       .Build();
+            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                              .UseStartup<Startup>()
+                                              .UseServiceFabric(options)
+                                              .Build();
+
+            return new AspNetCoreCommunicationContext(webHost, addUrlPrefix: true);
         }
     }
 }
