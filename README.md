@@ -28,54 +28,56 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        var webHost = BuildWebHost(args);
+        var context = CreateAspNetCoreCommunicationContext(args);
 
         using (var fabricRuntime = FabricRuntime.Create())
         {
-            fabricRuntime.RegisterStatefulServiceFactory("MyStatefulType", () => new MyStatefulService(webHost));
+            fabricRuntime.RegisterStatefulServiceFactory("CounterType", () => new CounterService(context));
 
-            webHost.Run();
+            context.WebHost.Run();
         }
     }
 
-    private static IWebHost BuildWebHost(string[] args)
-    {    
+    private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
+    {
         var serviceDescription = new ServiceDescription()
         {
-            ServiceType = typeof(MyStatefulService),
-            InterfaceTypes = ImmutableArray.Create(typeof(IMyStatefulService))
+            ServiceType = typeof(CounterService),
+            InterfaceTypes = ImmutableArray.Create(typeof(ICounterService))
         };
-        
+
         var options = new ServiceFabricOptions()
         {
-            EndpointName = "MyStatefulTypeEndpoint",
+            EndpointName = "CounterTypeEndpoint",
             ServiceDescriptions = ImmutableArray.Create(serviceDescription)
         };
 
-        return new WebHostBuilder().UseDefaultConfiguration(args)
-                                   .UseStartup<Startup>()
-                                   .UseServiceFabric(options)
-                                   .Build();
+        var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                          .UseStartup<Startup>()
+                                          .UseServiceFabric(options)
+                                          .Build();
+
+        return new AspNetCoreCommunicationContext(webHost, addUrlPrefix: true);
     }
 }
 ```
 
 ## Create Communication Listener
 ```csharp
-public class MyStatefulService : StatefulService
+public class CounterService : StatefulService, ICounterService
 {
     ...
     
-    private readonly IWebHost _webHost;    
+    private readonly AspNetCoreCommunicationContext _context;        
 
-    public MyStatefulService(IWebHost webHost)
-    {            
-        _webHost = webHost;
+    public CounterService(AspNetCoreCommunicationContext context)
+    {
+        _context = context;
     }
     
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(this, _webHost, withUrlPrefix: true)) };
+        return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
     }
 }
 ```
@@ -83,19 +85,19 @@ public class MyStatefulService : StatefulService
 ## ServiceManifest.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<ServiceManifest Name="MyStateful"
-                 Version="1.0.0"
+<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
-                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                 Name="Counter"
+                 Version="1.0.0">
   <ServiceTypes>
-    <StatefulServiceType ServiceTypeName="MyStatefulType" HasPersistedState="true" />
+    <StatefulServiceType ServiceTypeName="CounterType" HasPersistedState="true" />
   </ServiceTypes>
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
         <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16453\bin\dnx.exe</Program>
-        <Arguments>--project approot\src\MyStateful MyStateful</Arguments>
+        <Arguments>--project approot\src\Counter Counter</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
       </ExeHost>
@@ -103,7 +105,7 @@ public class MyStatefulService : StatefulService
   </CodePackage>
   <Resources>
     <Endpoints>
-      <Endpoint Name="MyStatefulTypeEndpoint" Protocol="http" Type="Input" />
+      <Endpoint Name="CounterTypeEndpoint" Protocol="http" Type="Input" />
     </Endpoints>
   </Resources>
 </ServiceManifest>
