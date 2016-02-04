@@ -96,8 +96,7 @@ public class CounterService : StatefulService, ICounterService
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16453\bin\dnx.exe</Program>
-        <Arguments>--project approot\src\Counter Counter</Arguments>
+        <Program>Counter.exe</Program>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
       </ExeHost>
