@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ServiceFabric.AspNetCore;
+﻿using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -13,7 +11,14 @@ namespace Sms
 {
     public class SmsService : StatefulService, ISmsService
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly AspNetCoreCommunicationContext _context;
+        private readonly SemaphoreSlim _semaphore;
+
+        public SmsService(AspNetCoreCommunicationContext context)
+        {
+            _context = context;
+            _semaphore = new SemaphoreSlim(1, 1);
+        }
 
         public async Task<IEnumerable<string>> GetMessagesAsync(string user)
         {
@@ -54,14 +59,7 @@ namespace Sms
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Build an ASP.NET Core web application that serves as the communication listener.
-            var webHost = new WebHostBuilder().UseDefaultConfiguration()
-                                              .UseStartup<Startup>()
-                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "SmsTypeEndpoint")
-                                              .ConfigureServices(services => services.AddSingleton<ISmsService>(this))
-                                              .Build();
-
-            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
+            return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
         }
     }
 }

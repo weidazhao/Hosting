@@ -11,7 +11,9 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Gateway", "Gateway\Gateway.
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Sms", "Sms\Sms.xproj", "{998EBA46-CBBE-4712-929B-603E633EC48F}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.ServiceFabric.AspNetCore", "Microsoft.ServiceFabric.AspNetCore\Microsoft.ServiceFabric.AspNetCore.xproj", "{A326AC7D-A3A8-4BD5-82C5-3AC8DD52AF16}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.ServiceFabric.AspNetCore.Hosting", "Microsoft.ServiceFabric.AspNetCore.Hosting\Microsoft.ServiceFabric.AspNetCore.Hosting.xproj", "{6EFAACB6-2CF0-42C6-AFC4-FFC1AEDB60A3}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.ServiceFabric.AspNetCore.Gateway", "Microsoft.ServiceFabric.AspNetCore.Gateway\Microsoft.ServiceFabric.AspNetCore.Gateway.xproj", "{E5D8CE99-9A88-49AA-8948-0E3C90C83257}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +39,14 @@ Global
 		{998EBA46-CBBE-4712-929B-603E633EC48F}.Debug|x64.Build.0 = Debug|Any CPU
 		{998EBA46-CBBE-4712-929B-603E633EC48F}.Release|x64.ActiveCfg = Release|Any CPU
 		{998EBA46-CBBE-4712-929B-603E633EC48F}.Release|x64.Build.0 = Release|Any CPU
-		{A326AC7D-A3A8-4BD5-82C5-3AC8DD52AF16}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A326AC7D-A3A8-4BD5-82C5-3AC8DD52AF16}.Debug|x64.Build.0 = Debug|Any CPU
-		{A326AC7D-A3A8-4BD5-82C5-3AC8DD52AF16}.Release|x64.ActiveCfg = Release|Any CPU
-		{A326AC7D-A3A8-4BD5-82C5-3AC8DD52AF16}.Release|x64.Build.0 = Release|Any CPU
+		{6EFAACB6-2CF0-42C6-AFC4-FFC1AEDB60A3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6EFAACB6-2CF0-42C6-AFC4-FFC1AEDB60A3}.Debug|x64.Build.0 = Debug|Any CPU
+		{6EFAACB6-2CF0-42C6-AFC4-FFC1AEDB60A3}.Release|x64.ActiveCfg = Release|Any CPU
+		{6EFAACB6-2CF0-42C6-AFC4-FFC1AEDB60A3}.Release|x64.Build.0 = Release|Any CPU
+		{E5D8CE99-9A88-49AA-8948-0E3C90C83257}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5D8CE99-9A88-49AA-8948-0E3C90C83257}.Debug|x64.Build.0 = Debug|Any CPU
+		{E5D8CE99-9A88-49AA-8948-0E3C90C83257}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5D8CE99-9A88-49AA-8948-0E3C90C83257}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

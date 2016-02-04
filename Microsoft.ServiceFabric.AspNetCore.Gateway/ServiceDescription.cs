@@ -39,22 +39,12 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 
         public virtual Task<string> ComputeNamedPartitionKeyAsync(HttpContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            return Task.FromResult(context.Request.ToString());
+            throw new NotImplementedException();
         }
 
         public virtual Task<long> ComputeUniformInt64PartitionKeyAsync(HttpContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            return Task.FromResult<long>(context.Request.GetHashCode());
+            throw new NotImplementedException();
         }
     }
 }

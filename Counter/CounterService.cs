@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ServiceFabric.AspNetCore;
+﻿using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -12,7 +10,14 @@ namespace Counter
 {
     public class CounterService : StatefulService, ICounterService
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly AspNetCoreCommunicationContext _context;
+        private readonly SemaphoreSlim _semaphore;
+
+        public CounterService(AspNetCoreCommunicationContext context)
+        {
+            _context = context;
+            _semaphore = new SemaphoreSlim(1, 1);
+        }
 
         public async Task<long> GetCurrentAsync()
         {
@@ -62,14 +67,7 @@ namespace Counter
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Build an ASP.NET Core web application that serves as a communication listener.
-            var webHost = new WebHostBuilder().UseDefaultConfiguration()
-                                              .UseStartup<Startup>()
-                                              .UseServiceFabricEndpoint(ServiceInitializationParameters, "CounterTypeEndpoint")
-                                              .ConfigureServices(services => services.AddSingleton<ICounterService>(this))
-                                              .Build();
-
-            return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
+            return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
         }
     }
 }

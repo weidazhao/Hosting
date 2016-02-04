@@ -1,9 +1,9 @@
 # About The Sample
-Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core Web API as communication listeners in their stateless services or stateful services, just like what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
+Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in their stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
 
 This sample demonstrates:
 
-1. How ASP.NET Core Web API can be used in a communication listener of stateless/stateful services.
+1. How ASP.NET Core can be used in a communication listener of stateless/stateful services.
 2. How to build an HTTP gateway service to forward requests to multiple services behind it with the reusable and modular components.
 
 Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
@@ -13,8 +13,8 @@ Please share your feedback to help us improve the experience in the future relea
 1. Install Service Fabric runtime, SDK and tools - 1.4.87: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
 2. Launch 'Developer Command Prompt for VS2015' as admin and upgrade DNVM by running: https://github.com/aspnet/home#cmd
 3. In the command prompt, run _set DNX_UNSTABLE_FEED=https://www.myget.org/F/aspnetcidev/_.
-4. In the command prompt, run _dnvm install 1.0.0-rc2-16430 -a x86 -u_.
-5. In the command prompt, run _dnvm install 1.0.0-rc2-16430 -a x64 -u_.
+4. In the command prompt, run _dnvm install 1.0.0-rc2-16453 -a x86 -u_.
+5. In the command prompt, run _dnvm install 1.0.0-rc2-16453 -a x64 -u_.
 6. Open Visual Studio running as admin, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
 7. Clone the repo and open the solution.
 8. After all the packages are restored, Ctrl F5 / F5 to run the app.
@@ -22,61 +22,62 @@ Please share your feedback to help us improve the experience in the future relea
 
 # Key Code Snippets
 
-## Create Communication Listener
+## Entry Point
 ```csharp
-public class MyStatefulService : StatefulService
+public static class Program
 {
-    ...
-    
-    protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
+    public static void Main(string[] args)
     {
-        // Build an ASP.NET Core web application that serves as the communication listener.
-        var webHost = new WebHostBuilder().UseDefaultConfiguration()
+        var context = CreateAspNetCoreCommunicationContext(args);
+
+        using (var fabricRuntime = FabricRuntime.Create())
+        {
+            fabricRuntime.RegisterStatefulServiceFactory("CounterType", () => new CounterService(context));
+
+            context.WebHost.Run();
+        }
+    }
+
+    private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
+    {
+        var serviceDescription = new ServiceDescription()
+        {
+            ServiceType = typeof(CounterService),
+            InterfaceTypes = ImmutableArray.Create(typeof(ICounterService))
+        };
+
+        var options = new ServiceFabricOptions()
+        {
+            EndpointName = "CounterTypeEndpoint",
+            ServiceDescriptions = ImmutableArray.Create(serviceDescription)
+        };
+
+        var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                           .UseStartup<Startup>()
-                                          .UseServiceFabricEndpoint(ServiceInitializationParameters, "MyStatefulTypeEndpoint")
-                                          .ConfigureServices(services => services.AddSingleton<MyStatefulService>(this))
+                                          .UseServiceFabric(options)
                                           .Build();
 
-        return new[] { new ServiceReplicaListener(_ => new AspNetCoreCommunicationListener(webHost)) };
+        return new AspNetCoreCommunicationContext(webHost, addUrlPrefix: true);
     }
 }
 ```
 
-## ASP.NET Core Communication Listener Adapter
+## Create Communication Listener
 ```csharp
-public class AspNetCoreCommunicationListener : ICommunicationListener
+public class CounterService : StatefulService, ICounterService
 {
-    private readonly IWebHost _webHost;
+    ...
+    
+    private readonly AspNetCoreCommunicationContext _context;        
 
-    public AspNetCoreCommunicationListener(IWebHost webHost)
+    public CounterService(AspNetCoreCommunicationContext context)
     {
-        if (webHost == null)
-        {
-            throw new ArgumentNullException(nameof(webHost));
-        }
-
-        _webHost = webHost;
+        _context = context;
     }
-
-    public void Abort()
+    
+    protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        _webHost.Dispose();
-    }
-
-    public Task CloseAsync(CancellationToken cancellationToken)
-    {
-        _webHost.Dispose();
-
-        return Task.FromResult(true);
-    }
-
-    public Task<string> OpenAsync(CancellationToken cancellationToken)
-    {
-        _webHost.Start();
-
-        var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
-
-        return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
+        return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
     }
 }
 ```
@@ -84,19 +85,19 @@ public class AspNetCoreCommunicationListener : ICommunicationListener
 ## ServiceManifest.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<ServiceManifest Name="MyStateful"
-                 Version="1.0.0"
+<ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
-                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                 Name="Counter"
+                 Version="1.0.0">
   <ServiceTypes>
-    <StatefulServiceType ServiceTypeName="MyStatefulType" HasPersistedState="true" />
+    <StatefulServiceType ServiceTypeName="CounterType" HasPersistedState="true" />
   </ServiceTypes>
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16430\bin\dnx.exe</Program>
-        <Arguments>--project approot\src\MyStateful MyStateful</Arguments>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16453\bin\dnx.exe</Program>
+        <Arguments>--project approot\src\Counter Counter</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
       </ExeHost>
@@ -104,7 +105,7 @@ public class AspNetCoreCommunicationListener : ICommunicationListener
   </CodePackage>
   <Resources>
     <Endpoints>
-      <Endpoint Name="MyStatefulTypeEndpoint" Protocol="http" Type="Input" />
+      <Endpoint Name="CounterTypeEndpoint" Protocol="http" Type="Input" />
     </Endpoints>
   </Resources>
 </ServiceManifest>

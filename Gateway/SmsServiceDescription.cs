@@ -15,20 +15,20 @@ namespace Gateway
 
         public override Task<long> ComputeUniformInt64PartitionKeyAsync(HttpContext context)
         {
-            try
-            {
-                var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            string user = null;
 
-                // Assumes that the last two segments in the path are {user}/{message}
-                string user = pathSegments[pathSegments.Length - 2];
-
-                return Task.FromResult((long)user.GetHashCode());
-            }
-            catch
+            if (StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "GET"))
             {
-                // Wrong, but ok for prototype
-                return Task.FromResult((long)context.GetHashCode());
+                user = pathSegments[pathSegments.Length - 1];
             }
+            else if (StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "POST"))
+            {
+                user = pathSegments[pathSegments.Length - 2];
+            }
+
+            return Task.FromResult(HashCodeUtilities.GetInt64HashCode(user));
         }
     }
 }
