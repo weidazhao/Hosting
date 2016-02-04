@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.AspNetCore.Hosting.Internal;
 using System;
 using System.Fabric;
+using System.Linq;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
@@ -36,7 +37,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             //
             webHostBuilder.ConfigureServices(services =>
             {
-                if (options.ServiceDescriptions != null)
+                if (options.ServiceDescriptions != null && options.ServiceDescriptions.Any())
                 {
                     services.AddTransient<IStartupFilter>(serviceProvider => new ServiceFabricStartupFilter(options));
 
@@ -44,18 +45,24 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 
                     foreach (var serviceDescription in options.ServiceDescriptions)
                     {
-                        foreach (var interfaceType in serviceDescription.InterfaceTypes)
+                        if (serviceDescription.ServiceType != null && serviceDescription.InterfaceTypes != null)
                         {
-                            services.AddScoped(interfaceType, serviceProvider =>
+                            foreach (var interfaceType in serviceDescription.InterfaceTypes)
                             {
-                                var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                                if (interfaceType != null)
+                                {
+                                    services.AddScoped(interfaceType, serviceProvider =>
+                                    {
+                                        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
-                                var feature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
+                                        var feature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
 
-                                var instanceOrReplica = feature?.InstanceOrReplica;
+                                        var instanceOrReplica = feature?.InstanceOrReplica;
 
-                                return instanceOrReplica?.GetType() == serviceDescription.ServiceType ? instanceOrReplica : null;
-                            });
+                                        return instanceOrReplica?.GetType() == serviceDescription.ServiceType ? instanceOrReplica : null;
+                                    });
+                                }
+                            }
                         }
                     }
                 }
