@@ -11,14 +11,10 @@ Please share your feedback to help us improve the experience in the future relea
 # How to Build & Run The Sample
 
 1. Install Service Fabric runtime, SDK and tools - 1.4.87: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
-2. Launch 'Developer Command Prompt for VS2015' as admin and upgrade DNVM by running: https://github.com/aspnet/home#cmd
-3. In the command prompt, run _set DNX_UNSTABLE_FEED=https://www.myget.org/F/aspnetcidev/_.
-4. In the command prompt, run _dnvm install 1.0.0-rc2-16453 -a x86 -u_.
-5. In the command prompt, run _dnvm install 1.0.0-rc2-16453 -a x64 -u_.
-6. Open Visual Studio running as admin, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
-7. Clone the repo and open the solution.
-8. After all the packages are restored, Ctrl F5 / F5 to run the app.
-9. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services.
+2. Install DotNet CLI: https://github.com/dotnet/cli. If you install it via binaries (not MSI), add path-to-dotnet-cli\bin to the environment variable PATH.
+3. Clone the repo.
+4. Go to Hosting\Hosting, and run dotnet-publish.cmd.
+5. Run Hosting\Hosting\Scripts\Deploy-FabricApplication.ps1 to deploy the app under Hosting\Hosting\pkg\Debug. 
 
 # Key Code Snippets
 
