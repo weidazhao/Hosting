@@ -35,6 +35,7 @@ namespace Sms
 
             var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                               .UseStartup<Startup>()
+                                              .UseServer("Microsoft.AspNetCore.Server.Kestrel")
                                               .UseServiceFabric(options)
                                               .Build();
 
