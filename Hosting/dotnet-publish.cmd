@@ -35,8 +35,7 @@ for %%S in (Counter,Gateway,Sms) do (
     robocopy /E %SOLUTION_FOLDER%\%%S\PackageRoot\ %PACKAGE_ROOT%\%%S\
     robocopy /E %SOLUTION_FOLDER%\%%S\bin\%CONFIGURATION%\%FRAMEWORK%\%RUNTIME%\ %PACKAGE_ROOT%\%%S\Code\
     
-    copy /Y %SOLUTION_FOLDER%\%%S\appsettings.json %PACKAGE_ROOT%\%%S\Code\
-    copy /Y %SOLUTION_FOLDER%\%%S\hosting.json %PACKAGE_ROOT%\%%S\Code\
+    copy /Y %SOLUTION_FOLDER%\%%S\appsettings.json %PACKAGE_ROOT%\%%S\Code\    
 )
 
 copy /Y %SOLUTION_FOLDER%\Hosting\ApplicationManifest.xml %PACKAGE_ROOT%\
