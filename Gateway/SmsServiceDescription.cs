@@ -28,7 +28,7 @@ namespace Gateway
                 user = pathSegments[pathSegments.Length - 2];
             }
 
-            return Task.FromResult(HashCodeUtilities.GetInt64HashCode(user));
+            return Task.FromResult(Fnv1aHashCode.Get64bitHashCode(user));
         }
     }
 }
