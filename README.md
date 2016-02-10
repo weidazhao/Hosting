@@ -13,8 +13,8 @@ Please share your feedback to help us improve the experience in the future relea
 1. Install Service Fabric runtime, SDK and tools - 1.4.87: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
 2. Launch 'Developer Command Prompt for VS2015' as admin and upgrade DNVM by running: https://github.com/aspnet/home#cmd
 3. In the command prompt, run _set DNX_UNSTABLE_FEED=https://www.myget.org/F/aspnetcidev/_.
-4. In the command prompt, run _dnvm install 1.0.0-rc2-16453 -a x86 -u_.
-5. In the command prompt, run _dnvm install 1.0.0-rc2-16453 -a x64 -u_.
+4. In the command prompt, run _dnvm install 1.0.0-rc2-16496 -a x86 -u_.
+5. In the command prompt, run _dnvm install 1.0.0-rc2-16496 -a x64 -u_.
 6. Open Visual Studio running as admin, go to Options -> NuGet Package Manager -> Package Sources, and add a new package source: https://www.myget.org/F/aspnetcidev/api/v3/index.json.
 7. Clone the repo and open the solution.
 8. After all the packages are restored, Ctrl F5 / F5 to run the app.
@@ -96,7 +96,7 @@ public class CounterService : StatefulService, ICounterService
   <CodePackage Name="Code" Version="1.0.0">
     <EntryPoint>
       <ExeHost>
-        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16453\bin\dnx.exe</Program>
+        <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16496\bin\dnx.exe</Program>
         <Arguments>--project approot\src\Counter Counter</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
         <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />

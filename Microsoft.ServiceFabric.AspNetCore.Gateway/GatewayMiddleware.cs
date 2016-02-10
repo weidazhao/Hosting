@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.ServiceFabric.AspNetCore.Gateway.Internal;
 using System;
 using System.Threading.Tasks;
 
-namespace Microsoft.ServiceFabric.AspNetCore.Gateway.Internal
+namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 {
     public class GatewayMiddleware
     {
