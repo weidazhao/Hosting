@@ -17,19 +17,16 @@ if exist %PACKAGE_ROOT%\ (
 if not exist %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Hosting\project.lock.json (
     dotnet restore %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Hosting\
 )
-dotnet compile %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Hosting\ -c %CONFIGURATION% -f %FRAMEWORK%
 
 if not exist %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Gateway\project.lock.json (
     dotnet restore %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Gateway\
 )
-dotnet compile %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Gateway\ -c %CONFIGURATION% -f %FRAMEWORK%
 
 for %%S in (Counter,Gateway,Sms) do (
     if not exist %SOLUTION_FOLDER%\%%S\project.lock.json (
         dotnet restore %SOLUTION_FOLDER%\%%S\
     )
-
-    dotnet compile %SOLUTION_FOLDER%\%%S\ -c %CONFIGURATION% -f %FRAMEWORK%
+    
     dotnet publish %SOLUTION_FOLDER%\%%S\ -c %CONFIGURATION% -f %FRAMEWORK% -r %RUNTIME%
 
     robocopy /E %SOLUTION_FOLDER%\%%S\PackageRoot\ %PACKAGE_ROOT%\%%S\
