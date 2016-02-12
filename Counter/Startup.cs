@@ -30,18 +30,6 @@ namespace Counter
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.Use(next => async context =>
-            {
-                if (context.Request.Path == "/_status")
-                {
-                    await context.Response.WriteAsync("operational");
-                }
-                else
-                {
-                    await next(context);
-                }
-            });
-            
             app.UseMvc();
         }
     }
