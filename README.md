@@ -1,10 +1,10 @@
 # About The Sample
-Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in their stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
 
 This sample demonstrates:
 
-1. How ASP.NET Core can be used in a communication listener of stateless/stateful services.
-2. How to build an HTTP gateway service to forward requests to multiple services behind it with the reusable and modular components.
+1. How ASP.NET Core can be used in a communication listener of stateless/stateful services. Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in their stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
+
+2. How to build an API gateway service to forward requests to multiple micro services behind it with the reusable and modular component. Service Fabric is a great platform for building micro services. The gateway middleware (Microsoft.ServiceFabric.AspNetCore.Gateway) is an attempt to provide a building block for people to easily implement the API gateway pattern of micro services on Service Fabric. There are a couple good articles elaborating the API gateway pattern, such as http://microservices.io/patterns/apigateway.html, http://www.infoq.com/articles/microservices-intro, etc.
 
 Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
 
