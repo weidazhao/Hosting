@@ -39,7 +39,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             {
                 if (options.ServiceDescriptions != null && options.ServiceDescriptions.Any())
                 {
-                    services.AddTransient<IStartupFilter>(serviceProvider => new ServiceFabricStartupFilter(options));
+                    services.AddTransient<IStartupFilter, ServiceFabricStartupFilter>();
 
                     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
