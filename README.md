@@ -14,7 +14,7 @@ Please share your feedback to help us improve the experience in the future relea
 2. Install DotNet CLI: https://github.com/dotnet/cli. If you install it via binaries (not MSI), add path-to-dotnet-cli\bin to the environment variable PATH. Current version: 1.0.0.001297
 3. Clone the repo.
 4. Go to Hosting\Hosting, and run dotnet-publish.cmd.
-5. Run Hosting\Hosting\Scripts\Deploy-FabricApplication.ps1 to deploy the app under Hosting\Hosting\pkg\Debug. 
+5. Open 'Windows PowerShell' command prompt as administrator, navigate to Hosting\Hosting\, and run _Connect-ServiceFabricCluster | .\Scripts\Deploy-FabricApplication.ps1 -PublishProfileFile .\PublishProfiles\Local.xml -ApplicationPackagePath .\pkg\Debug\ -OverwriteBehavior Always_ 
 
 # Key Code Snippets
 
