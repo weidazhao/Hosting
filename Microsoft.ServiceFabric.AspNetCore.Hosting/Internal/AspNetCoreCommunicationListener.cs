@@ -56,7 +56,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             if (_addUrlPrefix)
             {
                 object instanceOrReplica;
-                ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica);
+                if (!ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica))
+                {
+                    throw new InvalidOperationException();
+                }
             }
         }
 
@@ -65,7 +68,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             if (_addUrlPrefix)
             {
                 object instanceOrReplica;
-                ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica);
+                if (!ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica))
+                {
+                    throw new InvalidOperationException();
+                }
             }
 
             return Task.FromResult(true);
@@ -77,7 +83,11 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
             if (_addUrlPrefix)
             {
-                ServiceFabricRegistry.Default.TryAdd(_instanceOrReplica, out _urlPrefix);
+                if (!ServiceFabricRegistry.Default.TryAdd(_instanceOrReplica, out _urlPrefix))
+                {
+                    throw new InvalidOperationException();
+                }
+
                 return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{_urlPrefix}")));
             }
 
