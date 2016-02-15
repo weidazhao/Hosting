@@ -10,6 +10,8 @@ namespace Hosting.Tests
     {
         public static void Main(string[] args)
         {
+            string baseAddress = args.Length > 0 && !string.IsNullOrEmpty(args[0]) ? args[0] : "http://localhost:8000";
+
             using (var cts = new CancellationTokenSource())
             {
                 Console.CancelKeyPress += (sender, eventArgs) =>
@@ -20,50 +22,50 @@ namespace Hosting.Tests
                     eventArgs.Cancel = true;
                 };
 
-                RunTestsRepeatedlyAsync(cts.Token).GetAwaiter().GetResult();
+                RunTestsRepeatedlyAsync(new Uri(baseAddress), cts.Token).GetAwaiter().GetResult();
             }
         }
 
-        public static async Task RunTestsRepeatedlyAsync(CancellationToken cancellationToken)
+        private static async Task RunTestsRepeatedlyAsync(Uri baseAddress, CancellationToken cancellationToken)
         {
-            while (true)
+            using (var client = new HttpClient(new ConsoleLoggingHandler(), true))
             {
-                if (cancellationToken.IsCancellationRequested)
+                client.BaseAddress = baseAddress;
+
+                int iteration = 0;
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    break;
+                    await RunTestsAsync(client, cancellationToken);
+
+                    Console.WriteLine($"Iteration {++iteration} completed.");
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
+            }
+        }
 
-                try
-                {
-                    using (var client = new HttpClient(new ConsoleLoggingHandler(), true))
-                    {
-                        client.BaseAddress = new Uri("http://localhost:8000");
+        private static async Task RunTestsAsync(HttpClient client, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // SMS
+                await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty), cancellationToken);
 
-                        // SMS
-                        await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty));
+                await client.GetAsync("/sms/api/sms/unicorn", cancellationToken);
 
-                        await client.GetAsync("/sms/api/sms/unicorn");
+                // Counter
+                await client.PostAsync("/counter/api/counter", new StringContent(string.Empty), cancellationToken);
 
-                        // Counter
-                        await client.PostAsync("/counter/api/counter", new StringContent(string.Empty));
+                await client.GetAsync("/counter/api/counter", cancellationToken);
 
-                        await client.GetAsync("/counter/api/counter");
+                await client.GetAsync("/Hosting/CounterService/api/counter", cancellationToken);
 
-                        await client.GetAsync("/Hosting/CounterService/api/counter");
-
-                        var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
-                        request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
-                        await client.SendAsync(request);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
-                Console.WriteLine();
-
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
+                request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
+                await client.SendAsync(request, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
