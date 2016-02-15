@@ -7,22 +7,15 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
     public class ServiceFabricMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ServiceFabricOptions _options;
 
-        public ServiceFabricMiddleware(RequestDelegate next, ServiceFabricOptions options)
+        public ServiceFabricMiddleware(RequestDelegate next)
         {
             if (next == null)
             {
                 throw new ArgumentNullException(nameof(next));
             }
 
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
             _next = next;
-            _options = options;
         }
 
         public async Task Invoke(HttpContext context)
