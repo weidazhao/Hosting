@@ -14,10 +14,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
     {
         private readonly object _instanceOrReplica;
         private readonly IWebHost _webHost;
-        private readonly bool _addUrlPrefix;
+        private readonly bool _isWebHostShared;
         private PathString _urlPrefix;
 
-        public AspNetCoreCommunicationListener(IStatelessServiceInstance instance, IWebHost webHost, bool addUrlPrefix)
+        public AspNetCoreCommunicationListener(IStatelessServiceInstance instance, IWebHost webHost, bool isWebHostShared)
         {
             if (instance == null)
             {
@@ -31,10 +31,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
             _instanceOrReplica = instance;
             _webHost = webHost;
-            _addUrlPrefix = addUrlPrefix;
+            _isWebHostShared = isWebHostShared;
         }
 
-        public AspNetCoreCommunicationListener(IStatefulServiceReplica replica, IWebHost webHost, bool addUrlPrefix)
+        public AspNetCoreCommunicationListener(IStatefulServiceReplica replica, IWebHost webHost, bool isWebHostShared)
         {
             if (replica == null)
             {
@@ -48,12 +48,12 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
             _instanceOrReplica = replica;
             _webHost = webHost;
-            _addUrlPrefix = addUrlPrefix;
+            _isWebHostShared = isWebHostShared;
         }
 
         public void Abort()
         {
-            if (_addUrlPrefix)
+            if (_isWebHostShared)
             {
                 object instanceOrReplica;
                 if (!ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica))
@@ -65,7 +65,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            if (_addUrlPrefix)
+            if (_isWebHostShared)
             {
                 object instanceOrReplica;
                 if (!ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica))
@@ -81,7 +81,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
         {
             var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            if (_addUrlPrefix)
+            if (_isWebHostShared)
             {
                 if (!ServiceFabricRegistry.Default.TryAdd(_instanceOrReplica, out _urlPrefix))
                 {

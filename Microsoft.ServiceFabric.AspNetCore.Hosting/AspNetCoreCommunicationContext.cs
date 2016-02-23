@@ -8,7 +8,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public class AspNetCoreCommunicationContext
     {
-        public AspNetCoreCommunicationContext(IWebHost webHost, bool addUrlPrefix)
+        public AspNetCoreCommunicationContext(IWebHost webHost, bool isWebHostShared)
         {
             if (webHost == null)
             {
@@ -16,12 +16,12 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             }
 
             WebHost = webHost;
-            AddUrlPrefix = addUrlPrefix;
+            IsWebHostShared = isWebHostShared;
         }
 
         public IWebHost WebHost { get; }
 
-        public bool AddUrlPrefix { get; }
+        public bool IsWebHostShared { get; }
 
         public ICommunicationListener CreateCommunicationListener(IStatelessServiceInstance instance)
         {
@@ -30,7 +30,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            return new AspNetCoreCommunicationListener(instance, WebHost, AddUrlPrefix);
+            return new AspNetCoreCommunicationListener(instance, WebHost, IsWebHostShared);
         }
 
         public ICommunicationListener CreateCommunicationListener(IStatefulServiceReplica replica)
@@ -40,7 +40,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                 throw new ArgumentNullException(nameof(replica));
             }
 
-            return new AspNetCoreCommunicationListener(replica, WebHost, AddUrlPrefix);
+            return new AspNetCoreCommunicationListener(replica, WebHost, IsWebHostShared);
         }
     }
 }

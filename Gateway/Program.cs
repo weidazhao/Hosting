@@ -31,7 +31,7 @@ namespace Gateway
                                               .UseServiceFabric(options)
                                               .Build();
 
-            return new AspNetCoreCommunicationContext(webHost, addUrlPrefix: false);
+            return new AspNetCoreCommunicationContext(webHost, isWebHostShared: false);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Counter
                                               .UseServiceFabric(options)
                                               .Build();
 
-            return new AspNetCoreCommunicationContext(webHost, addUrlPrefix: true);
+            return new AspNetCoreCommunicationContext(webHost, isWebHostShared: true);
         }
     }
 }
