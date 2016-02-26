@@ -1,8 +1,8 @@
 @echo off
 
 rem DotNet CLI Version
-rem 962411969ec9ce6a6b8f8f246c018026091a6f10
-rem 1.0.0.001496
+rem 6aeed1f52d73ffa8bb01229e4638fe3d8250b9e7
+rem 1.0.0.001540
 
 set CONFIGURATION=Debug
 set FRAMEWORK=net451
