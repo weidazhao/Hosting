@@ -14,7 +14,7 @@ Please share your feedback to help us improve the experience in the future relea
 2. Install DotNet CLI: https://github.com/dotnet/cli. If you install it via binaries (not MSI), add path-to-dotnet-cli\bin to the environment variable PATH. Current version: 1740854a858319f89af327488070cc580c7939ff 1.0.0.001580
 3. Clone the repo.
 4. Go to Hosting\Hosting, and run dotnet-publish.cmd. **Note:** Visual Studio 2015 doesn't support DotNet CLI yet, so you won't be able to publish the app from within VS at the moment.
-5. Open 'Windows PowerShell' command prompt as administrator, navigate to Hosting\Hosting\, and run _Connect-ServiceFabricCluster | .\Scripts\Deploy-FabricApplication.ps1 -PublishProfileFile .\PublishProfiles\Local.xml -ApplicationPackagePath .\pkg\Debug\ -OverwriteBehavior Always_
+5. Open 'Windows PowerShell' command prompt as administrator, navigate to Hosting\Hosting\, and run _Connect-ServiceFabricCluster  localhost:19000 | .\Scripts\Deploy-FabricApplication.ps1 -PublishProfileFile .\PublishProfiles\Local.xml -ApplicationPackagePath .\pkg\Debug\ -OverwriteBehavior Always_
 6. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services. 
 
 # Key Code Snippets
