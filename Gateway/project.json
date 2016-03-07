@@ -9,8 +9,8 @@
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
-    "Microsoft.ServiceFabric": "4.4.87-preview",
-    "Microsoft.ServiceFabric.Services": "1.4.87-preview",
+    "Microsoft.ServiceFabric": "4.5.175-preview",
+    "Microsoft.ServiceFabric.Services": "1.5.175-preview",
     "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
     "Microsoft.ServiceFabric.AspNetCore.Gateway": "1.0.0-*"
   },

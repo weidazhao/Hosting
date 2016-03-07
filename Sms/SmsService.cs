@@ -28,7 +28,10 @@ namespace Sms
             {
                 var messageQueue = await StateManager.GetOrAddAsync<IReliableQueue<string>>(user);
 
-                return messageQueue.ToArray();
+                using (var tx = StateManager.CreateTransaction())
+                {
+                    return (await messageQueue.CreateEnumerableAsync(tx)).ToList();
+                }
             }
             finally
             {
