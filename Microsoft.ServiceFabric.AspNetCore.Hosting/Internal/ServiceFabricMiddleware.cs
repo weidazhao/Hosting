@@ -35,7 +35,6 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 context.Request.PathBase = context.Request.PathBase + urlPrefix;
 
                 feature.InstanceOrReplica = instanceOrReplica;
-                context.Features.Set(feature);
             }
 
             await _next.Invoke(context);
