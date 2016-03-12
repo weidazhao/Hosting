@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
