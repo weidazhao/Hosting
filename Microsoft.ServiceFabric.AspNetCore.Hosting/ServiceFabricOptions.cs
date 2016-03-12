@@ -9,7 +9,5 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
         public string EndpointName { get; set; }
 
         public ImmutableArray<ServiceDescription> ServiceDescriptions { get; set; }
-
-        public Action<IServiceCollection> ConfigureServices { get; set; }
     }
 }

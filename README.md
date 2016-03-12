@@ -11,7 +11,7 @@ Please share your feedback to help us improve the experience in the future relea
 # How to Build & Run The Sample
 
 1. Install Service Fabric runtime, SDK and tools - 1.5.175: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
-2. Install DotNet CLI: https://github.com/dotnet/cli. If you install it via binaries (not MSI), add path-to-dotnet-cli\bin to the environment variable PATH. Current version: 444e4f9fd71b7bebbc647eae7c0e9cd352645f30 1.0.0.001668
+2. Install DotNet CLI: https://github.com/dotnet/cli. If you install it via binaries (not MSI), add path-to-dotnet-cli\bin to the environment variable PATH. Current version: 0c31e53bfa562b0231701cf33e9798affeebbf07 1.0.0.001711
 3. Clone the repo.
 4. Go to Hosting\Hosting, and run dotnet-publish.cmd. **Note:** Visual Studio 2015 doesn't support DotNet CLI yet, so you won't be able to publish the app from within VS at the moment.
 5. Open 'Windows PowerShell' command prompt as administrator, navigate to Hosting\Hosting\, and run _Connect-ServiceFabricCluster  localhost:19000 | .\Scripts\Deploy-FabricApplication.ps1 -PublishProfileFile .\PublishProfiles\Local.xml -ApplicationPackagePath .\pkg\Debug\ -OverwriteBehavior Always_

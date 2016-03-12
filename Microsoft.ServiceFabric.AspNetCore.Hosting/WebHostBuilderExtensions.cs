@@ -66,11 +66,6 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                         }
                     }
                 }
-
-                if (options.ConfigureServices != null)
-                {
-                    options.ConfigureServices(services);
-                }
             });
 
             return webHostBuilder;
