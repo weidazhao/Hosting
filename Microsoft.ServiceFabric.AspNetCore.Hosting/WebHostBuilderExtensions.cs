@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.AspNetCore.Hosting.Internal;
 using System;
@@ -39,9 +37,8 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             {
                 if (options.ServiceDescriptions != null && options.ServiceDescriptions.Any())
                 {
+                    services.AddScoped<ServiceFabricFeature>();
                     services.AddTransient<IStartupFilter, ServiceFabricStartupFilter>();
-
-                    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
                     foreach (var serviceDescription in options.ServiceDescriptions)
                     {
@@ -53,9 +50,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
                                 {
                                     services.AddScoped(interfaceType, serviceProvider =>
                                     {
-                                        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-
-                                        var feature = httpContextAccessor.HttpContext.Features.Get<ServiceFabricFeature>();
+                                        var feature = serviceProvider.GetRequiredService<ServiceFabricFeature>();
 
                                         var instanceOrReplica = feature?.InstanceOrReplica;
 

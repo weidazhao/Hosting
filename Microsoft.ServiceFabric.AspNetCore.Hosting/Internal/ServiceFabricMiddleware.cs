@@ -18,7 +18,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, ServiceFabricFeature feature)
         {
             if (context == null)
             {
@@ -33,7 +33,8 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             {
                 context.Request.Path = remainingPath;
                 context.Request.PathBase = context.Request.PathBase + urlPrefix;
-                context.Features.Set(new ServiceFabricFeature { InstanceOrReplica = instanceOrReplica });
+
+                feature.InstanceOrReplica = instanceOrReplica;
             }
 
             await _next.Invoke(context);
