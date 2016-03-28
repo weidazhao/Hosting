@@ -19,8 +19,8 @@ namespace Sms.Controllers
             return _smsService.GetMessageAsync(user);
         }
 
-        [HttpPost("{user}/{message}")]
-        public Task PostMessageAsync(string user, string message)
+        [HttpPost("{user}")]
+        public Task PostMessageAsync(string user, [FromBody]string message)
         {
             return _smsService.PostMessageAsync(user, message);
         }

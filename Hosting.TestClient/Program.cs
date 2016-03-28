@@ -48,7 +48,7 @@ namespace Hosting.TestClient
             try
             {
                 // SMS
-                await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty), cancellationToken);
+                await client.PostAsync("/sms/api/sms/unicorn", new StringContent("hello world!"), cancellationToken);
 
                 await client.GetAsync("/sms/api/sms/unicorn", cancellationToken);
 
