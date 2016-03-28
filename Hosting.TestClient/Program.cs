@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hosting.Tests
+namespace Hosting.TestClient
 {
     internal static class Program
     {
@@ -60,7 +60,7 @@ namespace Hosting.Tests
                 await client.GetAsync("/Hosting/CounterService/api/counter", cancellationToken);
 
                 var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
-                request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
+                request.Headers.Add("SF-ServiceUri", "fabric:/Hosting/CounterService");
                 await client.SendAsync(request, cancellationToken);
             }
             catch (Exception ex)

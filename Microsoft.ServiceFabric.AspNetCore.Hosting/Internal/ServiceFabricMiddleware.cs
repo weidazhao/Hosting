@@ -18,23 +18,37 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, ServiceFabricServiceRegistry registry, ServiceFabricServiceScope scope)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
+            if (registry == null)
+            {
+                throw new ArgumentNullException(nameof(registry));
+            }
+
+            if (scope == null)
+            {
+                throw new ArgumentNullException(nameof(scope));
+            }
+
             PathString urlPrefix;
             PathString remainingPath;
-            object instanceOrReplica;
+            object service;
 
-            if (ServiceFabricRegistry.Default.TryGet(context.Request.Path, out urlPrefix, out remainingPath, out instanceOrReplica))
+            if (!registry.TryGet(context.Request.Path, out urlPrefix, out remainingPath, out service))
             {
-                context.Request.Path = remainingPath;
-                context.Request.PathBase = context.Request.PathBase + urlPrefix;
-                context.Features.Set(new ServiceFabricFeature { InstanceOrReplica = instanceOrReplica });
+                context.Response.StatusCode = 503;
+
+                return;
             }
+
+            context.Request.Path = remainingPath;
+            context.Request.PathBase = context.Request.PathBase + urlPrefix;
+            scope.Service = service;
 
             await _next.Invoke(context);
         }

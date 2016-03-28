@@ -2,21 +2,23 @@
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
+using System.Fabric;
 
 namespace Gateway
 {
     public class GatewayService : StatelessService
     {
-        private readonly AspNetCoreCommunicationContext _context;
+        private readonly AspNetCoreCommunicationContext _communicationContext;
 
-        public GatewayService(AspNetCoreCommunicationContext context)
+        public GatewayService(StatelessServiceContext serviceContext, AspNetCoreCommunicationContext communicationContext)
+            : base(serviceContext)
         {
-            _context = context;
+            _communicationContext = communicationContext;
         }
 
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            return new[] { new ServiceInstanceListener(_ => _context.CreateCommunicationListener(this)) };
+            return new[] { new ServiceInstanceListener(_ => _communicationContext.CreateCommunicationListener(this)) };
         }
     }
 }
