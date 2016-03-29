@@ -14,7 +14,7 @@
     "Microsoft.ServiceFabric.Services": "2.0.135"
   },
   "frameworks": {
-    "net451": { }
+    "net452": { }
   },
   "content": [
     "appsettings.json"

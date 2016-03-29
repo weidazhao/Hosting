@@ -7,6 +7,6 @@
     "System.Collections.Immutable": "1.2.0-rc2-*"
   },
   "frameworks": {
-    "net451": { }
+    "net452": { }
   }
 }
