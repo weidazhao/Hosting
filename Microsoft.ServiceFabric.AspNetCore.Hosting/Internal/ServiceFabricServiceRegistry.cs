@@ -1,44 +1,42 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.ServiceFabric.Services.Runtime;
 using System;
 using System.Collections.Immutable;
-using System.Fabric;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
-    public class ServiceFabricRegistry
+    public class ServiceFabricServiceRegistry
     {
-        public static readonly ServiceFabricRegistry Default = new ServiceFabricRegistry();
-
         private ImmutableDictionary<PathString, object> _entries = ImmutableDictionary.Create<PathString, object>();
 
-        public bool TryAdd(object instanceOrReplica, out PathString urlPrefix)
+        public bool TryAdd(object service, out PathString urlPrefix)
         {
-            if (instanceOrReplica == null)
+            if (service == null)
             {
-                throw new ArgumentNullException(nameof(instanceOrReplica));
+                throw new ArgumentNullException(nameof(service));
             }
 
-            if (!(instanceOrReplica is IStatelessServiceInstance) && !(instanceOrReplica is IStatefulServiceReplica))
+            if (!(service is StatelessService) && !(service is StatefulService))
             {
-                throw new ArgumentException(null, nameof(instanceOrReplica));
+                throw new ArgumentException(null, nameof(service));
             }
 
             urlPrefix = UrlPrefix.NewUrlPrefix();
 
-            return ImmutableInterlocked.TryAdd(ref _entries, urlPrefix, instanceOrReplica);
+            return ImmutableInterlocked.TryAdd(ref _entries, urlPrefix, service);
         }
 
-        public bool TryRemove(PathString urlPrefix, out object instanceOrReplica)
+        public bool TryRemove(PathString urlPrefix, out object service)
         {
             if (urlPrefix == null)
             {
                 throw new ArgumentNullException(nameof(urlPrefix));
             }
 
-            return ImmutableInterlocked.TryRemove(ref _entries, urlPrefix, out instanceOrReplica);
+            return ImmutableInterlocked.TryRemove(ref _entries, urlPrefix, out service);
         }
 
-        public bool TryGet(PathString path, out PathString urlPrefix, out PathString remainingPath, out object instanceOrReplica)
+        public bool TryGet(PathString path, out PathString urlPrefix, out PathString remainingPath, out object service)
         {
             if (path == null)
             {
@@ -47,14 +45,14 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
             urlPrefix = null;
             remainingPath = null;
-            instanceOrReplica = null;
+            service = null;
 
             if (!UrlPrefix.TryGetUrlPrefix(path, out urlPrefix, out remainingPath))
             {
                 return false;
             }
 
-            if (!_entries.TryGetValue(urlPrefix, out instanceOrReplica))
+            if (!_entries.TryGetValue(urlPrefix, out service))
             {
                 return false;
             }
@@ -63,8 +61,8 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
         }
 
         //
-        // Leave UrlPrefix as a nested private class inside ServiceFabricRegistry,
-        // since UrlPrefix.TryGetUrlPrefix() doesn't validate format for perf reasons.
+        // Leave UrlPrefix as a nested private class inside ServiceFabricServiceRegistry,
+        // as UrlPrefix.TryGetUrlPrefix() doesn't validate the value in order to achieve better performance.
         //
         private static class UrlPrefix
         {

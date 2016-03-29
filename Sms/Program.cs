@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
-using System.Collections.Immutable;
-using System.Fabric;
+using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Sms
 {
@@ -9,37 +8,22 @@ namespace Sms
     {
         public static void Main(string[] args)
         {
-            var context = CreateAspNetCoreCommunicationContext(args);
+            var communicationContext = CreateAspNetCoreCommunicationContext(args);
 
-            using (var fabricRuntime = FabricRuntime.Create())
-            {
-                fabricRuntime.RegisterStatefulServiceFactory("SmsType", () => new SmsService(context));
+            ServiceRuntime.RegisterServiceAsync("SmsType", serviceContext => new SmsService(serviceContext, communicationContext)).GetAwaiter().GetResult();
 
-                context.WebHost.Run();
-            }
+            communicationContext.WebHost.Run();
         }
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
         {
-            var serviceDescription = new ServiceDescription()
-            {
-                ServiceType = typeof(SmsService),
-                InterfaceTypes = ImmutableArray.Create(typeof(ISmsService))
-            };
-
-            var options = new ServiceFabricOptions()
-            {
-                EndpointName = "SmsTypeEndpoint",
-                ServiceDescriptions = ImmutableArray.Create(serviceDescription)
-            };
-
-            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+            var webHost = new WebHostBuilder().UseDefaultHostingConfiguration(args)
                                               .UseStartup<Startup>()
                                               .UseServer("Microsoft.AspNetCore.Server.Kestrel")
-                                              .UseServiceFabric(options)
+                                              .UseServiceFabricEndpoint("SmsTypeEndpoint")
                                               .Build();
 
-            return new AspNetCoreCommunicationContext(webHost, isWebHostShared: true);
+            return new AspNetCoreCommunicationContext(webHost);
         }
     }
 }

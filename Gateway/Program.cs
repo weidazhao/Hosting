@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
-using System.Fabric;
+using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace Gateway
 {
@@ -8,30 +8,22 @@ namespace Gateway
     {
         public static void Main(string[] args)
         {
-            var context = CreateAspNetCoreCommunicationContext(args);
+            var communicationContext = CreateAspNetCoreCommunicationContext(args);
 
-            using (var fabricRuntime = FabricRuntime.Create())
-            {
-                fabricRuntime.RegisterStatelessServiceFactory("GatewayType", () => new GatewayService(context));
+            ServiceRuntime.RegisterServiceAsync("GatewayType", serviceContext => new GatewayService(serviceContext, communicationContext)).GetAwaiter().GetResult();
 
-                context.WebHost.Run();
-            }
+            communicationContext.WebHost.Run();
         }
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
         {
-            var options = new ServiceFabricOptions()
-            {
-                EndpointName = "GatewayTypeEndpoint"
-            };
-
-            var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+            var webHost = new WebHostBuilder().UseDefaultHostingConfiguration(args)
                                               .UseStartup<Startup>()
                                               .UseServer("Microsoft.AspNetCore.Server.Kestrel")
-                                              .UseServiceFabric(options)
+                                              .UseServiceFabricEndpoint("GatewayTypeEndpoint")
                                               .Build();
 
-            return new AspNetCoreCommunicationContext(webHost, isWebHostShared: false);
+            return new AspNetCoreCommunicationContext(webHost);
         }
     }
 }

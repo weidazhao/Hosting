@@ -3,6 +3,7 @@ using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
+using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,12 +11,13 @@ namespace Counter
 {
     public class CounterService : StatefulService, ICounterService
     {
-        private readonly AspNetCoreCommunicationContext _context;
+        private readonly AspNetCoreCommunicationContext _communicationContext;
         private readonly SemaphoreSlim _semaphore;
 
-        public CounterService(AspNetCoreCommunicationContext context)
+        public CounterService(StatefulServiceContext serviceContext, AspNetCoreCommunicationContext communicationContext)
+            : base(serviceContext)
         {
-            _context = context;
+            _communicationContext = communicationContext;
             _semaphore = new SemaphoreSlim(1, 1);
         }
 
@@ -67,7 +69,7 @@ namespace Counter
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
+            return new[] { new ServiceReplicaListener(_ => _communicationContext.CreateCommunicationListener(this)) };
         }
     }
 }

@@ -4,23 +4,22 @@
     "emitEntryPoint": true,
     "preserveCompilationContext": true
   },
-
   "dependencies": {
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
-    "Microsoft.ServiceFabric": "4.5.175-preview",
-    "Microsoft.ServiceFabric.Services": "1.5.175-preview",
+    "Microsoft.ServiceFabric": "5.0.135",
+    "Microsoft.ServiceFabric.AspNetCore.Gateway": "1.0.0-*",
     "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
-    "Microsoft.ServiceFabric.AspNetCore.Gateway": "1.0.0-*"
+    "Microsoft.ServiceFabric.Services": "2.0.135"
   },
-
   "frameworks": {
-    "net451": { }
+    "net452": { }
   },
-
+  "content": [
+    "appsettings.json"
+  ],
   "exclude": [
-    "wwwroot",
     "node_modules",
     "PackageRoot"
   ],

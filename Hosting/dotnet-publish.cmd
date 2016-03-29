@@ -1,12 +1,10 @@
 @echo off
 
 rem DotNet CLI Version
-rem 0c31e53bfa562b0231701cf33e9798affeebbf07
-rem 1.0.0.001711
+rem 7397d20549d2014d54bb081c39cb06bc20799c10
+rem 1.0.0-beta-002060
 
 set CONFIGURATION=Debug
-set FRAMEWORK=net451
-set RUNTIME=win7-x64
 set SOLUTION_FOLDER=%~dp0..
 set PACKAGE_ROOT=%SOLUTION_FOLDER%\Hosting\pkg\%CONFIGURATION%
 
@@ -23,16 +21,12 @@ if not exist %SOLUTION_FOLDER%\Microsoft.ServiceFabric.AspNetCore.Gateway\projec
 )
 
 for %%S in (Counter,Gateway,Sms) do (
+    robocopy /E %SOLUTION_FOLDER%\%%S\PackageRoot\ %PACKAGE_ROOT%\%%S\
+
     if not exist %SOLUTION_FOLDER%\%%S\project.lock.json (
         dotnet restore %SOLUTION_FOLDER%\%%S\
     )
-    
-    dotnet publish %SOLUTION_FOLDER%\%%S\ -c %CONFIGURATION% -f %FRAMEWORK% -r %RUNTIME%
-
-    robocopy /E %SOLUTION_FOLDER%\%%S\PackageRoot\ %PACKAGE_ROOT%\%%S\
-    robocopy /E %SOLUTION_FOLDER%\%%S\bin\%CONFIGURATION%\%FRAMEWORK%\%RUNTIME%\publish\ %PACKAGE_ROOT%\%%S\Code\
-    
-    copy /Y %SOLUTION_FOLDER%\%%S\appsettings.json %PACKAGE_ROOT%\%%S\Code\    
+    dotnet publish %SOLUTION_FOLDER%\%%S\ -c %CONFIGURATION% -o %PACKAGE_ROOT%\%%S\Code\
 )
 
 copy /Y %SOLUTION_FOLDER%\Hosting\ApplicationPackageRoot\ApplicationManifest.xml %PACKAGE_ROOT%\

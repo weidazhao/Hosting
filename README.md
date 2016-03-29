@@ -2,20 +2,19 @@
 
 This sample demonstrates:
 
-1. How ASP.NET Core can be used in a communication listener of stateless/stateful services. Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in their stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
+1. How ASP.NET Core can be used in a communication listener of stateless/stateful services. Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
 
-2. How to build an API gateway service to forward requests to multiple micro services behind it with the reusable and modular component. Service Fabric is a great platform for building micro services. The gateway middleware (Microsoft.ServiceFabric.AspNetCore.Gateway) is an attempt to provide a building block for people to easily implement the API gateway pattern of micro services on Service Fabric. There are a couple good articles elaborating the API gateway pattern, such as http://microservices.io/patterns/apigateway.html, http://www.infoq.com/articles/microservices-intro, etc.
+2. How to build an API gateway service to forward requests to multiple microservices behind it with the reusable and modular component. Service Fabric is a great platform for building micro services. The gateway middleware (Microsoft.ServiceFabric.AspNetCore.Gateway) is an attempt to provide a building block for people to easily implement the API gateway pattern of microservices on Service Fabric. There are a couple good articles elaborating the API gateway pattern, such as http://microservices.io/patterns/apigateway.html, http://www.infoq.com/articles/microservices-intro, etc. For more information about microservices, check out https://azure.microsoft.com/en-us/blog/microservices-an-application-revolution-powered-by-the-cloud/, http://martinfowler.com/articles/microservices.html.
 
-Please share your feedback to help us improve the experience in the future releases of SDK and tooling.
+Please share your feedback to help us improve the experience in the future releases of Service Fabric SDK and tooling.
 
 # How to Build & Run The Sample
 
-1. Install Service Fabric runtime, SDK and tools - 1.5.175: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
-2. Install DotNet CLI: https://github.com/dotnet/cli. If you install it via binaries (not MSI), add path-to-dotnet-cli\bin to the environment variable PATH. Current version: 0c31e53bfa562b0231701cf33e9798affeebbf07 1.0.0.001711
+1. Install Service Fabric runtime, SDK and tools - 2.0.135: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
+2. Install DotNet CLI: https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-dev-win-x64.latest.exe. Latest compatible version: 7397d20549d2014d54bb081c39cb06bc20799c10 1.0.0-beta-002060
 3. Clone the repo.
 4. Go to Hosting\Hosting, and run dotnet-publish.cmd. **Note:** Visual Studio 2015 doesn't support DotNet CLI yet, so you won't be able to publish the app from within VS at the moment.
 5. Open 'Windows PowerShell' command prompt as administrator, navigate to Hosting\Hosting\, and run _Connect-ServiceFabricCluster  localhost:19000 | .\Scripts\Deploy-FabricApplication.ps1 -PublishProfileFile .\PublishProfiles\Local.xml -ApplicationPackagePath .\pkg\Debug\ -OverwriteBehavior Always_
-6. Open Hosting\Hosting.Tests\Hosting.Tests.sln to run the client that will send requests to the services. 
 
 # Key Code Snippets
 
@@ -25,37 +24,22 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        var context = CreateAspNetCoreCommunicationContext(args);
+        var communicationContext = CreateAspNetCoreCommunicationContext(args);
 
-        using (var fabricRuntime = FabricRuntime.Create())
-        {
-            fabricRuntime.RegisterStatefulServiceFactory("CounterType", () => new CounterService(context));
+        ServiceRuntime.RegisterServiceAsync("CounterType", serviceContext => new CounterService(serviceContext, communicationContext)).GetAwaiter().GetResult();
 
-            context.WebHost.Run();
-        }
+        communicationContext.WebHost.Run();
     }
 
     private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
     {
-        var serviceDescription = new ServiceDescription()
-        {
-            ServiceType = typeof(CounterService),
-            InterfaceTypes = ImmutableArray.Create(typeof(ICounterService))
-        };
-
-        var options = new ServiceFabricOptions()
-        {
-            EndpointName = "CounterTypeEndpoint",
-            ServiceDescriptions = ImmutableArray.Create(serviceDescription)
-        };
-
         var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
                                           .UseStartup<Startup>()
                                           .UseServer("Microsoft.AspNetCore.Server.Kestrel")
-                                          .UseServiceFabric(options)
+                                          .UseServiceFabricEndpoint("CounterTypeEndpoint")
                                           .Build();
 
-        return new AspNetCoreCommunicationContext(webHost, isWebHostShared: true);
+        return new AspNetCoreCommunicationContext(webHost);
     }
 }
 ```
@@ -66,17 +50,37 @@ public class CounterService : StatefulService, ICounterService
 {
     ...
     
-    private readonly AspNetCoreCommunicationContext _context;        
+    private readonly AspNetCoreCommunicationContext _communicationContext;
 
-    public CounterService(AspNetCoreCommunicationContext context)
+    public CounterService(StatefulServiceContext serviceContext, AspNetCoreCommunicationContext communicationContext)
+        : base(serviceContext)
     {
-        _context = context;
+        _communicationContext = communicationContext;
     }
     
     protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
     {
-        return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
+        return new[] { new ServiceReplicaListener(_ => _communicationContext.CreateCommunicationListener(this)) };
     }
+}
+```
+
+## Service Dependency Injection
+```csharp
+public class Startup
+{
+    ...
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Add CounterService.
+        services.AddScopedStatefulService<ICounterService, CounterService>();
+
+        ...
+    }
+
+    ...
 }
 ```
 
@@ -114,54 +118,48 @@ public class Startup
 {
     ...
 
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddDefaultGatewayClientFactory();
+    }
+
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
-        //
-        // Scenarios:
-        // 1. Multiple services.
-        // 2. Various versions or kinds of clients side by side.
-        //
+        ...
+        
+        var counterOptions = new GatewayOptions()
+        {
+            ServiceUri = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute)
+        };
 
-        //
-        // SMS
-        //
-        app.Map("/sms",
-            subApp =>
-            {
-                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new SmsServiceDescription() });
-            }
-        );
-
-        //
-        // Counter
-        //
         app.Map("/counter",
             subApp =>
             {
-                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new CounterServiceDescription() });
+                subApp.RunGateway(counterOptions);
             }
         );
 
         app.Map("/Hosting/CounterService",
             subApp =>
             {
-                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new CounterServiceDescription() });
+                subApp.RunGateway(counterOptions);
             }
         );
 
         app.MapWhen(
             context =>
             {
-                StringValues serviceNames;
+                StringValues serviceUri;
 
-                return context.Request.Headers.TryGetValue("SF-ServiceName", out serviceNames) &&
-                       serviceNames.Count == 1 &&
-                       serviceNames[0] == "fabric:/Hosting/CounterService";
+                return context.Request.Headers.TryGetValue("SF-ServiceUri", out serviceUri) &&
+                       serviceUri.Count == 1 &&
+                       serviceUri[0] == "fabric:/Hosting/CounterService";
             },
             subApp =>
             {
-                subApp.RunGateway(new GatewayOptions() { ServiceDescription = new CounterServiceDescription() });
+                subApp.RunGateway(counterOptions);
             }
         );
     }
