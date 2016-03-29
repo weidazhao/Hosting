@@ -33,6 +33,8 @@ namespace Sms
                 {
                     var message = await messageQueue.TryDequeueAsync(tx);
 
+                    await tx.CommitAsync();
+
                     return message.HasValue ? message.Value : string.Empty;
                 }
             }

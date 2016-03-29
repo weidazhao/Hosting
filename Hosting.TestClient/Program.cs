@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,6 +39,7 @@ namespace Hosting.TestClient
                     await RunTestsAsync(client, cancellationToken);
 
                     Console.WriteLine($"Iteration {++iteration} completed.");
+                    Console.WriteLine();
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }
@@ -50,16 +52,12 @@ namespace Hosting.TestClient
                 // Gateway
                 await client.GetAsync("/_health", cancellationToken);
 
-                // SMS
-                await client.GetAsync("/sms/_health", cancellationToken);
-
-                await client.PostAsync("/sms/api/sms/unicorn", new StringContent("hello world!"), cancellationToken);
+                // SMS                
+                await client.PostAsync("/sms/api/sms/unicorn", new StringContent(@"""hello world!""", Encoding.UTF8, "application/json"), cancellationToken);
 
                 await client.GetAsync("/sms/api/sms/unicorn", cancellationToken);
 
                 // Counter
-                await client.GetAsync("/counter/_health", cancellationToken);
-
                 await client.PostAsync("/counter/api/counter", new StringContent(string.Empty), cancellationToken);
 
                 await client.GetAsync("/counter/api/counter", cancellationToken);
@@ -91,7 +89,12 @@ namespace Hosting.TestClient
 
                 stopWatch.Stop();
 
-                Console.WriteLine($"Status: {response.StatusCode} Method: {response.RequestMessage.Method} URL: {response.RequestMessage.RequestUri} Time elapsed: {stopWatch.Elapsed}");
+                Console.WriteLine($"URL: {response.RequestMessage.RequestUri}");
+                Console.WriteLine($"Method: {response.RequestMessage.Method}");
+                Console.WriteLine($"Status: {response.StatusCode}");
+                Console.WriteLine($"Content: {await response.Content.ReadAsStringAsync()}");
+                Console.WriteLine($"Time elapsed: {stopWatch.Elapsed}");
+                Console.WriteLine("--------------------------------------------------------------");
 
                 return response;
             }

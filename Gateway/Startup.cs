@@ -53,16 +53,7 @@ namespace Gateway
                 {
                     var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    string user = null;
-
-                    if (StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "GET"))
-                    {
-                        user = pathSegments[pathSegments.Length - 1];
-                    }
-                    else if (StringComparer.OrdinalIgnoreCase.Equals(context.Request.Method, "POST"))
-                    {
-                        user = pathSegments[pathSegments.Length - 2];
-                    }
+                    string user = pathSegments[pathSegments.Length - 1];
 
                     return new ServicePartitionKey(Fnv1aHashCode.Get64bitHashCode(user));
 
