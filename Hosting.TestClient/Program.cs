@@ -47,12 +47,19 @@ namespace Hosting.TestClient
         {
             try
             {
+                // Gateway
+                await client.GetAsync("/_health", cancellationToken);
+
                 // SMS
+                await client.GetAsync("/sms/_health", cancellationToken);
+
                 await client.PostAsync("/sms/api/sms/unicorn", new StringContent("hello world!"), cancellationToken);
 
                 await client.GetAsync("/sms/api/sms/unicorn", cancellationToken);
 
                 // Counter
+                await client.GetAsync("/counter/_health", cancellationToken);
+
                 await client.PostAsync("/counter/api/counter", new StringContent(string.Empty), cancellationToken);
 
                 await client.GetAsync("/counter/api/counter", cancellationToken);
