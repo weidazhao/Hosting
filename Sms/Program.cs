@@ -19,7 +19,7 @@ namespace Sms
         {
             var webHost = new WebHostBuilder().UseDefaultHostingConfiguration(args)
                                               .UseStartup<Startup>()
-                                              .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                                              .UseKestrel()
                                               .UseServiceFabricEndpoint("SmsTypeEndpoint")
                                               .Build();
 
