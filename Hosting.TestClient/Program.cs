@@ -53,7 +53,7 @@ namespace Hosting.TestClient
                 await client.GetAsync("/_health", cancellationToken);
 
                 // SMS                
-                await client.PostAsync("/sms/api/sms/unicorn", new StringContent(@"""hello world!""", Encoding.UTF8, "application/json"), cancellationToken);
+                await client.PostAsync("/sms/api/sms/unicorn", new StringContent($"\"hello world! ({DateTimeOffset.UtcNow.ToString("u")})\"", Encoding.UTF8, "application/json"), cancellationToken);
 
                 await client.GetAsync("/sms/api/sms/unicorn", cancellationToken);
 
