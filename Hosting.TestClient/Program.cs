@@ -89,11 +89,24 @@ namespace Hosting.TestClient
 
                 stopWatch.Stop();
 
-                Console.WriteLine($"URL: {response.RequestMessage.RequestUri}");
-                Console.WriteLine($"Method: {response.RequestMessage.Method}");
-                Console.WriteLine($"Status: {response.StatusCode}");
-                Console.WriteLine($"Content: {await response.Content.ReadAsStringAsync()}");
-                Console.WriteLine($"Time elapsed: {stopWatch.Elapsed}");
+                try
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+
+                    Console.WriteLine($"URL: {response.RequestMessage.RequestUri}");
+                    Console.WriteLine($"Method: {response.RequestMessage.Method}");
+                    Console.WriteLine($"Status: {response.StatusCode}");
+                    Console.WriteLine($"Content: {await response.Content.ReadAsStringAsync()}");
+                    Console.WriteLine($"Time elapsed: {stopWatch.Elapsed}");
+                }
+                finally
+                {
+                    Console.ResetColor();
+                }
+
                 Console.WriteLine("--------------------------------------------------------------");
 
                 return response;
