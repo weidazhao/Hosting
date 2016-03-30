@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.ServiceFabric.AspNetCore.Gateway;
 using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 
 namespace Gateway
@@ -49,6 +50,8 @@ namespace Gateway
             {
                 ServiceUri = new Uri("fabric:/Hosting/SmsService", UriKind.Absolute),
 
+                OperationRetrySettings = new OperationRetrySettings(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2), 30),
+
                 GetServicePartitionKey = context =>
                 {
                     var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
@@ -72,7 +75,9 @@ namespace Gateway
             //
             var counterOptions = new GatewayOptions()
             {
-                ServiceUri = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute)
+                ServiceUri = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute),
+
+                OperationRetrySettings = new OperationRetrySettings(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2), 30)
             };
 
             app.Map("/counter",

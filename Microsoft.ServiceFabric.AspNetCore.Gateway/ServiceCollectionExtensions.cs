@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     return false;
                 }
 
-                result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, false, TimeSpan.FromSeconds(2), 30);
+                result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, false, retrySettings, retrySettings.DefaultMaxRetryCount);
 
                 return true;
             }
