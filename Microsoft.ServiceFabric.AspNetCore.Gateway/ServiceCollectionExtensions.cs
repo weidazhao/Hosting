@@ -1,5 +1,4 @@
 ﻿using Microsoft.ServiceFabric.AspNetCore.Gateway;
-using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -13,26 +12,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton(_ => new HttpRequestDispatcherProvider(null, new[] { new ExceptionHandler() }, null));
+            services.AddSingleton(_ => new HttpRequestDispatcherProvider(null, new[] { new AlwaysTreatedAsNonTransientExceptionHandler() }, null));
 
             return services;
-        }
-
-        private sealed class ExceptionHandler : IExceptionHandler
-        {
-            public bool TryHandleException(ExceptionInformation exceptionInformation, OperationRetrySettings retrySettings, out ExceptionHandlingResult result)
-            {
-                if (exceptionInformation == null)
-                {
-                    result = null;
-
-                    return false;
-                }
-
-                result = new ExceptionHandlingRetryResult(exceptionInformation.Exception, false, retrySettings, retrySettings.DefaultMaxRetryCount);
-
-                return true;
-            }
         }
     }
 }
