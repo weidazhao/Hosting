@@ -127,8 +127,40 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
-        ...
-        
+        //
+        // Scenarios:
+        // 1. Multiple services.
+        // 2. Various versions or kinds of clients side by side.
+        //
+
+        //
+        // SMS
+        //
+        var smsOptions = new GatewayOptions()
+        {
+            ServiceUri = new Uri("fabric:/Hosting/SmsService", UriKind.Absolute),
+
+            GetServicePartitionKey = context =>
+            {
+                var pathSegments = context.Request.Path.Value.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+                string user = pathSegments[pathSegments.Length - 1];
+
+                return new ServicePartitionKey(Fnv1aHashCode.Get64bitHashCode(user));
+
+            }
+        };
+
+        app.Map("/sms",
+            subApp =>
+            {
+                subApp.RunGateway(smsOptions);
+            }
+        );
+
+        //
+        // Counter
+        //
         var counterOptions = new GatewayOptions()
         {
             ServiceUri = new Uri("fabric:/Hosting/CounterService", UriKind.Absolute)
@@ -154,8 +186,8 @@ public class Startup
                 StringValues serviceUri;
 
                 return context.Request.Headers.TryGetValue("SF-ServiceUri", out serviceUri) &&
-                       serviceUri.Count == 1 &&
-                       serviceUri[0] == "fabric:/Hosting/CounterService";
+                        serviceUri.Count == 1 &&
+                        serviceUri[0] == "fabric:/Hosting/CounterService";
             },
             subApp =>
             {
