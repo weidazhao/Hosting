@@ -49,9 +49,6 @@ namespace Hosting.TestClient
         {
             try
             {
-                // Gateway
-                await client.GetAsync("/_health", cancellationToken);
-
                 // SMS                
                 await client.PostAsync("/sms/api/sms/unicorn", new StringContent($"\"hello world! ({DateTimeOffset.UtcNow.ToString("u")})\"", Encoding.UTF8, "application/json"), cancellationToken);
 

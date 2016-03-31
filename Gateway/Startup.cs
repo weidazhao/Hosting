@@ -35,8 +35,6 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseHealthCheck();
-
             //
             // Scenarios:
             // 1. Multiple services.
