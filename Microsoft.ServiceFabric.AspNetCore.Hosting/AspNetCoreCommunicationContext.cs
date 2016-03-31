@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.AspNetCore.Hosting.Internal;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Runtime;
 using System;
-using System.Fabric;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting
 {
     public class AspNetCoreCommunicationContext
     {
-        public AspNetCoreCommunicationContext(IWebHost webHost, bool isWebHostShared)
+        public AspNetCoreCommunicationContext(IWebHost webHost)
         {
             if (webHost == null)
             {
@@ -16,31 +16,28 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
             }
 
             WebHost = webHost;
-            IsWebHostShared = isWebHostShared;
         }
 
         public IWebHost WebHost { get; }
 
-        public bool IsWebHostShared { get; }
-
-        public ICommunicationListener CreateCommunicationListener(IStatelessServiceInstance instance)
+        public ICommunicationListener CreateCommunicationListener(StatelessService service)
         {
-            if (instance == null)
+            if (service == null)
             {
-                throw new ArgumentNullException(nameof(instance));
+                throw new ArgumentNullException(nameof(service));
             }
 
-            return new AspNetCoreCommunicationListener(instance, WebHost, IsWebHostShared);
+            return new AspNetCoreCommunicationListener(this, service);
         }
 
-        public ICommunicationListener CreateCommunicationListener(IStatefulServiceReplica replica)
+        public ICommunicationListener CreateCommunicationListener(StatefulService service)
         {
-            if (replica == null)
+            if (service == null)
             {
-                throw new ArgumentNullException(nameof(replica));
+                throw new ArgumentNullException(nameof(service));
             }
 
-            return new AspNetCoreCommunicationListener(replica, WebHost, IsWebHostShared);
+            return new AspNetCoreCommunicationListener(this, service);
         }
     }
 }

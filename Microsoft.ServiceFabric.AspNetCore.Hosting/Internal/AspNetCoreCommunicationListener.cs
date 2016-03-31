@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Features;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Runtime;
 using System;
-using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,51 +12,54 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 {
     public class AspNetCoreCommunicationListener : ICommunicationListener
     {
-        private readonly object _instanceOrReplica;
-        private readonly IWebHost _webHost;
-        private readonly bool _isWebHostShared;
+        private readonly AspNetCoreCommunicationContext _context;
+        private readonly object _service;
+        private readonly ServiceFabricServiceRegistry _registry;
+
         private PathString _urlPrefix;
 
-        public AspNetCoreCommunicationListener(IStatelessServiceInstance instance, IWebHost webHost, bool isWebHostShared)
+        public AspNetCoreCommunicationListener(AspNetCoreCommunicationContext context, StatelessService service)
         {
-            if (instance == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(instance));
+                throw new ArgumentNullException(nameof(context));
             }
 
-            if (webHost == null)
+            if (service == null)
             {
-                throw new ArgumentNullException(nameof(webHost));
+                throw new ArgumentNullException(nameof(service));
             }
 
-            _instanceOrReplica = instance;
-            _webHost = webHost;
-            _isWebHostShared = isWebHostShared;
+            _context = context;
+            _service = service;
+            _registry = _context.WebHost.Services.GetService<ServiceFabricServiceRegistry>();
         }
 
-        public AspNetCoreCommunicationListener(IStatefulServiceReplica replica, IWebHost webHost, bool isWebHostShared)
+        public AspNetCoreCommunicationListener(AspNetCoreCommunicationContext context, StatefulService service)
         {
-            if (replica == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(replica));
+                throw new ArgumentNullException(nameof(context));
             }
 
-            if (webHost == null)
+            if (service == null)
             {
-                throw new ArgumentNullException(nameof(webHost));
+                throw new ArgumentNullException(nameof(service));
             }
 
-            _instanceOrReplica = replica;
-            _webHost = webHost;
-            _isWebHostShared = isWebHostShared;
+            _context = context;
+            _service = service;
+            _registry = _context.WebHost.Services.GetService<ServiceFabricServiceRegistry>();
         }
+
+        #region ICommunicationListener
 
         public void Abort()
         {
-            if (_isWebHostShared)
+            if (_registry != null)
             {
-                object instanceOrReplica;
-                if (!ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica))
+                object service;
+                if (!_registry.TryRemove(_urlPrefix, out service))
                 {
                     throw new InvalidOperationException();
                 }
@@ -65,10 +68,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            if (_isWebHostShared)
+            if (_registry != null)
             {
-                object instanceOrReplica;
-                if (!ServiceFabricRegistry.Default.TryRemove(_urlPrefix, out instanceOrReplica))
+                object service;
+                if (!_registry.TryRemove(_urlPrefix, out service))
                 {
                     throw new InvalidOperationException();
                 }
@@ -79,19 +82,23 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
+            var serverAddressesFeature = _context.WebHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            if (_isWebHostShared)
+            if (_registry != null)
             {
-                if (!ServiceFabricRegistry.Default.TryAdd(_instanceOrReplica, out _urlPrefix))
+                if (!_registry.TryAdd(_service, out _urlPrefix))
                 {
                     throw new InvalidOperationException();
                 }
 
                 return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{_urlPrefix}")));
             }
-
-            return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
+            else
+            {
+                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
+            }
         }
+
+        #endregion ICommunicationListener
     }
 }

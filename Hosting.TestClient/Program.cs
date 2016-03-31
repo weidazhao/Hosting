@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hosting.Tests
+namespace Hosting.TestClient
 {
     internal static class Program
     {
@@ -38,6 +39,7 @@ namespace Hosting.Tests
                     await RunTestsAsync(client, cancellationToken);
 
                     Console.WriteLine($"Iteration {++iteration} completed.");
+                    Console.WriteLine();
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }
@@ -47,8 +49,11 @@ namespace Hosting.Tests
         {
             try
             {
-                // SMS
-                await client.PostAsync("/sms/api/sms/unicorn/hello", new StringContent(string.Empty), cancellationToken);
+                // Gateway
+                await client.GetAsync("/_health", cancellationToken);
+
+                // SMS                
+                await client.PostAsync("/sms/api/sms/unicorn", new StringContent($"\"hello world! ({DateTimeOffset.UtcNow.ToString("u")})\"", Encoding.UTF8, "application/json"), cancellationToken);
 
                 await client.GetAsync("/sms/api/sms/unicorn", cancellationToken);
 
@@ -60,7 +65,7 @@ namespace Hosting.Tests
                 await client.GetAsync("/Hosting/CounterService/api/counter", cancellationToken);
 
                 var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
-                request.Headers.Add("SF-ServiceName", "fabric:/Hosting/CounterService");
+                request.Headers.Add("SF-ServiceUri", "fabric:/Hosting/CounterService");
                 await client.SendAsync(request, cancellationToken);
             }
             catch (Exception ex)
@@ -84,7 +89,25 @@ namespace Hosting.Tests
 
                 stopWatch.Stop();
 
-                Console.WriteLine($"Status: {response.StatusCode} Method: {response.RequestMessage.Method} URL: {response.RequestMessage.RequestUri} Time elapsed: {stopWatch.Elapsed}");
+                try
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+
+                    Console.WriteLine($"URL: {response.RequestMessage.RequestUri}");
+                    Console.WriteLine($"Method: {response.RequestMessage.Method}");
+                    Console.WriteLine($"Status: {response.StatusCode}");
+                    Console.WriteLine($"Content: {await response.Content.ReadAsStringAsync()}");
+                    Console.WriteLine($"Time elapsed: {stopWatch.Elapsed}");
+                }
+                finally
+                {
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine("--------------------------------------------------------------");
 
                 return response;
             }

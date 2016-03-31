@@ -3,7 +3,7 @@ using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.Collections.Generic;
-using System.Linq;
+using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,16 +11,17 @@ namespace Sms
 {
     public class SmsService : StatefulService, ISmsService
     {
-        private readonly AspNetCoreCommunicationContext _context;
+        private readonly AspNetCoreCommunicationContext _communicationContext;
         private readonly SemaphoreSlim _semaphore;
 
-        public SmsService(AspNetCoreCommunicationContext context)
+        public SmsService(StatefulServiceContext serviceContext, AspNetCoreCommunicationContext communicationContext)
+            : base(serviceContext)
         {
-            _context = context;
+            _communicationContext = communicationContext;
             _semaphore = new SemaphoreSlim(1, 1);
         }
 
-        public async Task<IEnumerable<string>> GetMessagesAsync(string user)
+        public async Task<string> GetMessageAsync(string user)
         {
             await _semaphore.WaitAsync();
 
@@ -30,7 +31,11 @@ namespace Sms
 
                 using (var tx = StateManager.CreateTransaction())
                 {
-                    return (await messageQueue.CreateEnumerableAsync(tx)).ToList();
+                    var message = await messageQueue.TryDequeueAsync(tx);
+
+                    await tx.CommitAsync();
+
+                    return message.HasValue ? message.Value : string.Empty;
                 }
             }
             finally
@@ -62,7 +67,7 @@ namespace Sms
 
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new[] { new ServiceReplicaListener(_ => _context.CreateCommunicationListener(this)) };
+            return new[] { new ServiceReplicaListener(_ => _communicationContext.CreateCommunicationListener(this)) };
         }
     }
 }

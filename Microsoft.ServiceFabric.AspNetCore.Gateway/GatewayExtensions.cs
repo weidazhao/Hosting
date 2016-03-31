@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Gateway
@@ -17,7 +18,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
                 throw new ArgumentNullException(nameof(options));
             }
 
-            return app.UseMiddleware<GatewayMiddleware>(options);
+            return app.UseMiddleware<GatewayMiddleware>(Options.Create(options));
         }
     }
 }

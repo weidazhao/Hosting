@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sms.Controllers
@@ -15,13 +14,13 @@ namespace Sms.Controllers
         }
 
         [HttpGet("{user}")]
-        public Task<IEnumerable<string>> GetMessagesAsync(string user)
+        public Task<string> GetMessageAsync(string user)
         {
-            return _smsService.GetMessagesAsync(user);
+            return _smsService.GetMessageAsync(user);
         }
 
-        [HttpPost("{user}/{message}")]
-        public Task PostMessageAsync(string user, string message)
+        [HttpPost("{user}")]
+        public Task PostMessageAsync(string user, [FromBody]string message)
         {
             return _smsService.PostMessageAsync(user, message);
         }
