@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "dependencies": {
     "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-*",
@@ -8,5 +8,8 @@
   },
   "frameworks": {
     "net452": { }
+  },
+  "runtimes": {
+    "win7-x64": { }
   }
 }

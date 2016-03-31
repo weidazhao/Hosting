@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "compilationOptions": {
     "emitEntryPoint": true
@@ -11,5 +11,8 @@
         "System.Net.Http": "4.0.0.0"
       }
     }
+  },
+  "runtimes": {
+    "win7-x64": { }
   }
 }

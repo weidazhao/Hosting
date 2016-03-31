@@ -17,6 +17,9 @@
   "frameworks": {
     "net452": { }
   },
+  "runtimes": {
+    "win7-x64": { }
+  },
   "content": [
     "appsettings.json"
   ],
