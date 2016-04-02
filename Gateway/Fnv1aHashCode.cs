@@ -34,14 +34,14 @@ namespace Gateway
             return (long)hashCode;
         }
 
-        public static long Get64bitHashCode(string value)
+        public static long Get64bitHashCode(string value, Encoding encoding = null)
         {
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
 
-            return Get64bitHashCode(Encoding.Unicode.GetBytes(value));
+            return Get64bitHashCode((encoding ?? Encoding.UTF8).GetBytes(value));
         }
     }
 }

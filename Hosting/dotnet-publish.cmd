@@ -1,8 +1,8 @@
 @echo off
 
 rem DotNet CLI Version
-rem 9f23b7adf5bb8dc1cabc43691170701a7f1ada93
-rem 1.0.0-beta-002184
+rem 60b23d5115199eb3b8d6def3d0c7a95deae56625
+rem 1.0.0-beta-002202
 
 set CONFIGURATION=Debug
 set SOLUTION_FOLDER=%~dp0..
