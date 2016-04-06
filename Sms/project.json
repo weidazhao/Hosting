@@ -24,7 +24,6 @@
     "appsettings.json"
   ],
   "exclude": [
-    "node_modules",
     "PackageRoot"
   ],
   "publishExclude": [
