@@ -8,7 +8,6 @@
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-*",
     "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0-rc2-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
     "Microsoft.ServiceFabric": "5.0.135",
     "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
