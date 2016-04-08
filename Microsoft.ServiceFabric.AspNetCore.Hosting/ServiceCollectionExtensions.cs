@@ -8,52 +8,38 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddScopedStatelessService<TService, TImplementation>(this IServiceCollection services)
-            where TImplementation : StatelessService
+        public static IServiceCollection AddServiceFabricService<TService>(this IServiceCollection services)
+        {
+            return services.AddServiceFabricService(typeof(TService), typeof(TService));
+        }
+
+        public static IServiceCollection AddServiceFabricService<TService, TImplementation>(this IServiceCollection services)
+        {
+            return services.AddServiceFabricService(typeof(TService), typeof(TImplementation));
+        }
+
+        public static IServiceCollection AddServiceFabricService(this IServiceCollection services, Type serviceType, Type implementationType)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
-            return services.AddScopedService(typeof(TService), typeof(TImplementation));
-        }
-
-        public static IServiceCollection AddScopedStatelessService<TService>(this IServiceCollection services)
-            where TService : StatelessService
-        {
-            if (services == null)
+            if (serviceType == null)
             {
-                throw new ArgumentNullException(nameof(services));
+                throw new ArgumentNullException(nameof(serviceType));
             }
 
-            return services.AddScopedStatelessService<TService, TService>();
-        }
-
-        public static IServiceCollection AddScopedStatefulService<TService, TImplementation>(this IServiceCollection services)
-            where TImplementation : StatefulService
-        {
-            if (services == null)
+            if (implementationType == null)
             {
-                throw new ArgumentNullException(nameof(services));
+                throw new ArgumentNullException(nameof(implementationType));
             }
 
-            return services.AddScopedService(typeof(TService), typeof(TImplementation));
-        }
-
-        public static IServiceCollection AddScopedStatefulService<TService>(this IServiceCollection services)
-            where TService : StatefulService
-        {
-            if (services == null)
+            if (!typeof(StatelessService).IsAssignableFrom(implementationType) && !typeof(StatefulService).IsAssignableFrom(implementationType))
             {
-                throw new ArgumentNullException(nameof(services));
+                throw new ArgumentException(null, nameof(implementationType));
             }
 
-            return services.AddScopedStatefulService<TService, TService>();
-        }
-
-        private static IServiceCollection AddScopedService(this IServiceCollection services, Type serviceType, Type implementationType)
-        {
             //
             // Adds ServiceFabricServiceRegistry if it has not been added yet.
             //

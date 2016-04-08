@@ -22,7 +22,7 @@ namespace Sms
         public void ConfigureServices(IServiceCollection services)
         {
             // Add SmsService.
-            services.AddScopedStatefulService<ISmsService, SmsService>();
+            services.AddServiceFabricService<ISmsService, SmsService>();
 
             // Add framework services.
             services.AddMvcCore()

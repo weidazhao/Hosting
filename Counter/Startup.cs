@@ -22,7 +22,7 @@ namespace Counter
         public void ConfigureServices(IServiceCollection services)
         {
             // Add CounterService.
-            services.AddScopedStatefulService<ICounterService, CounterService>();
+            services.AddServiceFabricService<ICounterService, CounterService>();
 
             // Add framework services.
             services.AddMvcCore()
