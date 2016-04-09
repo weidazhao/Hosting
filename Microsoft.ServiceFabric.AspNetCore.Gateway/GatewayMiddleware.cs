@@ -42,7 +42,12 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
             // Some of the code is copied from https://github.com/AspNet/Proxy/blob/dev/src/Microsoft.AspNetCore.Proxy/ProxyMiddleware.cs for prototype purpose.
             // Reviewing the license of the code will be needed if this code is to be used in production.
             //
-            var servicePartitionClient = ResolveServicePartitionClient(context, _options);
+            var servicePartitionClient = new ServicePartitionClient<HttpRequestDispatcher>(_dispatcherProvider,
+                                                                                           _options.ServiceUri,
+                                                                                           _options.GetServicePartitionKey?.Invoke(context),
+                                                                                           _options.TargetReplicaSelector,
+                                                                                           _options.ListenerName,
+                                                                                           _options.OperationRetrySettings);
 
             await servicePartitionClient.InvokeWithRetryAsync(async dispatcher =>
             {
@@ -128,16 +133,6 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
                     await responseMessage.Content.CopyToAsync(context.Response.Body);
                 }
             });
-        }
-
-        private ServicePartitionClient<HttpRequestDispatcher> ResolveServicePartitionClient(HttpContext context, GatewayOptions options)
-        {
-            return new ServicePartitionClient<HttpRequestDispatcher>(_dispatcherProvider,
-                                                                     options.ServiceUri,
-                                                                     options.GetServicePartitionKey != null ? options.GetServicePartitionKey(context) : null,
-                                                                     options.TargetReplicaSelector,
-                                                                     options.ListenerName,
-                                                                     options.OperationRetrySettings);
         }
     }
 }
