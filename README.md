@@ -152,7 +152,6 @@ public class Startup
                 string user = pathSegments[pathSegments.Length - 1];
 
                 return new ServicePartitionKey(Fnv1aHashCode.Get64bitHashCode(user));
-
             }
         };
 
