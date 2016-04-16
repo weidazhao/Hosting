@@ -75,7 +75,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Add CounterService.
-        services.AddScopedStatefulService<ICounterService, CounterService>();
+        services.AddServiceFabricService<ICounterService, CounterService>();
 
         ...
     }
@@ -152,7 +152,6 @@ public class Startup
                 string user = pathSegments[pathSegments.Length - 1];
 
                 return new ServicePartitionKey(Fnv1aHashCode.Get64bitHashCode(user));
-
             }
         };
 

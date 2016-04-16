@@ -2,12 +2,15 @@
   "version": "1.0.0-*",
   "dependencies": {
     "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-*",
-    "Microsoft.ServiceFabric": "5.0.135",
-    "Microsoft.ServiceFabric.Services": "2.0.135",
     "System.Collections.Immutable": "1.2.0-rc2-*"
   },
   "frameworks": {
-    "net452": { }
+    "net452": {
+      "dependencies": {
+        "Microsoft.ServiceFabric": "5.0.135",
+        "Microsoft.ServiceFabric.Services": "2.0.135"
+      }
+    }
   },
   "runtimes": {
     "win7-x64": { }
