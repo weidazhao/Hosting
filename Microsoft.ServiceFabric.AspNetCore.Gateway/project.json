@@ -2,12 +2,14 @@
   "version": "1.0.0-*",
   "dependencies": {
     "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Options": "1.0.0-rc2-*",
-    "Microsoft.ServiceFabric": "5.0.135",
-    "Microsoft.ServiceFabric.Services": "2.0.135"
+    "Microsoft.Extensions.Options": "1.0.0-rc2-*"
   },
   "frameworks": {
     "net452": {
+      "dependencies": {
+        "Microsoft.ServiceFabric": "5.0.135",
+        "Microsoft.ServiceFabric.Services": "2.0.135"
+      },
       "frameworkAssemblies": {
         "System.Net.Http": "4.0.0.0"
       }
