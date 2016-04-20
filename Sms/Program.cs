@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
+using System.IO;
 
 namespace Sms
 {
@@ -18,6 +19,7 @@ namespace Sms
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
         {
             var webHost = new WebHostBuilder().UseDefaultHostingConfiguration(args)
+                                              .UseContentRoot(Directory.GetCurrentDirectory())
                                               .UseStartup<Startup>()
                                               .UseKestrel()
                                               .UseServiceFabricEndpoint("SmsTypeEndpoint")
