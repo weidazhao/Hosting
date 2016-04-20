@@ -11,7 +11,9 @@
         "Microsoft.ServiceFabric.Services": "2.0.135"
       },
       "frameworkAssemblies": {
-        "System.Net.Http": "4.0.0.0"
+        "System.Runtime": { "type": "build" },
+        "System.Net.Http": { "type": "build" },
+        "System.ComponentModel": { "type": "build" }
       }
     }
   },

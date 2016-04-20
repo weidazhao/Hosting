@@ -15,11 +15,21 @@
         "Microsoft.ServiceFabric.AspNetCore.Gateway": "1.0.0-*",
         "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
         "Microsoft.ServiceFabric.Services": "2.0.135"
+      },
+      "frameworkAssemblies": {
+        "System.Runtime": { "type": "build" },
+        "System.ComponentModel": { "type": "build" }
       }
     }
   },
   "runtimes": {
     "win7-x64": { }
+  },
+
+  "runtimeOptions": {
+    "configProperties": {
+      "System.GC.Server": true
+    }
   },
   "content": [
     "appsettings.json"

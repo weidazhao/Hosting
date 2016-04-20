@@ -9,6 +9,10 @@
       "dependencies": {
         "Microsoft.ServiceFabric": "5.0.135",
         "Microsoft.ServiceFabric.Services": "2.0.135"
+      },
+      "frameworkAssemblies": {
+        "System.Runtime": { "type": "build" },
+        "System.ComponentModel": { "type": "build" }
       }
     }
   },
