@@ -34,6 +34,7 @@ public static class Program
     private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
     {
         var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+                                          .UseContentRoot(Directory.GetCurrentDirectory())
                                           .UseStartup<Startup>()
                                           .UseKestrel()
                                           .UseServiceFabricEndpoint("CounterTypeEndpoint")
