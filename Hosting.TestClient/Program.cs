@@ -40,6 +40,7 @@ namespace Hosting.TestClient
 
                     Console.WriteLine($"Iteration {++iteration} completed.");
                     Console.WriteLine();
+
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }
