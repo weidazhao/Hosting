@@ -33,7 +33,9 @@ public static class Program
 
     private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
     {
-        var webHost = new WebHostBuilder().UseDefaultConfiguration(args)
+        var config = new ConfigurationBuilder().AddCommandLine(args).Build();
+
+        var webHost = new WebHostBuilder().UseConfiguration(config)
                                           .UseContentRoot(Directory.GetCurrentDirectory())
                                           .UseStartup<Startup>()
                                           .UseKestrel()
