@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.IO;
@@ -18,7 +19,9 @@ namespace Gateway
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
         {
-            var webHost = new WebHostBuilder().UseDefaultHostingConfiguration(args)
+            var config = new ConfigurationBuilder().AddCommandLine(args).Build();
+
+            var webHost = new WebHostBuilder().UseConfiguration(config)
                                               .UseContentRoot(Directory.GetCurrentDirectory())
                                               .UseStartup<Startup>()
                                               .UseKestrel()

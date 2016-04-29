@@ -1,11 +1,13 @@
 {
   "version": "1.0.0-*",
-  "compilationOptions": {
+  "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true
   },
   "dependencies": {
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc2-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*"
   },
   "frameworks": {
