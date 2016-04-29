@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Console": {
+      "executablePath": "..\\artifacts\\Hosting.TestClient\\bin\\Debug\\net452\\win7-x64\\Hosting.TestClient.exe"
+    }
+  }
+}
