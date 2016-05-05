@@ -2,7 +2,17 @@
   "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "compile": {
+      "exclude": [
+        "PackageRoot"
+      ]
+    }
+  },
+  "publishOptions": {
+    "include": [
+      "appsettings.json"
+    ]
   },
   "dependencies": {
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-*",
@@ -28,16 +38,5 @@
     "configProperties": {
       "System.GC.Server": true
     }
-  },
-  "content": [
-    "appsettings.json"
-  ],
-  "exclude": [
-    "PackageRoot"
-  ],
-  "publishExclude": [
-    "**.user",
-    "**.vspscc",
-    "PackageRoot"
-  ]
+  }
 }
