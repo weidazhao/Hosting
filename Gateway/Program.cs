@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.IO;
@@ -10,21 +9,18 @@ namespace Gateway
     {
         public static void Main(string[] args)
         {
-            var communicationContext = CreateAspNetCoreCommunicationContext(args);
+            var communicationContext = CreateAspNetCoreCommunicationContext();
 
             ServiceRuntime.RegisterServiceAsync("GatewayType", serviceContext => new GatewayService(serviceContext, communicationContext)).GetAwaiter().GetResult();
 
             communicationContext.WebHost.Run();
         }
 
-        private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext(string[] args)
+        private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext()
         {
-            var config = new ConfigurationBuilder().AddCommandLine(args).Build();
-
-            var webHost = new WebHostBuilder().UseConfiguration(config)
+            var webHost = new WebHostBuilder().UseKestrel()
                                               .UseContentRoot(Directory.GetCurrentDirectory())
                                               .UseStartup<Startup>()
-                                              .UseKestrel()
                                               .UseServiceFabricEndpoint("GatewayTypeEndpoint")
                                               .Build();
 
