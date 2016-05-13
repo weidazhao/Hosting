@@ -15,19 +15,19 @@
     ]
   },
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-*",
-    "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0-rc2-*",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*"
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final"
   },
   "frameworks": {
     "net452": {
       "dependencies": {
-        "Microsoft.ServiceFabric": "5.0.135",
+        "Microsoft.ServiceFabric": "5.0.217",
         "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
-        "Microsoft.ServiceFabric.Services": "2.0.135"
+        "Microsoft.ServiceFabric.Services": "2.0.217"
       }
     }
   },
