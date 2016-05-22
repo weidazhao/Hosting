@@ -3,9 +3,9 @@
    <Parameters>
       <Parameter Name="Gateway_InstanceCount" DefaultValue="1" />
       <Parameter Name="Counter_TargetReplicaSetSize" DefaultValue="3" />
-      <Parameter Name="Counter_MinReplicaSetSize" DefaultValue="2" />
+      <Parameter Name="Counter_MinReplicaSetSize" DefaultValue="3" />
       <Parameter Name="Sms_TargetReplicaSetSize" DefaultValue="3" />
-      <Parameter Name="Sms_MinReplicaSetSize" DefaultValue="2" />
+      <Parameter Name="Sms_MinReplicaSetSize" DefaultValue="3" />
       <Parameter Name="Sms_PartitionCount" DefaultValue="7" />
    </Parameters>
    <ServiceManifestImport>
