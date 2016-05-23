@@ -14,6 +14,7 @@ Please share your feedback to help us improve the experience in the future relea
 2. Install .NET Core Tooling Preview 1 for Visual Studio 2015: https://go.microsoft.com/fwlink/?LinkId=798481
 3. Clone the repo.
 4. Open Hosting.sln in Visual Studio 2015 as admin, and F5.
+5. After the application is deployed to local dev cluster, right click Hosting.TestClient -> Debug -> Start new instance.
 
 # Key Code Snippets
 
