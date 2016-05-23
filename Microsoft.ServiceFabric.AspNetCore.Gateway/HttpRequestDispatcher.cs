@@ -7,7 +7,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
     public class HttpRequestDispatcher : HttpClient, ICommunicationClient
     {
         public HttpRequestDispatcher()
-            : base()
+            : base(new HttpClientHandler() { AllowAutoRedirect = false, UseCookies = false })
         {
         }
 
