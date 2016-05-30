@@ -48,14 +48,18 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 return;
             }
 
-            context.Request.Path = remainingPath;
-            scope.Service = service;
-
             StringValues pathBase;
             if (context.Request.Headers.TryGetValue("X-ServiceFabric-PathBase", out pathBase))
             {
-                context.Request.PathBase = pathBase.FirstOrDefault();
+                context.Request.PathBase = new PathString(pathBase.FirstOrDefault()) + context.Request.PathBase;
             }
+            else
+            {
+                context.Request.PathBase = urlPrefix + context.Request.PathBase;
+            }
+
+            context.Request.Path = remainingPath;
+            scope.Service = service;
 
             await _next.Invoke(context);
         }
