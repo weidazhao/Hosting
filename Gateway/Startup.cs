@@ -105,6 +105,21 @@ namespace Gateway
                     subApp.RunGateway(counterOptions);
                 }
             );
+
+            // Web App
+            var webAppOptions = new GatewayOptions()
+            {
+                ServiceUri = new Uri("fabric:/Hosting/WebApp", UriKind.Absolute),
+
+                OperationRetrySettings = new OperationRetrySettings(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2), 30)
+            };
+
+            app.Map("/webapp",
+                subApp =>
+                {
+                    subApp.RunGateway(webAppOptions);
+                }
+            );
         }
     }
 }

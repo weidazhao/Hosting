@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
@@ -47,8 +49,13 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             }
 
             context.Request.Path = remainingPath;
-            context.Request.PathBase = context.Request.PathBase + urlPrefix;
             scope.Service = service;
+
+            StringValues pathBase;
+            if (context.Request.Headers.TryGetValue("X-ServiceFabric-PathBase", out pathBase))
+            {
+                context.Request.PathBase = pathBase.FirstOrDefault();
+            }
 
             await _next.Invoke(context);
         }

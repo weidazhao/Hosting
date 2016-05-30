@@ -76,9 +76,14 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
                 {
                     if (!requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray()) && requestMessage.Content != null)
                     {
-                        requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                        requestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
                     }
                 }
+
+                //
+                // Flow path base through the custom header X-ServiceFabric-PathBase.
+                //
+                requestMessage.Headers.TryAddWithoutValidation("X-ServiceFabric-PathBase", context.Request.PathBase);
 
                 //
                 // Construct the request URL
