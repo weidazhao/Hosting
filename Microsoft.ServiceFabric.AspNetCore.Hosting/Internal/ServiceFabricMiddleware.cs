@@ -44,20 +44,16 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             if (!registry.TryGet(context.Request.Path, out urlPrefix, out remainingPath, out service))
             {
                 context.Response.StatusCode = 503;
-
                 return;
             }
 
             StringValues pathBase;
             if (context.Request.Headers.TryGetValue("X-ServiceFabric-PathBase", out pathBase))
             {
-                context.Request.PathBase = new PathString(pathBase.FirstOrDefault()) + context.Request.PathBase;
-            }
-            else
-            {
-                context.Request.PathBase = urlPrefix + context.Request.PathBase;
+                urlPrefix = pathBase.FirstOrDefault();
             }
 
+            context.Request.PathBase = urlPrefix + context.Request.PathBase;
             context.Request.Path = remainingPath;
             scope.Service = service;
 
