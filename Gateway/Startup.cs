@@ -106,7 +106,9 @@ namespace Gateway
                 }
             );
 
+            //
             // Web App
+            //
             var webAppOptions = new GatewayOptions()
             {
                 ServiceUri = new Uri("fabric:/Hosting/WebApp", UriKind.Absolute),
