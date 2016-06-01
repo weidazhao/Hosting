@@ -5,6 +5,9 @@
     <ProjectGuid>89f3d30c-116e-4b3f-b362-0480a0e449a6</ProjectGuid>
     <ProjectVersion>1.0</ProjectVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationUrl>http://localhost:8000</ApplicationUrl>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="ApplicationPackageRoot\ApplicationManifest.xml" />
     <None Include="ApplicationParameters\Cloud.xml" />

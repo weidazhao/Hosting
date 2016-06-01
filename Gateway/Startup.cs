@@ -8,6 +8,7 @@ using Microsoft.ServiceFabric.AspNetCore.Gateway;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
+using System.Threading.Tasks;
 
 namespace Gateway
 {
@@ -122,6 +123,16 @@ namespace Gateway
                     subApp.RunGateway(webAppOptions);
                 }
             );
+
+            app.Run(context =>
+            {
+                if (context.Request.Path == "/")
+                {
+                    context.Response.Redirect($"{context.Request.Scheme}://{context.Request.Host}/webapp");
+                }
+
+                return Task.FromResult(true);
+            });
         }
     }
 }
