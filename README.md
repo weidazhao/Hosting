@@ -127,7 +127,7 @@ public class Startup
         services.AddDefaultHttpRequestDispatcherProvider();
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+	// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
         //
@@ -192,14 +192,41 @@ public class Startup
                 StringValues serviceUri;
 
                 return context.Request.Headers.TryGetValue("SF-ServiceUri", out serviceUri) &&
-                       serviceUri.Count == 1 &&
-                       serviceUri[0] == "fabric:/Hosting/CounterService";
+                        serviceUri.Count == 1 &&
+                        serviceUri[0] == "fabric:/Hosting/CounterService";
             },
             subApp =>
             {
                 subApp.RunGateway(counterOptions);
             }
         );
+
+        //
+        // Web App
+        //
+        var webAppOptions = new GatewayOptions()
+        {
+            ServiceUri = new Uri("fabric:/Hosting/WebApp", UriKind.Absolute),
+
+            OperationRetrySettings = new OperationRetrySettings(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2), 30)
+        };
+
+        app.Map("/webapp",
+            subApp =>
+            {
+                subApp.RunGateway(webAppOptions);
+            }
+        );
+
+        app.Run(context =>
+        {
+            if (context.Request.Path == "/")
+            {
+                context.Response.Redirect($"{context.Request.Scheme}://{context.Request.Host}/webapp");
+            }
+
+            return Task.FromResult(true);
+        });
     }
 }
 ```
