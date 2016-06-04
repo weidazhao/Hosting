@@ -16,7 +16,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
         private readonly object _service;
         private readonly ServiceFabricServiceRegistry _registry;
 
-        private PathString _urlPrefix;
+        private PathString _servicePathBase;
 
         public AspNetCoreCommunicationListener(AspNetCoreCommunicationContext context, StatelessService service)
         {
@@ -59,7 +59,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             if (_registry != null)
             {
                 object service;
-                if (!_registry.TryRemove(_urlPrefix, out service))
+                if (!_registry.TryRemove(_servicePathBase, out service))
                 {
                     throw new InvalidOperationException();
                 }
@@ -71,7 +71,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             if (_registry != null)
             {
                 object service;
-                if (!_registry.TryRemove(_urlPrefix, out service))
+                if (!_registry.TryRemove(_servicePathBase, out service))
                 {
                     throw new InvalidOperationException();
                 }
@@ -86,12 +86,12 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
             if (_registry != null)
             {
-                if (!_registry.TryAdd(_service, out _urlPrefix))
+                if (!_registry.TryAdd(_service, out _servicePathBase))
                 {
                     throw new InvalidOperationException();
                 }
 
-                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{_urlPrefix}")));
+                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{_servicePathBase}")));
             }
             else
             {

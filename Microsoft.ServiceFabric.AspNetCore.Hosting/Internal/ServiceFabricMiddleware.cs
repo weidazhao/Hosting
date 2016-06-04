@@ -37,11 +37,11 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 throw new ArgumentNullException(nameof(scope));
             }
 
-            PathString urlPrefix;
+            PathString servicePathBase;
             PathString remainingPath;
             object service;
 
-            if (!registry.TryGet(context.Request.Path, out urlPrefix, out remainingPath, out service))
+            if (!registry.TryGet(context.Request.Path, out servicePathBase, out remainingPath, out service))
             {
                 context.Response.StatusCode = 503;
                 return;
@@ -50,10 +50,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
             StringValues pathBase;
             if (context.Request.Headers.TryGetValue("X-ServiceFabric-PathBase", out pathBase))
             {
-                urlPrefix = pathBase.FirstOrDefault();
+                servicePathBase = pathBase.FirstOrDefault();
             }
 
-            context.Request.PathBase = urlPrefix + context.Request.PathBase;
+            context.Request.PathBase = servicePathBase + context.Request.PathBase;
             context.Request.Path = remainingPath;
             scope.Service = service;
 
