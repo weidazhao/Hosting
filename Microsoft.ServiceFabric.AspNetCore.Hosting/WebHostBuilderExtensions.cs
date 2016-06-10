@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Hosting
 
             var endpoint = FabricRuntime.GetActivationContext().GetEndpoint(endpointName);
 
-            string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
+            string serverUrl = $"{endpoint.Protocol.ToString().ToLowerInvariant()}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
 
             webHostBuilder.UseUrls(serverUrl);
 
