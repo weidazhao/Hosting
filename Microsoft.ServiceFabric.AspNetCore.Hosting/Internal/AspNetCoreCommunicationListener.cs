@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System;
+using System.Collections.Generic;
+using System.Fabric;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,7 +84,11 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
+            string ipAddressOrFQDN = FabricRuntime.GetNodeContext().IPAddressOrFQDN;
+
             var serverAddressesFeature = _context.WebHost.ServerFeatures.Get<IServerAddressesFeature>();
+
+            IEnumerable<string> addresses = serverAddressesFeature.Addresses.Select(address => address.Replace("+", ipAddressOrFQDN));
 
             if (_registry != null)
             {
@@ -91,12 +97,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                     throw new InvalidOperationException();
                 }
 
-                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses.Select(address => $"{address}{_servicePathBase}")));
+                addresses = addresses.Select(address => $"{address}{_servicePathBase}");
             }
-            else
-            {
-                return Task.FromResult(string.Join(";", serverAddressesFeature.Addresses));
-            }
+
+            return Task.FromResult(string.Join(";", addresses));
         }
 
         #endregion ICommunicationListener

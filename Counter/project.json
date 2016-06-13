@@ -17,7 +17,7 @@
   "dependencies": {
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Server.WebListener": "0.1.0-rc2-final",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc2-final",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final"
   },
