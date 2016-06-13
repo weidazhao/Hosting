@@ -100,7 +100,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 addresses = addresses.Select(address => $"{address}{_servicePathBase}");
             }
 
-            return Task.FromResult(string.Join(";", addresses));
+            return Task.FromResult(string.Join(";", addresses.Distinct()));
         }
 
         #endregion ICommunicationListener
