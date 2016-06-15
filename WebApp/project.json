@@ -63,9 +63,9 @@
   "frameworks": {
     "net452": {
       "dependencies": {
-        "Microsoft.ServiceFabric": "5.0.217",
-        "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
-        "Microsoft.ServiceFabric.Services": "2.0.217"
+        "Microsoft.ServiceFabric": "5.1.150",
+        "Microsoft.ServiceFabric.AspNetCore.Hosting": "",
+        "Microsoft.ServiceFabric.Services": "2.1.150"
       }
     }
   },
