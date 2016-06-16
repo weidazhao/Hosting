@@ -75,6 +75,10 @@
     "preserveCompilationContext": true
   },
 
+  "runtimes": {
+    "win7-x64": { }
+  },
+
   "publishOptions": {
     "include": [
       "wwwroot",

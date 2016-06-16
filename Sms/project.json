@@ -32,10 +32,5 @@
   },
   "runtimes": {
     "win7-x64": { }
-  },
-  "runtimeOptions": {
-    "configProperties": {
-      "System.GC.Server": true
-    }
   }
 }
