@@ -11,14 +11,16 @@ using WebApp.Services;
 
 namespace WebApp
 {
-    public class Startup
+    public class StartupDevelopment
     {
-        public Startup(IHostingEnvironment env)
+        public StartupDevelopment(IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+                                                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                                                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+            builder.AddUserSecrets();
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -29,8 +31,6 @@ namespace WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddServiceFabricService<WebAppService>();
-
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -52,7 +52,9 @@ namespace WebApp
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseExceptionHandler("/Home/Error");
+            app.UseDeveloperExceptionPage();
+            app.UseDatabaseErrorPage();
+            app.UseBrowserLink();
 
             app.UseStaticFiles();
 

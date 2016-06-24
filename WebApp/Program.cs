@@ -9,22 +9,39 @@ namespace WebApp
     {
         public static void Main(string[] args)
         {
-            var communicationContext = CreateAspNetCoreCommunicationContext();
+            var localWebHost = CreateLocalWebHost();
+            IHostingEnvironment env = localWebHost.Services.GetService(typeof(IHostingEnvironment)) as IHostingEnvironment;
 
-            ServiceRuntime.RegisterServiceAsync("WebAppType", serviceContext => new WebAppService(serviceContext, communicationContext)).GetAwaiter().GetResult();
+            if (env.IsDevelopment())
+            {
+                localWebHost.Run();
+            }
+            else
+            {
+                var communicationContext = new AspNetCoreCommunicationContext(CreateServiceFabricWebHost());
 
-            communicationContext.WebHost.Run();
+                ServiceRuntime.RegisterServiceAsync("WebAppType", serviceContext => new WebAppService(serviceContext, communicationContext)).GetAwaiter().GetResult();
+
+                communicationContext.WebHost.Run();
+            }
         }
 
-        private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext()
+        private static IWebHost CreateLocalWebHost()
         {
-            var webHost = new WebHostBuilder().UseKestrel()
-                                              .UseContentRoot(Directory.GetCurrentDirectory())
-                                              .UseStartup<Startup>()
-                                              .UseServiceFabricEndpoint("WebAppTypeEndpoint")
-                                              .Build();
+            return new WebHostBuilder().UseKestrel()
+                                       .UseUrls("http://localhost:8001")
+                                       .UseContentRoot(Directory.GetCurrentDirectory())
+                                       .UseStartup("WebApp")
+                                       .Build();
+        }
 
-            return new AspNetCoreCommunicationContext(webHost);
+        private static IWebHost CreateServiceFabricWebHost()
+        {
+            return new WebHostBuilder().UseKestrel()
+                                       .UseContentRoot(Directory.GetCurrentDirectory())
+                                       .UseStartup<Startup>()
+                                       .UseServiceFabricEndpoint("WebAppTypeEndpoint")
+                                       .Build();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-WebApp-4b332dff-6daa-4b2c-a482-ddbf5b11741d",
 
   "dependencies": {
@@ -11,6 +11,7 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-final",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0-rc2-final",
