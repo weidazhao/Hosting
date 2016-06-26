@@ -2,7 +2,7 @@
 
 This sample demonstrates:
 
-1. How ASP.NET Core can be used in a communication listener of stateless/stateful services. Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does. With the new hosting APIs having been added to ASP.NET Core 1.0 RC2, this becomes possible.
+1. How ASP.NET Core can be used in a communication listener of stateless/stateful services. Today the scenario we've enabled is to host ASP.NET Core web application as a stateless service with Service Fabric. We wanted to light up the scenarios that people also can use ASP.NET Core as communication listeners in stateless services and stateful services, similar to what the [OwinCommunicationListener](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/master/Services/WordCount/WordCount.Common/OwinCommunicationListener.cs) does.
 
 2. How to build an API gateway service to forward requests to multiple microservices behind it with the reusable and modular component. Service Fabric is a great platform for building microservices. The gateway middleware (Microsoft.ServiceFabric.AspNetCore.Gateway) is an attempt to provide a building block for people to easily implement the API gateway pattern of microservices on Service Fabric. There are a couple good articles elaborating the API gateway pattern, such as http://microservices.io/patterns/apigateway.html, http://www.infoq.com/articles/microservices-intro, etc. For more information about microservices, check out https://azure.microsoft.com/en-us/blog/microservices-an-application-revolution-powered-by-the-cloud/, http://martinfowler.com/articles/microservices.html.
 
@@ -11,7 +11,7 @@ Please share your feedback to help us improve the experience in the future relea
 # How to Build & Run The Sample
 
 1. Install Service Fabric runtime, SDK and tools for Visual Studio 2015 - 2.1.150: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
-2. Install .NET Core Tooling Preview 1 for Visual Studio 2015: https://go.microsoft.com/fwlink/?LinkId=798481
+2. Install .NET Core Tooling Preview 2 for Visual Studio 2015: https://go.microsoft.com/fwlink/?LinkId=798481
 3. Clone the repo.
 4. Open Hosting.sln in Visual Studio 2015 as admin, and F5.
 5. After the application is deployed to local dev cluster, right click Hosting.TestClient -> Debug -> Start new instance.
