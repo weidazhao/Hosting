@@ -18,7 +18,7 @@ namespace Counter
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext()
         {
-            var webHost = new WebHostBuilder().UseWebListener()
+            var webHost = new WebHostBuilder().UseKestrel()
                                               .UseContentRoot(Directory.GetCurrentDirectory())
                                               .UseStartup<Startup>()
                                               .UseServiceFabricEndpoint("CounterTypeEndpoint")
