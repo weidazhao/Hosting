@@ -11,7 +11,7 @@ Please share your feedback to help us improve the experience in the future relea
 # How to Build & Run The Sample
 
 1. Install Service Fabric runtime, SDK and tools for Visual Studio 2015 - 2.1.150: https://azure.microsoft.com/en-us/documentation/articles/service-fabric-get-started/
-2. Install .NET Core Tooling Preview 2 for Visual Studio 2015: https://go.microsoft.com/fwlink/?LinkId=798481
+2. Install .NET Core Tooling Preview 2 for Visual Studio 2015: https://go.microsoft.com/fwlink/?LinkId=817245
 3. Clone the repo.
 4. Open Hosting.sln in Visual Studio 2015 as admin, and F5.
 5. After the application is deployed to local dev cluster, right click Hosting.TestClient -> Debug -> Start new instance.
