@@ -95,11 +95,6 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                     return false;
                 }
 
-                if (remainingPathValue == "/")
-                {
-                    remainingPathValue = string.Empty;
-                }
-
                 remainingPath = remainingPathValue;
 
                 return true;
