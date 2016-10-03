@@ -7,8 +7,8 @@
   "frameworks": {
     "net452": {
       "dependencies": {
-        "Microsoft.ServiceFabric": "5.1.150",
-        "Microsoft.ServiceFabric.Services": "2.1.150"
+        "Microsoft.ServiceFabric": "5.2.207",
+        "Microsoft.ServiceFabric.Services": "2.2.207"
       },
       "frameworkAssemblies": {
         "System.Net.Http": "4.0.0.0"

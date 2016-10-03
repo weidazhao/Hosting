@@ -22,9 +22,9 @@
   "frameworks": {
     "net452": {
       "dependencies": {
-        "Microsoft.ServiceFabric": "5.1.150",
+        "Microsoft.ServiceFabric": "5.2.207",
         "Microsoft.ServiceFabric.AspNetCore.Hosting": "1.0.0-*",
-        "Microsoft.ServiceFabric.Services": "2.1.150"
+        "Microsoft.ServiceFabric.Services": "2.2.207"
       }
     }
   },
