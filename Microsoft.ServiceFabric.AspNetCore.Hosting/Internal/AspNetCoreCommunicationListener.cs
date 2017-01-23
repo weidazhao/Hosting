@@ -22,35 +22,15 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
         public AspNetCoreCommunicationListener(AspNetCoreCommunicationContext context, StatelessService service)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (service == null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
-            _context = context;
-            _service = service;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             _registry = _context.WebHost.Services.GetService<ServiceFabricServiceRegistry>();
         }
 
         public AspNetCoreCommunicationListener(AspNetCoreCommunicationContext context, StatefulService service)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (service == null)
-            {
-                throw new ArgumentNullException(nameof(service));
-            }
-
-            _context = context;
-            _service = service;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             _registry = _context.WebHost.Services.GetService<ServiceFabricServiceRegistry>();
         }
 
@@ -60,8 +40,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
         {
             if (_registry != null)
             {
-                object service;
-                if (!_registry.TryRemove(_servicePathBase, out service))
+                if (!_registry.TryRemove(_servicePathBase, out object service))
                 {
                     throw new InvalidOperationException();
                 }
@@ -72,8 +51,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
         {
             if (_registry != null)
             {
-                object service;
-                if (!_registry.TryRemove(_servicePathBase, out service))
+                if (!_registry.TryRemove(_servicePathBase, out object service))
                 {
                     throw new InvalidOperationException();
                 }
