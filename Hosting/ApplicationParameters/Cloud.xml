@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/Hosting" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<Application Name="fabric:/Hosting" xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Parameters>
-    <Parameter Name="WebApp_InstanceCount" Value="1" />
-    <Parameter Name="Gateway_InstanceCount" Value="-1" />
-    <Parameter Name="Counter_TargetReplicaSetSize" Value="3" />
-    <Parameter Name="Counter_MinReplicaSetSize" Value="3" />
-    <Parameter Name="Sms_TargetReplicaSetSize" Value="3" />
-    <Parameter Name="Sms_MinReplicaSetSize" Value="3" />
-    <Parameter Name="Sms_PartitionCount" Value="100" />
+    <Parameter Name="Stateless1_InstanceCount" Value="-1" />
   </Parameters>
 </Application>

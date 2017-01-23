@@ -37,18 +37,14 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
                 throw new ArgumentNullException(nameof(scope));
             }
 
-            PathString servicePathBase;
-            PathString remainingPath;
-            object service;
 
-            if (!registry.TryGet(context.Request.Path, out servicePathBase, out remainingPath, out service))
+            if (!registry.TryGet(context.Request.Path, out PathString servicePathBase, out PathString remainingPath, out object service))
             {
                 context.Response.StatusCode = 503;
                 return;
             }
 
-            StringValues pathBase;
-            if (context.Request.Headers.TryGetValue("X-ServiceFabric-PathBase", out pathBase))
+            if (context.Request.Headers.TryGetValue("X-ServiceFabric-PathBase", out StringValues pathBase))
             {
                 servicePathBase = pathBase.FirstOrDefault();
             }
