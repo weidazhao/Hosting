@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26121.5
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Hosting", "Hosting\Hosting.sfproj", "{813B6F25-1725-4081-854E-444DCFFA6289}"
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Hosting", "Hosting\Hosting.sfproj", "{89F3D30C-116E-4B3F-B362-0480A0E449A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ServiceFabric.AspNetCore.Hosting", "Microsoft.ServiceFabric.AspNetCore.Hosting\Microsoft.ServiceFabric.AspNetCore.Hosting.csproj", "{0A68E3CE-9F8E-4BFF-A32E-88C1AE7DA360}"
 EndProject
@@ -23,12 +23,12 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{813B6F25-1725-4081-854E-444DCFFA6289}.Debug|x64.ActiveCfg = Debug|x64
-		{813B6F25-1725-4081-854E-444DCFFA6289}.Debug|x64.Build.0 = Debug|x64
-		{813B6F25-1725-4081-854E-444DCFFA6289}.Debug|x64.Deploy.0 = Debug|x64
-		{813B6F25-1725-4081-854E-444DCFFA6289}.Release|x64.ActiveCfg = Release|x64
-		{813B6F25-1725-4081-854E-444DCFFA6289}.Release|x64.Build.0 = Release|x64
-		{813B6F25-1725-4081-854E-444DCFFA6289}.Release|x64.Deploy.0 = Release|x64
+		{89F3D30C-116E-4B3F-B362-0480A0E449A6}.Debug|x64.ActiveCfg = Debug|x64
+		{89F3D30C-116E-4B3F-B362-0480A0E449A6}.Debug|x64.Build.0 = Debug|x64
+		{89F3D30C-116E-4B3F-B362-0480A0E449A6}.Debug|x64.Deploy.0 = Debug|x64
+		{89F3D30C-116E-4B3F-B362-0480A0E449A6}.Release|x64.ActiveCfg = Release|x64
+		{89F3D30C-116E-4B3F-B362-0480A0E449A6}.Release|x64.Build.0 = Release|x64
+		{89F3D30C-116E-4B3F-B362-0480A0E449A6}.Release|x64.Deploy.0 = Release|x64
 		{0A68E3CE-9F8E-4BFF-A32E-88C1AE7DA360}.Debug|x64.ActiveCfg = Debug|x64
 		{0A68E3CE-9F8E-4BFF-A32E-88C1AE7DA360}.Debug|x64.Build.0 = Debug|x64
 		{0A68E3CE-9F8E-4BFF-A32E-88C1AE7DA360}.Release|x64.ActiveCfg = Release|x64
