@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sms", "Sms\Sms.csproj", "{6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{5B358071-F42B-45CA-B9C3-FB394871F1C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hosting.TestClient", "Hosting.TestClient\Hosting.TestClient.csproj", "{AE9C2F3C-4FAB-45F4-A6F6-09AB589EFC9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +55,10 @@ Global
 		{5B358071-F42B-45CA-B9C3-FB394871F1C6}.Debug|x64.Build.0 = Debug|x64
 		{5B358071-F42B-45CA-B9C3-FB394871F1C6}.Release|x64.ActiveCfg = Release|x64
 		{5B358071-F42B-45CA-B9C3-FB394871F1C6}.Release|x64.Build.0 = Release|x64
+		{AE9C2F3C-4FAB-45F4-A6F6-09AB589EFC9E}.Debug|x64.ActiveCfg = Debug|x64
+		{AE9C2F3C-4FAB-45F4-A6F6-09AB589EFC9E}.Debug|x64.Build.0 = Debug|x64
+		{AE9C2F3C-4FAB-45F4-A6F6-09AB589EFC9E}.Release|x64.ActiveCfg = Release|x64
+		{AE9C2F3C-4FAB-45F4-A6F6-09AB589EFC9E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
