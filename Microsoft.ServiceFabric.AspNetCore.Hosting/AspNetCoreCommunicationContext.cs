@@ -10,12 +10,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting
     {
         public AspNetCoreCommunicationContext(IWebHost webHost)
         {
-            if (webHost == null)
-            {
-                throw new ArgumentNullException(nameof(webHost));
-            }
-
-            WebHost = webHost;
+            WebHost = webHost ?? throw new ArgumentNullException(nameof(webHost));
         }
 
         public IWebHost WebHost { get; }

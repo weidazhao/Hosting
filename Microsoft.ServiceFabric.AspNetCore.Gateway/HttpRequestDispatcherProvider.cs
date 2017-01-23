@@ -19,12 +19,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
         public HttpRequestDispatcherProvider(Func<HttpRequestDispatcher> innerDispatcherProvider, IServicePartitionResolver servicePartitionResolver = null, IEnumerable<IExceptionHandler> exceptionHandlers = null, string traceId = null)
             : base(servicePartitionResolver, exceptionHandlers, traceId)
         {
-            if (innerDispatcherProvider == null)
-            {
-                throw new ArgumentNullException(nameof(innerDispatcherProvider));
-            }
-
-            _innerDispatcherProvider = innerDispatcherProvider;
+            _innerDispatcherProvider = innerDispatcherProvider ?? throw new ArgumentNullException(nameof(innerDispatcherProvider));
         }
 
         protected override void AbortClient(HttpRequestDispatcher dispatcher)
