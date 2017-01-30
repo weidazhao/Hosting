@@ -12,7 +12,7 @@ Please share your feedback to help us improve the experience in the future relea
 
 1. Prepare your development environment: https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-get-started. Note: The master branch only works with Visual Studio 2017.
 2. Clone the repo.
-3. Open Hosting.sln in Visual Studio 2015 as admin, and F5.
+3. Open Hosting.sln in Visual Studio 2017 as admin, and F5.
 4. After the application is deployed to local dev cluster, right click Hosting.TestClient -> Debug -> Start new instance.
 
 # Key Code Snippets
