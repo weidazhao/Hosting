@@ -95,9 +95,7 @@ namespace Gateway
             app.MapWhen(
                 context =>
                 {
-                    StringValues serviceUri;
-
-                    return context.Request.Headers.TryGetValue("SF-ServiceUri", out serviceUri) &&
+                    return context.Request.Headers.TryGetValue("SF-ServiceUri", out StringValues serviceUri) &&
                            serviceUri.Count == 1 &&
                            serviceUri[0] == "fabric:/Hosting/CounterService";
                 },
