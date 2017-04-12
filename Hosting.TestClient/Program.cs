@@ -50,6 +50,9 @@ namespace Hosting.TestClient
         {
             try
             {
+                // WebApp
+                await client.GetAsync("/webapp", cancellationToken);
+
                 // SMS                
                 await client.PostAsync("/sms/api/sms/unicorn", new StringContent($"\"hello world! ({DateTimeOffset.UtcNow.ToString("u")})\"", Encoding.UTF8, "application/json"), cancellationToken);
 
@@ -65,9 +68,6 @@ namespace Hosting.TestClient
                 var request = new HttpRequestMessage(HttpMethod.Get, "/api/counter");
                 request.Headers.Add("SF-ServiceUri", "fabric:/Hosting/CounterService");
                 await client.SendAsync(request, cancellationToken);
-
-                // WebApp
-                await client.GetAsync("/webapp", cancellationToken);
             }
             catch (Exception ex)
             {
