@@ -32,6 +32,10 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 
         protected override Task<HttpRequestDispatcher> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
         {
+            // HACK: replace [::] with localhost.
+            // TODO: understand how to resolve the endpoint correctly.
+            endpoint = endpoint.Replace("[::]", "localhost");
+
             var dispatcher = _innerDispatcherProvider.Invoke();
             dispatcher.BaseAddress = new Uri(endpoint, UriKind.Absolute);
 
