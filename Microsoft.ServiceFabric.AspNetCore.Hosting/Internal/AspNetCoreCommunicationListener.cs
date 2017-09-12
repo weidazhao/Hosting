@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System;
-using System.Collections.Generic;
 using System.Fabric;
 using System.Linq;
 using System.Threading;
@@ -66,7 +65,8 @@ namespace Microsoft.ServiceFabric.AspNetCore.Hosting.Internal
 
             var serverAddressesFeature = _context.WebHost.ServerFeatures.Get<IServerAddressesFeature>();
 
-            IEnumerable<string> addresses = serverAddressesFeature.Addresses.Select(address => address.Replace("+", ipAddressOrFQDN));
+            var addresses = serverAddressesFeature.Addresses.Select(address => address.Replace("+", ipAddressOrFQDN)
+                                                                                      .Replace("[::]", ipAddressOrFQDN)); // IPAddress.IPv6Any
 
             if (_registry != null)
             {
