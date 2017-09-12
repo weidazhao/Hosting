@@ -2,6 +2,7 @@
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Sms
 {
@@ -9,11 +10,18 @@ namespace Sms
     {
         public static void Main(string[] args)
         {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync(string[] args)
+        {
             var communicationContext = CreateAspNetCoreCommunicationContext();
 
-            ServiceRuntime.RegisterServiceAsync("SmsType", serviceContext => new SmsService(serviceContext, communicationContext)).GetAwaiter().GetResult();
+            await communicationContext.WebHost.StartAsync();
 
-            communicationContext.WebHost.Run();
+            await ServiceRuntime.RegisterServiceAsync("SmsType", serviceContext => new SmsService(serviceContext, communicationContext));
+
+            await communicationContext.WebHost.WaitForShutdownAsync();
         }
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext()

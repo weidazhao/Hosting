@@ -2,6 +2,7 @@
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Counter
 {
@@ -9,16 +10,23 @@ namespace Counter
     {
         public static void Main(string[] args)
         {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync(string[] args)
+        {
             var communicationContext = CreateAspNetCoreCommunicationContext();
 
-            ServiceRuntime.RegisterServiceAsync("CounterType", serviceContext => new CounterService(serviceContext, communicationContext)).GetAwaiter().GetResult();
+            await communicationContext.WebHost.StartAsync();
 
-            communicationContext.WebHost.Run();
+            await ServiceRuntime.RegisterServiceAsync("CounterType", serviceContext => new CounterService(serviceContext, communicationContext));
+
+            await communicationContext.WebHost.WaitForShutdownAsync();
         }
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext()
         {
-            var webHost = new WebHostBuilder().UseWebListener()
+            var webHost = new WebHostBuilder().UseKestrel()
                                               .UseContentRoot(Directory.GetCurrentDirectory())
                                               .UseStartup<Startup>()
                                               .UseServiceFabricEndpoint("CounterTypeEndpoint")

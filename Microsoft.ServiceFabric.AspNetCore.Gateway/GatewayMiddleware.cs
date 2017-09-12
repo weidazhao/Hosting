@@ -16,17 +16,12 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
 
         public GatewayMiddleware(RequestDelegate next, HttpRequestDispatcherProvider dispatcherProvider, IOptions<GatewayOptions> options)
         {
-            if (dispatcherProvider == null)
-            {
-                throw new ArgumentNullException(nameof(dispatcherProvider));
-            }
-
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
-            _dispatcherProvider = dispatcherProvider;
+            _dispatcherProvider = dispatcherProvider ?? throw new ArgumentNullException(nameof(dispatcherProvider));
             _options = options.Value;
         }
 
@@ -76,7 +71,7 @@ namespace Microsoft.ServiceFabric.AspNetCore.Gateway
                 {
                     if (!requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray()) && requestMessage.Content != null)
                     {
-                        requestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                        requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
                     }
                 }
 
