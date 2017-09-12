@@ -2,6 +2,7 @@
 using Microsoft.ServiceFabric.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Runtime;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Gateway
 {
@@ -9,11 +10,18 @@ namespace Gateway
     {
         public static void Main(string[] args)
         {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        private static async Task MainAsync(string[] args)
+        {
             var communicationContext = CreateAspNetCoreCommunicationContext();
 
-            ServiceRuntime.RegisterServiceAsync("GatewayType", serviceContext => new GatewayService(serviceContext, communicationContext)).GetAwaiter().GetResult();
+            await communicationContext.WebHost.StartAsync();
 
-            communicationContext.WebHost.Run();
+            await ServiceRuntime.RegisterServiceAsync("GatewayType", serviceContext => new GatewayService(serviceContext, communicationContext));
+
+            await communicationContext.WebHost.WaitForShutdownAsync();
         }
 
         private static AspNetCoreCommunicationContext CreateAspNetCoreCommunicationContext()
